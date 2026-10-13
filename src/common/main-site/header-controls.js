@@ -33,7 +33,7 @@ export function createHeaderCards() {
   const narrow = matchMedia('(max-width:1099px)');
   const scope = '.bili-header__bar';
   const controls = '.favorite-entry,.history-entry,.right-entry__item:has([data-idx="fav"]),.right-entry__item:has([data-idx="history"])';
-  const properties = ['--homepagescript-card-left','--homepagescript-card-top','--homepagescript-card-height'];
+  const properties = ['--homepagescript-card-left','--homepagescript-card-top','--homepagescript-card-height','--homepagescript-card-width','--homepagescript-card-compact-width'];
   const saved = new Map(), observed = new Set(), events = new AbortController();
   let frame = 0, stopped = false;
   function restore(element, state) {
@@ -60,6 +60,34 @@ export function createHeaderCards() {
           state = {original:new Map(properties.map(name => [name, {value:popup.style.getPropertyValue(name),priority:popup.style.getPropertyPriority(name)}]))};
           saved.set(popup, state);
         }
+        const favorite = popup.querySelector('.favorite-panel-popover');
+        if (favorite && !state.nativeCompactWidth) {
+          // Read before applying our layout so the site's own folder/content
+          // widths (and its enclosing border) remain the source of truth.
+          // This also handles a login panel being replaced by lazy content.
+          popup.classList.remove('homepagescript-header-card');
+          const edges = element => {
+            const css = getComputedStyle(element);
+            return ['paddingLeft','paddingRight','borderLeftWidth','borderRightWidth'].reduce((sum, name) => sum + (parseFloat(css[name]) || 0), 0);
+          };
+          const content = favorite.closest('.v-popover-content');
+          const css = getComputedStyle(favorite);
+          const nativeWidth = element => {
+            const style = getComputedStyle(element);
+            return element.offsetWidth || (parseFloat(style.width) || 0) + (style.boxSizing === 'border-box' ? 0 : edges(element));
+          };
+          const shellWidth = (content ? edges(content) : 0) + edges(popup);
+          const panelWidth = nativeWidth(favorite);
+          state.nativeWidth = popup.offsetWidth || panelWidth + shellWidth;
+          const list = favorite.querySelector('.favorite-panel-popover__content');
+          const folders = favorite.querySelector('.favorite-panel-popover__nav');
+          // The horizontal layout replaces the folder column. Its card width
+          // must therefore follow the native video list, not the entire panel.
+          const listWidth = list && (nativeWidth(list) || Math.max(0, panelWidth - edges(favorite) - (folders ? nativeWidth(folders) : 0) - (parseFloat(css.columnGap) || 0)));
+          state.nativeCompactWidth = listWidth ? listWidth + edges(favorite) + shellWidth : 0;
+          if (state.nativeWidth > 0) popup.style.setProperty('--homepagescript-card-width', `${state.nativeWidth}px`);
+          if (state.nativeCompactWidth > 0) popup.style.setProperty('--homepagescript-card-compact-width', `${state.nativeCompactWidth}px`);
+        }
         if (!popup.classList.contains('homepagescript-header-card')) popup.classList.add('homepagescript-header-card');
         const rect = anchor.getBoundingClientRect();
         const inset = parseFloat(getComputedStyle(html).getPropertyValue('--broadcast-navigation-height')) || 0;
@@ -69,7 +97,7 @@ export function createHeaderCards() {
         // Account for any zoom already applied to the page by its native layout.
         const scale = width / popup.offsetWidth || 1;
         const values = [`${left / scale}px`, `${top / scale}px`, `${Math.max(0, innerHeight - top - 8) / scale}px`];
-        properties.forEach((name, index) => {
+        properties.slice(0, 3).forEach((name, index) => {
           if (popup.style.getPropertyValue(name) !== values[index]) popup.style.setProperty(name, values[index]);
         });
         state.style = popup.getAttribute('style');
@@ -98,6 +126,19 @@ export function createHeaderCards() {
   narrow.addEventListener('change', schedule, {signal:events.signal});
   window.addEventListener('resize', schedule, {signal:events.signal});
   document.addEventListener('scroll', schedule, {capture:true,passive:true,signal:events.signal});
+  // Delegation also covers folders mounted after the header is initialized.
+  document.addEventListener('wheel', event => {
+    if (!narrow.matches || event.ctrlKey || event.defaultPrevented) return;
+    const nav = event.target.closest?.(`${scope} .homepagescript-header-card .favorite-panel-popover__nav`);
+    if (!nav || getComputedStyle(nav).overflowX !== 'auto' || nav.scrollWidth <= nav.clientWidth) return;
+    const delta = Math.abs(event.deltaX) > Math.abs(event.deltaY) ? event.deltaX : event.deltaY;
+    const unit = event.deltaMode === 1 ? parseFloat(getComputedStyle(nav).lineHeight) || 16 : event.deltaMode === 2 ? nav.clientWidth : 1;
+    if (!delta) return;
+    nav.scrollLeft += delta * unit;
+    // Keep wheel gestures over this strip from scrolling the video list/page,
+    // including when the first or last folder has already been reached.
+    event.preventDefault();
+  }, {passive:false,signal:events.signal});
   for (const type of ['pointerover','focusin']) document.addEventListener(type, event => {
     if (event.target.closest?.(scope)) schedule();
   }, {capture:true,signal:events.signal});

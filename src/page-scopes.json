@@ -68,6 +68,13 @@
     ]
   },
   {
+    "id": "Watchlater",
+    "host": "www.bilibili.com",
+    "paths": [
+      "/watchlater/list"
+    ]
+  },
+  {
     "id": "Follow",
     "host": "link.bilibili.com",
     "paths": ["/p/center/index"],

@@ -1,3 +1,4 @@
+import {avatarSubmenuPosition} from '../../common/avatar-submenu-position.js';
 import {fitHomeHeader, createHeaderCards} from '../../common/main-site/header-controls.js';
 import searchStyle from './layout.css';
 import {homeStyle} from '../../common/main-site/home-style.js';
@@ -197,12 +198,10 @@ export function mount() {
         const zoom = Math.min(1, Math.max(1, html.clientWidth - 16) / width, Math.max(1, innerHeight - (submenu ? minimumTop + 8 : top + 8)) / height);
         let left;
         if (submenu) {
-          const rightFits = anchorRect.right + width * zoom <= html.clientWidth - 8;
-          const leftFits = anchorRect.left - width * zoom >= 8;
-          // padding 是原生悬停连接区；翻向左侧时也翻转 padding，避免移动鼠标时关闭。
-          element.classList.toggle('homepagescript-avatar-submenu-left', !rightFits);
-          left = rightFits ? anchorRect.right : leftFits ? anchorRect.left - width * zoom : anchorRect.right - width * zoom;
-          left = Math.max(8, Math.min(left, html.clientWidth - width * zoom - 8));
+          const position = avatarSubmenuPosition(anchorRect, width * zoom, html.clientWidth);
+          // padding 是原生悬停连接区；翻向左侧时也翻转 padding。
+          element.classList.toggle('homepagescript-avatar-submenu-left', position.opensLeft);
+          left = position.left;
           top = Math.max(minimumTop, Math.min((anchorRect.top + anchorRect.bottom - height * zoom) / 2, innerHeight - height * zoom - 8));
         } else left = Math.max(8, Math.min(anchorRect.right - width * zoom, html.clientWidth - width * zoom - 8));
         // CSS zoom 同样缩放 fixed 坐标；包含页面已有的 zoom。

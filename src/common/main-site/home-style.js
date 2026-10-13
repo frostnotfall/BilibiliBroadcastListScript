@@ -45,10 +45,11 @@ export function homeStyle(content = '') { return `
         box-sizing:border-box!important; min-width:0!important; max-width:calc(100vw - 16px)!important; transition-property:opacity!important;
       }
       html.homepagescript-active :is(.favorite-entry,.history-entry) .homepagescript-header-card { padding-top:8px!important; }
-      html.homepagescript-active .favorite-entry .homepagescript-header-card { width:min(522px,calc(100vw - 16px))!important; }
       html.homepagescript-active .history-entry .homepagescript-header-card { width:min(372px,calc(100vw - 16px))!important; }
       html.homepagescript-active .history-entry .homepagescript-header-card:has(.continuous-history-card) { width:min(302px,calc(100vw - 16px))!important; }
       html.homepagescript-active .right-entry__item:has(:is([data-idx="fav"],[data-idx="history"])) .homepagescript-header-card { width:min(372px,calc(100vw - 16px))!important; padding-top:8px!important; }
+      /* 收藏卡片先读取原生宽度，仅在视口放不下时收窄。 */
+      html.homepagescript-active .bili-header__bar .homepagescript-header-card:has(.favorite-panel-popover) { width:var(--homepagescript-card-width)!important; }
       html.homepagescript-active .homepagescript-header-card :is(.continuous-history-card,.right-entry__item-unlogin-panel) { box-sizing:border-box!important; width:100%!important; min-width:0!important; }
       html.homepagescript-active .homepagescript-header-card > .v-popover-content { box-sizing:border-box!important; width:100%!important; min-width:0!important; max-height:calc(var(--homepagescript-card-height) - 8px)!important; overflow:auto!important; }
       html.homepagescript-active .homepagescript-header-card :is(.favorite-panel-popover,.history-panel-popover) { box-sizing:border-box!important; width:100%!important; min-width:0!important; height:min(540px,calc(var(--homepagescript-card-height) - 10px))!important; }
@@ -122,9 +123,13 @@ ${content}
       html.homepagescript-active .bili-header__bar .offset-center-search { transform:none!important; position:relative!important; left:auto!important; }
     }
     @media (max-width:559px) {
+      /* 横排收藏夹不再占左侧宽度，外框仅保留原生视频列表的宽度。 */
+      html.homepagescript-active .bili-header__bar .homepagescript-header-card:has(.favorite-panel-popover) { width:var(--homepagescript-card-compact-width)!important; }
       html.homepagescript-active .homepagescript-header-card .favorite-panel-popover { flex-direction:column!important; }
-      html.homepagescript-active .homepagescript-header-card .favorite-panel-popover__nav { display:flex!important; width:100%!important; height:58px!important; flex:none!important; padding:4px 0!important; border-right:0!important; overflow-x:auto!important; overflow-y:hidden!important; }
-      html.homepagescript-active .homepagescript-header-card .favorite-panel-popover__nav .tab-item { flex:none!important; }
+      html.homepagescript-active .homepagescript-header-card .favorite-panel-popover__nav { display:flex!important; align-items:center!important; width:100%!important; height:40px!important; flex:none!important; padding:0!important; border-right:0!important; overflow-x:auto!important; overflow-y:hidden!important; }
+      html.homepagescript-active .homepagescript-header-card .favorite-panel-popover__nav .tab-item { position:relative!important; display:flex!important; align-items:center!important; justify-content:flex-start!important; gap:8px!important; box-sizing:border-box!important; flex:none!important; width:auto!important; min-width:0!important; height:32px!important; margin:0!important; padding:0 12px!important; white-space:nowrap!important; }
+      html.homepagescript-active .homepagescript-header-card .favorite-panel-popover__nav .tab-item > * { flex:none!important; width:auto!important; min-width:0!important; margin:0!important; }
+      html.homepagescript-active .homepagescript-header-card .favorite-panel-popover__nav .tab-item + .tab-item::before { content:""; position:absolute; left:0; top:5px; bottom:5px; border-left:1px solid var(--line_regular,#e3e5e7); pointer-events:none; }
       html.homepagescript-active .homepagescript-header-card .favorite-panel-popover__content { min-height:0!important; height:auto!important; }
     }
     @media (max-width:399px) {

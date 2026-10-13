@@ -1,0 +1,229 @@
+/* Native watchlater DOM: /watchlater/list. Wide layout stays with the site.
+   Keep selectors independent of Vue's generated data-v-* scope hashes. */
+@media (max-width:1099px) {
+  html.watchlaterscript-active {
+    --watchlater-columns:1;
+  }
+  html.watchlaterscript-active :is(#app,.watchlater-list) {
+    box-sizing:border-box!important;
+    min-width:0!important;
+    width:100%!important;
+    max-width:100%!important;
+  }
+  html.watchlaterscript-active #biliMainHeader {
+    min-height:var(--homepagescript-header-height,56px)!important;
+  }
+  html.watchlaterscript-active .watchlater-list {
+    --layout-padding:8px!important;
+    --menu-padding:8px!important;
+    padding-top:16px!important;
+  }
+  html.watchlaterscript-active .watchlater-list :is(.watchlater-list-slim,.breadcrums-nav) {
+    box-sizing:border-box!important;
+    min-width:0!important;
+    width:100%!important;
+    max-width:100%!important;
+  }
+  html.watchlaterscript-active .watchlater-list-title {
+    flex-wrap:wrap!important;
+    gap:8px!important;
+    font-size:20px!important;
+    line-height:32px!important;
+  }
+  html.watchlaterscript-active :is(.watchlater-list-title-left,.watchlater-list-title-right) {
+    min-width:0!important;
+    flex-wrap:wrap!important;
+  }
+  html.watchlaterscript-active .watchlater-list-title-right {
+    margin-left:auto!important;
+  }
+  html.watchlaterscript-active .watchlater-list-title__count {
+    font-size:15px!important;
+  }
+  html.watchlaterscript-active .watchlater-list-title-split {
+    margin:0 8px!important;
+  }
+  html.watchlaterscript-active .watchlater-list-nav.fixed {
+    top:var(--broadcast-navigation-height,0px)!important;
+  }
+  html.watchlaterscript-active .list-header {
+    margin-top:0!important;
+    padding:12px 0!important;
+  }
+  html.watchlaterscript-active .list-header-main {
+    flex-direction:column!important;
+    gap:10px!important;
+  }
+  html.watchlaterscript-active :is(.list-header-filter,.list-header-options) {
+    min-width:0!important;
+    max-width:100%!important;
+    flex-wrap:wrap!important;
+    gap:8px!important;
+  }
+  html.watchlaterscript-active .list-header-filter__btn {
+    flex:0 0 auto!important;
+    width:auto!important;
+    max-width:100%!important;
+    padding:10px 12px!important;
+    font-size:14px!important;
+  }
+  html.watchlaterscript-active .list-header-filter__more {
+    margin-left:0!important;
+    padding-left:0!important;
+  }
+  html.watchlaterscript-active .list-header-filter__more::before {
+    display:none!important;
+  }
+  html.watchlaterscript-active .list-header :is(.vui_button,.action-btn) {
+    min-width:0!important;
+    max-width:100%!important;
+    padding:0 10px!important;
+  }
+  /* Keep action labels visible even when the native search is expanded. */
+  html.watchlaterscript-active .list-header .action-btn .btn-txt {
+    max-width:none!important;
+    margin-left:4px!important;
+  }
+  html.watchlaterscript-active .list-header .split-line {
+    display:none!important;
+  }
+  html.watchlaterscript-active .list-header .vui_checkbox {
+    margin-left:0!important;
+  }
+  html.watchlaterscript-active .list-header .search-bar {
+    min-width:0!important;
+    max-width:100%!important;
+  }
+  html.watchlaterscript-active .list-header .search-bar .input-wrap {
+    min-width:0!important;
+  }
+  html.watchlaterscript-active .search-date-picker__trigger {
+    flex-wrap:wrap!important;
+    gap:4px!important;
+  }
+  html.watchlaterscript-active .search-date-picker__trigger .date-trigger {
+    width:125px!important;
+  }
+  html.watchlaterscript-active .search-date-picker__trigger .separator {
+    padding:0!important;
+  }
+  html.watchlaterscript-active .watchlater-list-grid {
+    grid-template-columns:repeat(var(--watchlater-columns),minmax(0,1fr))!important;
+    gap:24px 12px!important;
+  }
+  html.watchlaterscript-active .watchlater-list--vertical .watchlater-list-grid {
+    grid-template-columns:minmax(0,1fr)!important;
+    row-gap:16px!important;
+  }
+  html.watchlaterscript-active .watchlater-list :is(.video-card,.video-skeleton-card,.bili-video-card,.video-card__left,.video-card__right,.video-skeleton-card__left,.video-skeleton-card__right) {
+    min-width:0!important;
+  }
+  html.watchlaterscript-active .video-card--grid .video-card__left {
+    width:100%!important;
+  }
+  html.watchlaterscript-active .video-card--list .video-card__left,
+  html.watchlaterscript-active .video-skeleton-card.list-mode .video-skeleton-card__left {
+    flex:0 0 clamp(96px,36vw,178px)!important;
+    width:clamp(96px,36vw,178px)!important;
+  }
+  html.watchlaterscript-active .video-skeleton-card.list-mode .video-skeleton-card__main {
+    width:100%!important;
+  }
+  html.watchlaterscript-active :is(.video-card__right,.video-skeleton-card__right) {
+    margin-left:8px!important;
+  }
+  html.watchlaterscript-active .video-card__right .title {
+    max-width:calc(100% - 24px)!important;
+    -webkit-line-clamp:2!important;
+    font-size:14px!important;
+    line-height:20px!important;
+    margin-bottom:4px!important;
+  }
+  html.watchlaterscript-active .video-card__right .video-card__stats {
+    min-width:0!important;
+    flex-wrap:wrap!important;
+    gap:4px 8px!important;
+  }
+  html.watchlaterscript-active .video-card__right .video-card__stats .stat {
+    min-width:0!important;
+    max-width:100%!important;
+    margin-right:0!important;
+    font-size:12px!important;
+    line-height:18px!important;
+    overflow-wrap:anywhere!important;
+  }
+  html.watchlaterscript-active .watchlater-list .fixed-side-menu {
+    width:100%!important;
+    max-width:100%!important;
+    padding:0 8px!important;
+  }
+  html.watchlaterscript-active .watchlater-list .fixed-side-menu .right-side {
+    left:auto!important;
+    right:0!important;
+    bottom:12px!important;
+  }
+  html.watchlaterscript-active .watchlater-list-empty {
+    margin:48px 8px!important;
+    line-height:1.5!important;
+  }
+  html.watchlaterscript-active .to-login .decorative-drawing {
+    max-width:100%!important;
+    height:auto!important;
+  }
+  html.watchlaterscript-active .bili-footer {
+    display:none!important;
+  }
+  /* Vue teleports these dialogs outside main. Scope them with the root class. */
+  html.watchlaterscript-active .vui_dialog--content {
+    box-sizing:border-box!important;
+    min-width:0!important;
+    max-width:calc(100vw - 16px)!important;
+    max-height:calc(100vh - var(--broadcast-navigation-height,0px) - 16px)!important;
+    top:calc(50% + var(--broadcast-navigation-height,0px)/2)!important;
+    padding:36px 16px 16px!important;
+    overflow:auto!important;
+  }
+  html.watchlaterscript-active .vui_dialog--footer {
+    height:auto!important;
+    flex-wrap:wrap!important;
+    gap:8px!important;
+  }
+  html.watchlaterscript-active .vui_dialog--footer .vui_button {
+    flex:1 1 80px!important;
+    min-width:0!important;
+    max-width:100%!important;
+    width:auto!important;
+    margin:0!important;
+  }
+  html.watchlaterscript-active .dp__outer_menu_wrap:has(.search-date-picker__menu) {
+    left:8px!important;
+    right:8px!important;
+    width:min(322px,calc(100vw - 16px))!important;
+    max-width:calc(100vw - 16px)!important;
+  }
+  html.watchlaterscript-active .search-date-picker__menu {
+    min-width:0!important;
+    width:min(322px,calc(100vw - 16px))!important;
+    max-width:calc(100vw - 16px)!important;
+  }
+  html.watchlaterscript-active .search-date-picker__calendar {
+    padding:8px!important;
+  }
+  html.watchlaterscript-active .search-date-picker__calendar :is(.dp__calendar_header_item,.dp__calendar_item) {
+    flex:1 1 0!important;
+    min-width:0!important;
+    width:auto!important;
+  }
+  html.watchlaterscript-active .search-date-picker__calendar .dp__cell_inner {
+    width:100%!important;
+  }
+}
+@media (min-width:480px) and (max-width:1099px) {
+  html.watchlaterscript-active { --watchlater-columns:2; }
+}
+@media (min-width:720px) and (max-width:1099px) {
+  html.watchlaterscript-active { --watchlater-columns:3; }
+}
+@media (min-width:960px) and (max-width:1099px) {
+  html.watchlaterscript-active { --watchlater-columns:4; }
+}

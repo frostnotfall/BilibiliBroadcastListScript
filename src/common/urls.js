@@ -35,6 +35,8 @@ export function isMediaUrl(value) {
     || /^\/bangumi\/(?:media\/md|play\/(?:ep|ss))\d+\/?$/i.test(path)
     || /^\/audio\/(?:am|au)\d+\/?$/i.test(path)
     || /^\/medialist\/detail\/ml\d+\/?$/i.test(path)
+    // Native Watchlater cards and "play all" preserve their list/filter params.
+    || /^\/list\/watchlater\/?$/.test(path)
     || /^\/list\/\d+\/?$/.test(path);
 }
 export const isShortUrl = value => urlOf(value)?.hostname === 'b23.tv';
