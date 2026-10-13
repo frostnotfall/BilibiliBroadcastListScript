@@ -17,7 +17,7 @@ export function homeStyle(content = '') { return `
       html.homepagescript-active .bili-header__bar .left-entry-main { display:flex!important; width:auto!important; min-width:0!important; }
       html.homepagescript-active .bili-header__bar :is(.home-page-entry,.home-page-panel-entry) { flex:none!important; }
       html.homepagescript-active .bili-header__bar :is(.home-page-entry,.home-page-panel-entry) > a { display:flex!important; align-items:center!important; white-space:nowrap!important; }
-      html.homepagescript-active .bili-header__bar .menu-center { flex:1!important; min-width:0!important; width:auto!important; }
+      html.homepagescript-active .bili-header__bar .menu-center { flex:1!important; min-width:0!important; width:auto!important; margin:0 8px!important; }
       html.homepagescript-active .bili-header__bar .menu-right { flex:0 0 auto!important; width:auto!important; min-width:0!important; }
       /* 定位原生外框，内容留在带背景/边框/阴影的 v-popover-content 内。 */
       html.homepagescript-active .v-popover:has(.bili-header-channel-panel) {
@@ -31,9 +31,41 @@ export function homeStyle(content = '') { return `
       }
       html.homepagescript-active .bili-header-channel-panel .channel-panel__column { min-width:0!important; padding:0 8px!important; }
       html.homepagescript-active .bili-header-channel-panel .channel-panel__item { min-width:0!important; }
-      html.homepagescript-active .bili-header__bar .center-search-container { display:block!important; flex:1!important; min-width:0!important; }
+      html.homepagescript-active .bili-header__bar .center-search-container { display:block!important; flex:1!important; min-width:0!important; width:auto!important; margin:0 8px!important; }
+      html.homepagescript-active .bili-header__bar .menu-center .center-search-container { margin:0!important; }
       html.homepagescript-active .bili-header__bar .center-search__bar { width:100%!important; min-width:0!important; max-width:none!important; }
-      html.homepagescript-active .bili-header__bar .right-entry { flex:0 0 auto!important; }
+      html.homepagescript-active .bili-header__bar :is(#nav-searchform,#nav_searchform,.nav-search-content,.nav-search-input) { box-sizing:border-box!important; min-width:0!important; }
+      html.homepagescript-active .bili-header__bar .nav-search-input { width:100%!important; }
+      html.homepagescript-active .bili-header__bar .nav-search-clean { flex:none!important; }
+      html.homepagescript-active .bili-header__bar :is(#nav-searchform,#nav_searchform) { width:100%!important; }
+      html.homepagescript-active .bili-header__bar .right-entry { flex:0 0 auto!important; width:auto!important; min-width:0!important; }
+      html.homepagescript-active .bili-header__bar .right-entry__main { gap:8px!important; }
+      html.homepagescript-active .bili-header__bar .right-entry__item { min-width:28px!important; margin:0!important; }
+      html.homepagescript-active .bili-header__bar .right-entry__item-trigger .trigger-text { display:block!important; font-size:12px!important; white-space:nowrap!important; }
+      /* 外框留在原生悬停区域内；只调整坐标和尺寸，保留背景、状态及内容事件。 */
+      html.homepagescript-active .bili-header__bar .homepagescript-header-card {
+        position:fixed!important; left:var(--homepagescript-card-left,8px)!important; top:var(--homepagescript-card-top,var(--homepagescript-header-height))!important;
+        right:auto!important; bottom:auto!important; margin:0!important; transform:none!important;
+        box-sizing:border-box!important; min-width:0!important; max-width:calc(100vw - 16px)!important; transition-property:opacity!important;
+      }
+      html.homepagescript-active :is(.favorite-entry,.history-entry) .homepagescript-header-card { padding-top:8px!important; }
+      html.homepagescript-active .favorite-entry .homepagescript-header-card { width:min(522px,calc(100vw - 16px))!important; }
+      html.homepagescript-active .history-entry .homepagescript-header-card { width:min(372px,calc(100vw - 16px))!important; }
+      html.homepagescript-active .history-entry .homepagescript-header-card:has(.continuous-history-card) { width:min(302px,calc(100vw - 16px))!important; }
+      html.homepagescript-active .right-entry__item:has(:is([data-idx="fav"],[data-idx="history"])) .homepagescript-header-card { width:min(372px,calc(100vw - 16px))!important; padding-top:8px!important; }
+      html.homepagescript-active .homepagescript-header-card :is(.continuous-history-card,.right-entry__item-unlogin-panel) { box-sizing:border-box!important; width:100%!important; min-width:0!important; }
+      html.homepagescript-active .homepagescript-header-card > .v-popover-content { box-sizing:border-box!important; width:100%!important; min-width:0!important; max-height:calc(var(--homepagescript-card-height) - 8px)!important; overflow:auto!important; }
+      html.homepagescript-active .homepagescript-header-card :is(.favorite-panel-popover,.history-panel-popover) { box-sizing:border-box!important; width:100%!important; min-width:0!important; height:min(540px,calc(var(--homepagescript-card-height) - 10px))!important; }
+      html.homepagescript-active .homepagescript-header-card .history-panel-popover { display:flex!important; flex-direction:column!important; }
+      html.homepagescript-active .homepagescript-header-card .header-tabs-panel { flex:none!important; }
+      html.homepagescript-active .homepagescript-header-card .header-tabs-panel__content { flex:1!important; min-height:0!important; height:auto!important; overflow-y:auto!important; }
+      html.homepagescript-active .homepagescript-header-card .view-all-history-btn { max-width:calc(100% - 24px)!important; }
+      html.homepagescript-active .homepagescript-header-card .favorite-panel-popover__nav { height:100%!important; }
+      html.homepagescript-active .homepagescript-header-card .favorite-panel-popover__content { display:flex!important; flex-direction:column!important; flex:1!important; min-width:0!important; height:100%!important; }
+      html.homepagescript-active .homepagescript-header-card .content-scroll { flex:1!important; min-height:0!important; height:auto!important; overflow-y:auto!important; }
+      html.homepagescript-active .homepagescript-header-card .content-bottom { position:static!important; flex:none!important; }
+      html.homepagescript-active .center-search-container .homepagescript-header-card { width:min(500px,calc(100vw - 16px))!important; padding:0!important; max-height:var(--homepagescript-card-height)!important; overflow-y:auto!important; }
+      html.homepagescript-active .homepagescript-header-card .search-panel { box-sizing:border-box!important; max-height:var(--homepagescript-card-height)!important; }
       /* 主卡片和二级菜单留在原生父级内，保留悬停开合与点击行为。 */
       html.homepagescript-active :is(.bili-header__bar,.link-navbar) :is(.homepagescript-avatar-menu,.homepagescript-avatar-submenu) {
         position:fixed!important; left:var(--homepagescript-avatar-left,0px)!important; top:var(--homepagescript-avatar-top,0px)!important;
@@ -94,6 +126,12 @@ export function homeStyle(content = '') { return `
       .homepagescript-more:focus-visible, #homepagescript-menu a:focus-visible { outline:2px solid #00aeec; outline-offset:1px; }
 ${content}
       html.homepagescript-active .bili-header__bar .offset-center-search { transform:none!important; position:relative!important; left:auto!important; }
+    }
+    @media (max-width:559px) {
+      html.homepagescript-active .homepagescript-header-card .favorite-panel-popover { flex-direction:column!important; }
+      html.homepagescript-active .homepagescript-header-card .favorite-panel-popover__nav { display:flex!important; width:100%!important; height:58px!important; flex:none!important; padding:4px 0!important; border-right:0!important; overflow-x:auto!important; overflow-y:hidden!important; }
+      html.homepagescript-active .homepagescript-header-card .favorite-panel-popover__nav .tab-item { flex:none!important; }
+      html.homepagescript-active .homepagescript-header-card .favorite-panel-popover__content { min-height:0!important; height:auto!important; }
     }
     @media (max-width:399px) {
       html.homepagescript-active .bili-header__channel { grid-template-rows:auto auto 32px!important; }

@@ -20,8 +20,9 @@ html.homepagescript-active .link-navbar .user-panel-ctnr {min-width:0!important;
 html.homepagescript-active .link-navbar .user-panel-ctnr > .user-panel {box-sizing:border-box!important;max-width:calc(100vw - 16px)!important;}
 /* New live header: the same native search/avatar, with nav-title entries. */
 html.homepagescript-active .live-home-new-header {height:56px!important;min-width:0!important;width:100%!important;}
-/* Keep the native 40px search height instead of stretching it to the 56px header. */
-html.homepagescript-active .live-home-new-header .search-block {display:flex!important;align-items:center!important;height:40px!important;}
+/* Keep the native 40px search height. The in-flow panel expands the inner table;
+   align its top so opening suggestions cannot lift the input out of the header. */
+html.homepagescript-active .live-home-new-header .search-block {display:flex!important;align-items:flex-start!important;height:40px!important;}
 html.homepagescript-active .live-home-new-header .user-panel-ctnr {display:inline-flex!important;align-items:center!important;}
 html.homepagescript-active .link-navbar .live-home-new-nav {display:flex!important;align-items:center!important;gap:6px!important;flex:none!important;width:auto!important;min-width:0!important;margin:0!important;padding:0!important;}
 html.homepagescript-active .live-home-new-nav .nav-title:not(.homepagescript-hidden) {display:inline-flex!important;align-items:center!important;gap:4px!important;white-space:nowrap!important;margin:0!important;padding:0!important;line-height:24px!important;}

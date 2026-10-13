@@ -1,3 +1,4 @@
+import {fitHomeHeader, createHeaderCards} from '../../common/main-site/header-controls.js';
 import {homeStyle} from '../../common/main-site/home-style.js';
 import {pageId, isPageUrl, isMediaUrl, createPageOpening} from '../../common/index.js';
 import {createHeaderSearchNavigation, createAvatarNavigation} from '../../common/main-site/home-navigation.js';
@@ -9,6 +10,7 @@ export function mount() {
   window.bilibiliHomePageScript?.destroy();
 
   const headerSearchNavigation = createHeaderSearchNavigation();
+  const headerCards = createHeaderCards();
 
   const avatarNavigation = createAvatarNavigation();
 
@@ -105,31 +107,7 @@ export function mount() {
     });
   }
 
-  function fitHeader() {
-    for (const bar of document.querySelectorAll('.bili-header__bar')) {
-      // 保留原生入口及其完整弹出框，隐藏通往保留节点的路径之外的分支。
-      const keep = Array.from(bar.querySelectorAll('.home-page-entry,.home-page-panel-entry,.header-avatar-wrap'));
-      for (const link of bar.querySelectorAll('a[href]')) {
-        if (link.closest('.v-popover')) continue;
-        const url = new URL(link.href, location.href);
-        if (url.hostname === 'www.bilibili.com' && /^\/(?:index\.html)?$/.test(url.pathname)) {
-          keep.push(link.closest('.v-popover-wrap') || link);
-        }
-      }
-      const search = bar.querySelector('#nav-searchform');
-      if (search) keep.push(search.closest('.center-search-container,.menu-center') || search);
-      if (!keep.length) continue;
-      for (const element of hidden) if (bar.contains(element) && keep.some(node => node.contains(element))) fit([element], 1);
-      function trim(container) {
-        for (const child of container.children) {
-          const retained = keep.some(node => child.contains(node));
-          fit([child], retained ? 1 : 0);
-          if (retained && !keep.includes(child)) trim(child);
-        }
-      }
-      trim(bar);
-    }
-  }
+  function fitHeader() { fitHomeHeader(hidden, fit); }
 
   function observe(element) {
     if (!observed.has(element)) { observed.add(element); resize.observe(element); }
@@ -375,6 +353,7 @@ export function mount() {
     destroy() {
       avatarNavigation.destroy();
       headerSearchNavigation.destroy();
+      headerCards.destroy();
       stopped = true; events.abort(); mutations.disconnect(); avatarMutations.disconnect(); resize.disconnect(); cancelAnimationFrame(frame); closeMenu();
       clearInterval(potPlayerTimer); restorePotPlayerIgnore();
       for (const [element, saved] of avatarMenus) resetAvatarMenu(element, saved);
