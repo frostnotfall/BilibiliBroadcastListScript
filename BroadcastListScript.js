@@ -1,4 +1,4 @@
-// bilibili-broadcast-list-script v2.0.0
+// bilibili-broadcast-list-script version: 1
 // MIT License
 // 
 // Copyright (c) 2026 BilibiliBroadcastListScript contributors
@@ -237,6 +237,9 @@
     return isShortUrl(value) ? "short" : isMediaUrl(value) ? "media" : isPageUrl(value) ? "page" : "native";
   }
 
+  // src/common/version.js
+  var version = "1";
+
   // src/common/opening.js
   var resultType = "potPlayer.short-link.result";
   var resolverName = "potPlayer.short-link:";
@@ -433,7 +436,7 @@
       if (!frame) frame = requestAnimationFrame(prepare);
     }
     const controller = {
-      version: "2.0.0",
+      version,
       classifyUrl,
       isSupportedUrl: isMediaUrl,
       resolveUrl,
@@ -788,7 +791,7 @@ ${location.href}`;
     document.addEventListener("DOMContentLoaded", reconcile, { signal: events.signal });
     const poll = setInterval(reconcile, 250);
     const controller = {
-      version: "2.0.0",
+      version,
       get activePage() {
         return active?.id || null;
       },
@@ -852,7 +855,7 @@ ${location.href}`;
     const html = document.documentElement;
     const narrow = matchMedia("(max-width:1099px)");
     const scope = ".bili-header__bar";
-    const controls = '.favorite-entry,.history-entry,.center-search-container,.right-entry__item:has([data-idx="fav"]),.right-entry__item:has([data-idx="history"])';
+    const controls = '.favorite-entry,.history-entry,.right-entry__item:has([data-idx="fav"]),.right-entry__item:has([data-idx="history"])';
     const properties = ["--homepagescript-card-left", "--homepagescript-card-top", "--homepagescript-card-height"];
     const saved = /* @__PURE__ */ new Map(), observed = /* @__PURE__ */ new Set(), events = new AbortController();
     let frame = 0, stopped = false;
@@ -868,11 +871,10 @@ ${location.href}`;
       const targets = /* @__PURE__ */ new Set(), cards2 = /* @__PURE__ */ new Set();
       for (const control of document.querySelectorAll(`${scope} :is(${controls})`)) {
         targets.add(control);
-        const search = control.matches(".center-search-container");
-        const anchor = search ? control.querySelector(".center-search__bar") : control.querySelector(".right-entry__item-trigger,a");
+        const anchor = control.querySelector(".right-entry__item-trigger,a");
         if (!anchor) continue;
         targets.add(anchor);
-        const popups = search ? control.querySelectorAll(".nav-search-panel,.search-panel:not(.nav-search-panel *)") : control.querySelectorAll(".v-popover-wrap > .v-popover");
+        const popups = control.querySelectorAll(".v-popover-wrap > .v-popover");
         for (const popup of popups) {
           cards2.add(popup);
           targets.add(popup);
@@ -887,7 +889,7 @@ ${location.href}`;
           const inset = parseFloat(getComputedStyle(html).getPropertyValue("--broadcast-navigation-height")) || 0;
           const top = Math.max(inset, Math.min(rect.bottom, innerHeight - 8));
           const width = popup.getBoundingClientRect().width;
-          const left = Math.max(8, Math.min(search ? rect.left : rect.right - width, html.clientWidth - width - 8));
+          const left = Math.max(8, Math.min(rect.right - width, html.clientWidth - width - 8));
           const scale = width / popup.offsetWidth || 1;
           const values = [`${left / scale}px`, `${top / scale}px`, `${Math.max(0, innerHeight - top - 8) / scale}px`];
           properties.forEach((name, index) => {
@@ -1495,6 +1497,7 @@ ${location.href}`;
     html.homepagescript-active:has(link#__css-map__[href*="/light.css"]) { color-scheme:light!important; }
     html.homepagescript-active:has(link#__css-map__[href*="/dark.css"]) { color-scheme:dark!important; }
     html.homepagescript-active, html.homepagescript-active * { scrollbar-width:thin!important; scrollbar-color:auto!important; }
+    html.homepagescript-active .bili-header__bar :is(.big-logo,.big-logo__logo) { display:none!important; }
     .homepagescript-more, #homepagescript-menu { display:none; }
     @media (max-width:1099px) {
       html.homepagescript-active { --homepagescript-header-height:56px; }
@@ -1507,7 +1510,7 @@ ${location.href}`;
       html.homepagescript-active .bili-header__bar .left-entry-main { display:flex!important; width:auto!important; min-width:0!important; }
       html.homepagescript-active .bili-header__bar :is(.home-page-entry,.home-page-panel-entry) { flex:none!important; }
       html.homepagescript-active .bili-header__bar :is(.home-page-entry,.home-page-panel-entry) > a { display:flex!important; align-items:center!important; white-space:nowrap!important; }
-      html.homepagescript-active .bili-header__bar .menu-center { flex:1!important; min-width:0!important; width:auto!important; margin:0 8px!important; }
+      html.homepagescript-active .bili-header__bar .menu-center { flex:1!important; min-width:0!important; width:auto!important; }
       html.homepagescript-active .bili-header__bar .menu-right { flex:0 0 auto!important; width:auto!important; min-width:0!important; }
       /* 定位原生外框，内容留在带背景/边框/阴影的 v-popover-content 内。 */
       html.homepagescript-active .v-popover:has(.bili-header-channel-panel) {
@@ -1521,13 +1524,8 @@ ${location.href}`;
       }
       html.homepagescript-active .bili-header-channel-panel .channel-panel__column { min-width:0!important; padding:0 8px!important; }
       html.homepagescript-active .bili-header-channel-panel .channel-panel__item { min-width:0!important; }
-      html.homepagescript-active .bili-header__bar .center-search-container { display:block!important; flex:1!important; min-width:0!important; width:auto!important; margin:0 8px!important; }
-      html.homepagescript-active .bili-header__bar .menu-center .center-search-container { margin:0!important; }
+      html.homepagescript-active .bili-header__bar .center-search-container { display:block!important; flex:1!important; min-width:0!important; }
       html.homepagescript-active .bili-header__bar .center-search__bar { width:100%!important; min-width:0!important; max-width:none!important; }
-      html.homepagescript-active .bili-header__bar :is(#nav-searchform,#nav_searchform,.nav-search-content,.nav-search-input) { box-sizing:border-box!important; min-width:0!important; }
-      html.homepagescript-active .bili-header__bar .nav-search-input { width:100%!important; }
-      html.homepagescript-active .bili-header__bar .nav-search-clean { flex:none!important; }
-      html.homepagescript-active .bili-header__bar :is(#nav-searchform,#nav_searchform) { width:100%!important; }
       html.homepagescript-active .bili-header__bar .right-entry { flex:0 0 auto!important; width:auto!important; min-width:0!important; }
       html.homepagescript-active .bili-header__bar .right-entry__main { gap:8px!important; }
       html.homepagescript-active .bili-header__bar .right-entry__item { min-width:28px!important; margin:0!important; }
@@ -1554,8 +1552,6 @@ ${location.href}`;
       html.homepagescript-active .homepagescript-header-card .favorite-panel-popover__content { display:flex!important; flex-direction:column!important; flex:1!important; min-width:0!important; height:100%!important; }
       html.homepagescript-active .homepagescript-header-card .content-scroll { flex:1!important; min-height:0!important; height:auto!important; overflow-y:auto!important; }
       html.homepagescript-active .homepagescript-header-card .content-bottom { position:static!important; flex:none!important; }
-      html.homepagescript-active .center-search-container .homepagescript-header-card { width:min(500px,calc(100vw - 16px))!important; padding:0!important; max-height:var(--homepagescript-card-height)!important; overflow-y:auto!important; }
-      html.homepagescript-active .homepagescript-header-card .search-panel { box-sizing:border-box!important; max-height:var(--homepagescript-card-height)!important; }
       /* 主卡片和二级菜单留在原生父级内，保留悬停开合与点击行为。 */
       html.homepagescript-active :is(.bili-header__bar,.link-navbar) :is(.homepagescript-avatar-menu,.homepagescript-avatar-submenu) {
         position:fixed!important; left:var(--homepagescript-avatar-left,0px)!important; top:var(--homepagescript-avatar-top,0px)!important;
@@ -2601,10 +2597,9 @@ ${content2}
     const matchesPage = () => pageId(location.href) === "Feed";
     if (!matchesPage()) return;
     window.bilibiliFeedScript?.destroy();
-    const headerSearchNavigation = createHeaderSearchNavigation();
-    const avatarNavigation = createAvatarNavigation();
+    const homeLayout = mountHomeLayout(homeStyle(), matchesPage);
     const html = document.documentElement;
-    const narrow = matchMedia("(width < 1100px)");
+    const narrow = matchMedia("(max-width:1099px)");
     const railWidth = 20;
     const railDeadZone = 5;
     const leftWidth = `min(280px,calc(100vw - ${railWidth + 20}px))`;
@@ -2617,11 +2612,7 @@ ${content2}
     let classes = /* @__PURE__ */ new Map();
     const events = new AbortController();
     const profileCSS = "left:var(--feedscript-profile-left)!important; top:var(--feedscript-profile-top)!important; zoom:var(--feedscript-profile-zoom)!important; transition-property:left,top,opacity!important;";
-    const profiles = /* @__PURE__ */ new Map(), avatarMenus = /* @__PURE__ */ new Map();
-    const avatarProperties = ["--feedscript-avatar-left", "--feedscript-avatar-top", "--feedscript-avatar-zoom"];
-    const homeEntry = ".home-page-panel-entry";
-    let homeClick = null, homeClickTimer = 0, potPlayerApi = null, restoreIgnore = () => {
-    };
+    const profiles = /* @__PURE__ */ new Map();
     let main = null, left = null, open = false, stopped = false, frame = 0, layoutPending = false, width = 0;
     let restoreViewport = null, restoreLeft = null;
     const dynamicContent = createDynamicContent({ getRoot: () => main, popup, isActive: () => narrow.matches });
@@ -2637,34 +2628,14 @@ ${content2}
     @media ${narrow.media} { html.feedscript-active {
       &:has(link#__css-map__[href*="/light.css"]) { color-scheme:light!important; }
       &:has(link#__css-map__[href*="/dark.css"]) { color-scheme:dark!important; }
-      &, :is(body,.feedscript-left,.feedscript-scroll,.feedscript-home-menu) { scrollbar-width:thin!important; }
+      &, :is(body,.feedscript-left,.feedscript-scroll) { scrollbar-width:thin!important; }
       &, body { overflow-x:clip!important; scrollbar-gutter:auto!important; }
       .feedscript-hidden, :is(${header}):not(.feedscript-header):not(.feedscript-header *) { display:none!important; }
-      &:has(.feedscript-header) { --feedscript-header-height:56px; }
-      .feedscript-header { position:sticky!important; top:var(--broadcast-navigation-height,0px)!important; height:56px!important; z-index:1300!important; }
-      .feedscript-header, .feedscript-header :is(.bili-header,.bili-header__bar) { width:100%!important; min-width:0!important; max-width:none!important; margin:0!important; height:56px!important; box-sizing:border-box!important; }
-      .feedscript-header .bili-header__bar { position:relative!important; inset:auto!important; padding:0 8px!important; }
-      .feedscript-header :is(.left-entry-main > :not(.home-page-panel-entry),.right-entry__main > :not(.header-avatar-wrap),.right-entry > :not(.right-entry__main)) { display:none!important; }
-      .feedscript-header .left-entry { display:flex!important; flex:0 0 auto!important; min-width:0!important; margin-right:8px!important; }
-      .feedscript-header .home-page-panel-entry { margin:0!important; }
-      .feedscript-header .home-page-panel-entry .big-logo, .feedscript-header .big-logo__logo { width:64px!important; height:30px!important; }
-      .feedscript-header .home-page-panel-entry .trigger-text { font-size:14px!important; }
-      .feedscript-header .center-search-container { display:block!important; flex:1!important; min-width:0!important; }
-      .feedscript-header .center-search__bar { width:100%!important; min-width:0!important; max-width:none!important; }
-      .feedscript-header .right-entry { flex:0 0 auto!important; }
-      /* 与 HomePageScripts 共用处理方式，保留原生父级和悬停连接区。 */
-      .feedscript-header .bili-header__bar :is(.feedscript-avatar-menu,.feedscript-avatar-submenu,.feedscript-home-menu) {
-        position:fixed!important; left:var(--feedscript-avatar-left,0px)!important; top:var(--feedscript-avatar-top,0px)!important;
-        right:auto!important; bottom:auto!important; margin:0!important; transform:none!important;
-        zoom:var(--feedscript-avatar-zoom,1)!important; transition-property:opacity!important;
-      }
-      .feedscript-header .bili-header__bar .feedscript-avatar-submenu-left { padding-left:0!important; padding-right:10px!important; }
-      .feedscript-home-menu { width:min(900px,calc(100vw - 16px))!important; max-height:calc(100vh - var(--broadcast-navigation-height,0px) - 72px)!important; overflow:auto!important; box-sizing:border-box!important; }
-      .feedscript-home-menu :is(.v-popover-content,.bili-header-channel-panel) { width:100%!important; min-width:0!important; box-sizing:border-box!important; }
-      .feedscript-home-menu .bili-header-channel-panel { display:grid!important; grid-template-columns:repeat(auto-fit,minmax(130px,1fr))!important; gap:4px!important; padding:8px!important; }
-      .feedscript-home-menu .channel-panel__column { display:contents!important; }
-      .feedscript-home-menu .channel-panel__item { min-width:0!important; width:auto!important; height:auto!important; min-height:32px!important; padding:6px!important; margin:0!important; gap:8px!important; font-size:14px!important; white-space:nowrap!important; }
-      .feedscript-home-menu .navigation-channel-icon { flex:none!important; }
+      /* 这里只衔接动态页容器与信息栏；顶栏控件和浮层交由首页公共模块。 */
+      &:has(.feedscript-header) { --feedscript-header-height:var(--homepagescript-header-height); }
+      .feedscript-header { position:sticky!important; top:var(--broadcast-navigation-height,0px)!important; height:var(--homepagescript-header-height)!important; z-index:1300!important; }
+      .feedscript-header, .feedscript-header .bili-header { width:100%!important; min-width:0!important; max-width:none!important; margin:0!important; height:var(--homepagescript-header-height)!important; box-sizing:border-box!important; }
+      .feedscript-header .bili-header__bar { position:relative!important; inset:auto!important; }
       :is(.feedscript-path,.feedscript-main,.feedscript-fit,.feedscript-scroll), .feedscript-main > ${pageChild},
       .feedscript-main :is(${fullWidth2},${content2}) { box-sizing:border-box!important; min-width:0!important; max-width:100%!important; }
       :is(.feedscript-path,.feedscript-main) { width:100%!important; }
@@ -2728,83 +2699,6 @@ ${content2}
         if (value) element.style.setProperty(name, value, priority);
         else element.style.removeProperty(name);
       }
-    }
-    function resetAvatarMenu(element, saved) {
-      element.classList.remove("feedscript-avatar-menu", "feedscript-avatar-submenu", "feedscript-avatar-submenu-left", "feedscript-home-menu");
-      restoreStyles(element, saved.original);
-      resize.unobserve(element);
-      avatarMenus.delete(element);
-    }
-    function fitAvatarMenu(element, anchor, submenu, targets, home = false) {
-      let saved = avatarMenus.get(element);
-      if (!saved) {
-        saved = { original: saveStyles(element, avatarProperties), zoom: 1 };
-        avatarMenus.set(element, saved);
-        resize.observe(element);
-      }
-      targets.add(element);
-      element.classList.add(home ? "feedscript-home-menu" : submenu ? "feedscript-avatar-submenu" : "feedscript-avatar-menu");
-      const rect = element.getBoundingClientRect();
-      if (!rect.width || !rect.height) return;
-      const anchorRect = anchor.getBoundingClientRect();
-      const inset = parseFloat(getComputedStyle(html).getPropertyValue("--broadcast-navigation-height")) || 0;
-      const menuTop = inset && submenu ? element.closest(".feedscript-avatar-menu")?.getBoundingClientRect().top || 0 : 0;
-      const minimumTop = Math.max(inset + 8, menuTop);
-      let top = Math.max(minimumTop, Math.min(anchorRect.bottom, innerHeight - 16));
-      const width2 = rect.width / saved.zoom, height2 = rect.height / saved.zoom;
-      const zoom = Math.min(1, Math.max(1, html.clientWidth - 16) / width2, Math.max(1, innerHeight - (submenu ? minimumTop + 8 : top + 8)) / height2);
-      let left2;
-      if (submenu) {
-        const rightFits = anchorRect.right + width2 * zoom <= html.clientWidth - 8;
-        const leftFits = anchorRect.left - width2 * zoom >= 8;
-        element.classList.toggle("feedscript-avatar-submenu-left", !rightFits);
-        left2 = rightFits ? anchorRect.right : leftFits ? anchorRect.left - width2 * zoom : anchorRect.right - width2 * zoom;
-        left2 = Math.max(8, Math.min(left2, html.clientWidth - width2 * zoom - 8));
-        top = Math.max(minimumTop, Math.min((anchorRect.top + anchorRect.bottom - height2 * zoom) / 2, innerHeight - height2 * zoom - 8));
-      } else left2 = Math.max(8, Math.min(home ? anchorRect.left : anchorRect.right - width2 * zoom, html.clientWidth - width2 * zoom - 8));
-      const scale = rect.width / element.offsetWidth / saved.zoom * zoom;
-      const values = [`${left2 / scale}px`, `${top / scale}px`, String(zoom)];
-      avatarProperties.forEach((name, index) => {
-        if (element.style.getPropertyValue(name) !== values[index]) element.style.setProperty(name, values[index]);
-      });
-      saved.zoom = zoom;
-    }
-    function fitAvatarMenus() {
-      const targets = /* @__PURE__ */ new Set();
-      for (const element of document.querySelectorAll(".feedscript-header .bili-header__bar .header-avatar-wrap > .v-popover-wrap > .v-popover")) {
-        const anchor = element.parentElement.querySelector(".header-avatar-wrap--container") || element.closest(".header-avatar-wrap");
-        fitAvatarMenu(element, anchor, false, targets);
-        for (const submenu of element.querySelectorAll(".v-popover-wrap > .v-popover:is(.is-right,.is-left)")) {
-          fitAvatarMenu(submenu, submenu.parentElement, true, targets);
-        }
-      }
-      for (const element of document.querySelectorAll(`.feedscript-header ${homeEntry} > .v-popover`)) {
-        fitAvatarMenu(element, element.parentElement.querySelector(".left-entry__item-trigger"), false, targets, true);
-      }
-      for (const [element, saved] of avatarMenus) if (!targets.has(element)) resetAvatarMenu(element, saved);
-    }
-    function syncPotPlayerIgnore() {
-      const api = window.__potPlayerBilibiliClick;
-      if (api === potPlayerApi) return;
-      restoreIgnore();
-      potPlayerApi = api;
-      restoreIgnore = typeof api?.ignoreUrl === "function" ? api.ignoreUrl((url) => Boolean(homeClick?.isConnected && url.href === homeClick.href && isPageUrl(url))) : () => {
-      };
-    }
-    function prepareHomeClick(event) {
-      homeClick = event.target instanceof Element ? event.target.closest(`${homeEntry} a[href]`) : null;
-      syncPotPlayerIgnore();
-    }
-    function onHomeClick(event) {
-      prepareHomeClick(event);
-      clearTimeout(homeClickTimer);
-      homeClickTimer = setTimeout(() => {
-        homeClick = null;
-      }, 0);
-      if (!homeClick || homeClick.hasAttribute("download") || !isPageUrl(homeClick.href) || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
-      event.preventDefault();
-      event.stopImmediatePropagation();
-      location.assign(homeClick.href);
     }
     function reconcile(next) {
       for (const [element, names] of classes) for (const name of names) if (!next.get(element)?.has(name)) element.classList.remove(name);
@@ -2932,7 +2826,6 @@ ${content2}
       reconcile(/* @__PURE__ */ new Map());
       dynamicContent.clear();
       for (const host of [...profiles.keys()]) releaseProfile(host);
-      for (const [element, saved] of avatarMenus) resetAvatarMenu(element, saved);
       restoreViewport?.();
       restoreViewport = null;
       style.remove();
@@ -2948,7 +2841,6 @@ ${content2}
         if (narrow.matches) {
           if (layout) syncLayout();
           syncProfiles();
-          fitAvatarMenus();
         } else if (style.isConnected) clearLayout();
       } finally {
         observe();
@@ -3000,30 +2892,20 @@ ${content2}
       [window, "resize", () => schedule(false)],
       [window, "pageshow", schedule],
       [window, "scroll", () => schedule(false), true],
-      [narrow, "change", schedule],
-      [window, "pointerdown", prepareHomeClick, true],
-      [window, "keydown", (event) => {
-        if (event.key === "Enter") prepareHomeClick(event);
-      }, true],
-      [window, "click", onHomeClick, true]
+      [narrow, "change", schedule]
     ]) target.addEventListener(type, handler, { capture, signal: events.signal });
-    syncPotPlayerIgnore();
     refresh();
     window.bilibiliFeedScript = {
-      version: "1.2.16",
+      version,
       refresh,
       destroy() {
         dynamicContent.destroy();
-        avatarNavigation.destroy();
-        headerSearchNavigation.destroy();
+        homeLayout?.destroy();
         stopped = true;
         events.abort();
         observer.disconnect();
         resize.disconnect();
         cancelAnimationFrame(frame);
-        clearTimeout(homeClickTimer);
-        homeClick = null;
-        restoreIgnore();
         clearLayout();
       }
     };
@@ -3038,7 +2920,7 @@ ${content2}
   });
 
   // src/WebPage/History/content.css
-  var content_default3 = "@media(max-width:1099px) {\nhtml.homepagescript-active :is(.history-record,.main-head,.main-content,.breadcrumbs-nav,.history-list,.history-section,.breadcrumbs__top,.breadcrumbs__bottom) {box-sizing:border-box!important;min-width:0!important;width:100%!important;max-width:100%!important;margin-left:0!important;margin-right:0!important;}\nhtml.homepagescript-active .history-record {padding:8px!important;}\nhtml.homepagescript-active :is(.main-head,.breadcrumbs__top,.breadcrumbs__top > *,.breadcrumbs .tabs,.radio-filter,.filters) {flex-wrap:wrap!important;gap:8px!important;height:auto!important;}\nhtml.homepagescript-active .breadcrumbs.fixed {position:static!important;}\nhtml.homepagescript-active .timeline-item {flex-wrap:wrap!important;}\nhtml.homepagescript-active .history-timeline-anchor {display:none!important;}\nhtml.homepagescript-active .section-cards {display:grid!important;grid-template-columns:repeat(var(--homepagescript-columns,2),minmax(0,1fr))!important;gap:16px 12px!important;}\nhtml.homepagescript-active :is(.history-card,.history-card__left,.history-card__main,.history-card .bili-video-card,.history-card .bili-video-card__wrap) {box-sizing:border-box!important;width:100%!important;min-width:0!important;}\nhtml.homepagescript-active .history-card .bili-video-card__wrap {flex-direction:column!important;}\nhtml.homepagescript-active .history-card .bili-video-card__cover {width:100%!important;}\nhtml.homepagescript-active :is(.fixed-side-menu,.fixed-label-con) {display:none!important;}\n}";
+  var content_default3 = "/* Reflow native History content; the shared main-site module owns the header.\n   Keep controls, cards, selection overlays and native handlers in place. */\n@media (max-width:1099px) {\n  html.homepagescript-active .history-record {\n    box-sizing:border-box!important; min-width:0!important; width:100%!important; padding:16px 12px 28px!important;\n  }\n  /* Remove the desktop space reserved for the timeline and side navigation. */\n  html.homepagescript-active .history-record :is(.main-head,.breadcrumbs-nav,.main-content,.history-list,.history-section) {\n    box-sizing:border-box!important; min-width:0!important; width:100%!important; max-width:100%!important;\n    margin-left:0!important; margin-right:0!important; padding-left:0!important; padding-right:0!important;\n  }\n  html.homepagescript-active .history-record .main-head { display:flex!important; align-items:center!important; justify-content:space-between!important; flex-wrap:wrap!important; gap:10px 16px!important; margin-bottom:8px!important; }\n  html.homepagescript-active .history-record .main-title { margin:0!important; font-size:22px!important; line-height:32px!important; white-space:nowrap!important; }\n  html.homepagescript-active .history-record .main-title__icon { font-size:24px!important; margin-right:8px!important; }\n  html.homepagescript-active .history-record .main-actions { gap:12px!important; min-width:0!important; }\n  html.homepagescript-active .history-record .main-actions .split-line { margin:0!important; }\n  html.homepagescript-active .history-record .record-switcher { font-size:13px!important; white-space:nowrap!important; }\n  html.homepagescript-active .history-record .lists-view-mode__action { width:32px!important; height:32px!important; }\n\n  /* A tall sticky toolbar would consume most of a short player viewport. */\n  html.homepagescript-active .history-record .main-breadcrumbs { position:static!important; background:transparent!important; box-shadow:none!important; }\n  html.homepagescript-active .history-record .breadcrumbs-nav { padding-top:0!important; padding-bottom:12px!important; }\n  html.homepagescript-active .history-record .breadcrumbs__top { display:flex!important; flex-direction:column!important; align-items:stretch!important; gap:10px!important; }\n  html.homepagescript-active .history-record .breadcrumbs__top > :is(.left,.right) { min-width:0!important; width:100%!important; margin:0!important; }\n  html.homepagescript-active .history-record .breadcrumbs.normal .tabs { display:flex!important; width:100%!important; min-width:0!important; }\n  html.homepagescript-active .history-record .radio-tabs { flex:1!important; min-width:0!important; column-gap:0!important; }\n  html.homepagescript-active .history-record .radio-tabs__item { flex:1!important; min-width:0!important; padding:10px 6px!important; white-space:nowrap!important; }\n  /* An already-mounted page may retain the desktop cursor's measured offset. */\n  html.homepagescript-active .history-record .radio-tabs__cursor { display:none!important; }\n  html.homepagescript-active .history-record .radio-tabs__item--active { position:relative!important; }\n  html.homepagescript-active .history-record .radio-tabs__item--active::after { content:''; position:absolute; bottom:0; left:50%; transform:translateX(-50%); width:26px; height:3px; border-radius:2px; background:var(--history-brand-color,var(--brand_blue,#00aeec)); }\n  html.homepagescript-active .history-record .breadcrumbs.normal .filter-switcher { margin-left:8px!important; white-space:nowrap!important; }\n  html.homepagescript-active .history-record .breadcrumbs.normal .breadcrumbs__top > .right { display:grid!important; grid-template-columns:minmax(0,1fr) auto auto!important; gap:8px!important; }\n  html.homepagescript-active .history-record .breadcrumbs .action-btn { width:auto!important; min-width:0!important; height:34px!important; margin:0!important; padding:0 10px!important; white-space:nowrap!important; transition:none!important; }\n  html.homepagescript-active .history-record .breadcrumbs .action-btn .btn-txt { max-width:none!important; margin-left:4px!important; }\n  /* Unfold the native input visually without changing its focus/search events. */\n  html.homepagescript-active .history-record .search-bar { --search-bar-bg:var(--graph_bg_regular); --search-bar-side-padding:2px; box-sizing:border-box!important; width:100%!important; min-width:0!important; margin:0!important; transition:none!important; }\n  html.homepagescript-active .history-record .search-bar .input-wrap { min-width:0!important; max-width:none!important; }\n  html.homepagescript-active .history-record .search-bar-input { box-sizing:border-box!important; min-width:0!important; }\n  html.homepagescript-active .history-record .filter-item { flex-wrap:wrap!important; gap:8px!important; }\n  html.homepagescript-active .history-record .radio-filter { gap:6px!important; }\n  html.homepagescript-active .history-record .radio-filter__item { min-width:0!important; padding:0 10px!important; height:32px!important; }\n  html.homepagescript-active .history-record .date-picker-filter { margin-left:0!important; min-width:0!important; }\n  html.homepagescript-active .history-record .search-date-picker__trigger { flex-wrap:wrap!important; gap:4px!important; }\n  html.homepagescript-active .history-record .date-trigger { width:126px!important; }\n  html.homepagescript-active .history-record .search-date-picker__menu { box-sizing:border-box!important; min-width:0!important; width:min(322px,calc(100vw - 24px))!important; max-width:calc(100vw - 24px)!important; max-height:calc(100vh - var(--broadcast-navigation-height,0px) - 24px)!important; overflow:auto!important; }\n  html.homepagescript-active .history-record .breadcrumbs.editing .breadcrumbs__top > .left { display:flex!important; flex-wrap:wrap!important; gap:8px 12px!important; }\n  html.homepagescript-active .history-record .breadcrumbs.editing .selected-tips { min-width:0!important; margin:0!important; }\n  html.homepagescript-active .history-record .breadcrumbs.editing .split-line { display:none!important; }\n  html.homepagescript-active .history-record .breadcrumbs.editing .breadcrumbs__top > .right { justify-content:flex-end!important; }\n\n  html.homepagescript-active .history-record .main-content { margin-top:4px!important; }\n  html.homepagescript-active .history-record.empty .main-content { margin-top:24px!important; }\n  /* Dates stay above their group even when native scrolling applies .fixed\n     and inline top/bottom coordinates to the labels. */\n  html.homepagescript-active .history-record .history-timeline-item { display:flex!important; flex-direction:column!important; gap:12px!important; }\n  html.homepagescript-active .history-record :is(.history-timeline-label,.section-label,.section-title) { position:static!important; inset:auto!important; transform:none!important; height:auto!important; width:auto!important; }\n  html.homepagescript-active .history-record .history-timeline-label { display:block!important; }\n  html.homepagescript-active .history-record .section-label { display:flex!important; align-items:center!important; gap:12px!important; }\n  html.homepagescript-active .history-record .section-label::after { content:''; flex:1; height:1px; background:var(--line_regular,#e3e5e7); }\n  html.homepagescript-active .history-record .section-title { font-size:15px!important; line-height:22px!important; font-weight:500!important; }\n  html.homepagescript-active .history-record :is(.history-timeline-anchor,.section-anchor-icon,.timeline-start-track,.timeline-end-track,.fixed-side-menu,.fixed-label-con) { display:none!important; }\n  html.homepagescript-active .history-record .section-cards { display:grid!important; min-width:0!important; gap:20px 12px!important; padding-bottom:28px!important; }\n  html.homepagescript-active .history-record .section-cards.grid-mode { grid-template-columns:repeat(auto-fill,minmax(min(100%,210px),1fr))!important; }\n  html.homepagescript-active .history-record .section-cards.list-mode { grid-template-columns:minmax(0,1fr)!important; gap:14px!important; }\n  html.homepagescript-active .history-record .section-cards.the-last { padding-bottom:0!important; }\n  html.homepagescript-active .history-record :is(.history-card,.history-card__main,.bili-video-card,.bili-video-card__wrap,.bili-video-card__details) { min-width:0!important; }\n  html.homepagescript-active .history-record .history-card.grid-mode .history-card__left { width:100%!important; min-width:0!important; }\n  html.homepagescript-active .history-record .history-card.grid-mode .history-card__main { width:100%!important; }\n  html.homepagescript-active .history-record .bili-video-card { --bili-video-card-title-font-size:14px; --bili-video-card-title-line-height:20px; --bili-video-card-subtitle-font-size:12px; --bili-video-card-subtitle-line-height:18px; --bili-video-card-details-margin-top:8px; }\n  html.homepagescript-active .history-record .bili-video-card__title { text-indent:0!important; }\n  html.homepagescript-active .history-record .bili-video-card__subtitle { display:flex!important; flex-direction:column!important; align-items:flex-start!important; gap:2px!important; height:auto!important; }\n  html.homepagescript-active .history-record .bili-video-card__author { flex:none!important; width:100%!important; min-width:0!important; }\n  html.homepagescript-active .history-record .bili-video-card__corner { height:auto!important; margin-left:0!important; white-space:nowrap!important; }\n  html.homepagescript-active .history-record .bili-card-aside-action { width:26px!important; height:26px!important; display:flex!important; align-items:center!important; justify-content:center!important; }\n\n  /* Preserve the native list toggle as cover/details rows, not another grid. */\n  html.homepagescript-active .history-record .history-card.list-mode { align-items:flex-start!important; gap:12px!important; }\n  html.homepagescript-active .history-record .history-card.list-mode .history-card__left { flex:0 0 clamp(136px,30%,200px)!important; min-width:0!important; }\n  html.homepagescript-active .history-record .history-card.list-mode .history-card__main { width:100%!important; }\n  html.homepagescript-active .history-record .history-card__right { min-width:0!important; margin-left:0!important; }\n  html.homepagescript-active .history-record .info__top { display:grid!important; grid-template-columns:minmax(0,1fr) auto!important; gap:8px!important; }\n  html.homepagescript-active .history-record .info__top .title { margin:0!important; font-size:14px!important; line-height:20px!important; -webkit-line-clamp:2!important; }\n  html.homepagescript-active .history-record .info__top .right-actions { position:static!important; height:auto!important; flex-direction:column-reverse!important; gap:4px!important; align-self:start!important; }\n  html.homepagescript-active .history-record .right-actions .fav-status { margin:0!important; padding:0!important; box-shadow:none!important; font-size:11px!important; white-space:nowrap!important; }\n  html.homepagescript-active .history-record .right-actions .delete-btn { width:26px!important; height:26px!important; }\n  html.homepagescript-active .history-record .info__bottom .meta { max-width:100%!important; min-width:0!important; font-size:12px!important; line-height:18px!important; margin-top:4px!important; }\n  html.homepagescript-active .history-record .info__bottom .new_ep { margin-left:6px!important; padding-left:6px!important; }\n}\n\n@media (max-width:599px) {\n  html.homepagescript-active .history-record .breadcrumbs.normal .breadcrumbs__top > .right { grid-template-columns:repeat(2,minmax(0,1fr))!important; }\n  html.homepagescript-active .history-record .breadcrumbs.normal .search-input { grid-column:1 / -1!important; }\n}\n\n@media (max-width:459px) {\n  html.homepagescript-active .history-record .section-cards.grid-mode { grid-template-columns:minmax(0,1fr)!important; gap:16px!important; }\n  html.homepagescript-active .history-record .history-card.grid-mode .bili-video-card__wrap { flex-direction:row!important; align-items:flex-start!important; gap:10px!important; }\n  html.homepagescript-active .history-record .history-card.grid-mode .bili-video-card__cover { flex:0 0 40%!important; min-width:0!important; max-width:148px!important; }\n  html.homepagescript-active .history-record .history-card.grid-mode .bili-video-card__details { flex:1!important; margin-top:0!important; }\n  html.homepagescript-active .history-record .history-card.list-mode { gap:10px!important; }\n  html.homepagescript-active .history-record .history-card.list-mode .history-card__left { flex-basis:40%!important; max-width:148px!important; }\n}\n\n@media (max-width:399px) {\n  html.homepagescript-active .history-record .main-actions { width:100%!important; justify-content:flex-end!important; }\n  html.homepagescript-active .history-record .record-switcher { margin-right:auto!important; }\n}\n";
 
   // src/WebPage/History/style.js
   var pageStyle2 = homeStyle() + content_default3;
@@ -3150,6 +3032,182 @@ ${content2}
   // src/WebPage/Space/content.css
   var content_default5 = "@media(max-width:1099px) {\nhtml.homepagescript-active :is(#app,.space-main,.header-upinfo,.nav-bar__main) {box-sizing:border-box!important;min-width:0!important;width:100%!important;max-width:100%!important;}\n/* Identity and actions need separate rows; desktop flex bases squeeze the name. */\nhtml.homepagescript-active .space-header {height:auto!important;min-height:240px!important;padding-top:var(--homepagescript-header-height,56px)!important;}\nhtml.homepagescript-active .header-upinfo {display:flex!important;flex-direction:column!important;align-items:stretch!important;gap:16px!important;padding:24px 16px 16px!important;height:auto!important;}\nhtml.homepagescript-active .header-upinfo .upinfo__main {display:flex!important;flex:0 0 auto!important;align-items:center!important;gap:16px!important;min-width:0!important;width:100%!important;margin:0!important;}\nhtml.homepagescript-active .header-upinfo .upinfo-avatar {flex:0 0 64px!important;height:64px!important;margin:0!important;}\nhtml.homepagescript-active .header-upinfo .upinfo-detail {flex:1 1 0!important;min-width:0!important;}\nhtml.homepagescript-active .header-upinfo .upinfo-detail__top {display:flex!important;flex-wrap:wrap!important;align-items:center!important;gap:4px 6px!important;min-width:0!important;}\nhtml.homepagescript-active .header-upinfo .upinfo-detail__top > * {flex-shrink:0!important;margin:0!important;}\nhtml.homepagescript-active .header-upinfo .nickname {flex:0 1 auto!important;max-width:100%!important;font-size:22px!important;line-height:1.35!important;overflow-wrap:anywhere!important;}\nhtml.homepagescript-active .header-upinfo .header-sign {margin-top:6px!important;}\nhtml.homepagescript-active .header-upinfo .operations {align-self:stretch!important;min-width:0!important;}\nhtml.homepagescript-active .header-upinfo .interactions {display:flex!important;flex-wrap:wrap!important;gap:8px!important;min-width:0!important;max-width:100%!important;}\nhtml.homepagescript-active .header-upinfo .interactions > * {margin:0!important;}\nhtml.homepagescript-active .header-upinfo :is(.space-follow-btn,.message-btn) {box-sizing:border-box!important;width:120px!important;max-width:100%!important;height:34px!important;}\n/* Keep space navigation in document flow so a wrapped bar cannot cover cards. */\nhtml.homepagescript-active .space-navbar {position:static!important;}\nhtml.homepagescript-active .nav-bar__main {display:flex!important;flex-wrap:wrap!important;gap:10px 16px!important;padding:8px 16px 12px!important;height:auto!important;}\nhtml.homepagescript-active .nav-bar__main-left {display:flex!important;flex-wrap:wrap!important;align-items:center!important;gap:8px 16px!important;padding:0!important;margin:0!important;}\nhtml.homepagescript-active .nav-bar-search {--search-width:100%;flex:1 1 150px!important;max-width:220px!important;margin:0!important;}\nhtml.homepagescript-active .nav-bar-search .nav-search-input {box-sizing:border-box!important;width:100%!important;}\nhtml.homepagescript-active .nav-statistics {display:flex!important;flex-wrap:wrap!important;gap:8px 16px!important;}\nhtml.homepagescript-active .nav-statistics__item {min-width:0!important;margin:0!important;}\nhtml.homepagescript-active .nav-tab {max-width:100%!important;}\nhtml.homepagescript-active .nav-tab__item {flex-shrink:0!important;}\nhtml.homepagescript-active .space-favlist {box-sizing:border-box!important;flex-direction:column!important;width:100%!important;margin:0!important;padding:8px!important;gap:12px!important;}\nhtml.homepagescript-active :is(.favlist-aside,.favlist-main,.favlist-info-detail) {min-width:0!important;width:100%!important;}\nhtml.homepagescript-active .favlist-aside {max-height:240px!important;overflow:auto!important;}\nhtml.homepagescript-active .favlist-info {flex-wrap:wrap!important;height:auto!important;gap:12px!important;}\nhtml.homepagescript-active :is(.favlist-info-detail__actions,.fav-list-header-filter,.vui_pagenation,.vui_pagenation--btns) {flex-wrap:wrap!important;gap:8px!important;height:auto!important;max-width:100%!important;}\nhtml.homepagescript-active .fav-list-header-filter__right {min-width:0!important;max-width:100%!important;}\nhtml.homepagescript-active .fav-list-main .items {display:grid!important;grid-template-columns:repeat(var(--homepagescript-columns,2),minmax(0,1fr))!important;gap:16px 12px!important;}\nhtml.homepagescript-active :is(.items__item,.fav-list-main .bili-video-card) {min-width:0!important;width:100%!important;}\n  /* Remove desktop gutters and sidebar occupation after stacking the columns. */\n  html.homepagescript-active .space-main { padding:0!important; }\n  html.homepagescript-active .nav-tab { display:flex!important; flex-wrap:wrap!important; gap:4px 12px!important; height:auto!important; overflow:visible!important; }\n  html.homepagescript-active .nav-tab__item { position:relative!important; height:40px!important; margin:0!important; padding:0 2px!important; }\n  html.homepagescript-active .nav-tab-cursor { display:none!important; }\n  html.homepagescript-active .nav-tab__item.active::after { content:''; position:absolute; left:0; right:0; bottom:0; height:3px; border-radius:2px; background:var(--brand_blue,#00aeec); }\n  html.homepagescript-active :is(.nav-bar__main-left,.nav-bar__main-right) { box-sizing:border-box!important; min-width:0!important; width:100%!important; max-width:100%!important; }\n  html.homepagescript-active :is(.fav-list-header-filter__left,.fav-list-header-filter__right) { min-width:0!important; width:100%!important; max-width:100%!important; flex:1 1 100%!important; }\n  html.homepagescript-active .fav-list-header-filter :is(.vui_input,.vui_input-wrapper,.radio-filter) { box-sizing:border-box!important; min-width:0!important; max-width:100%!important; }\n  html.homepagescript-active :is(.space-home,.space-dynamic,.space-upload,.space-lists,.space-subscribe) {\n    box-sizing:border-box!important; min-width:0!important; width:100%!important; max-width:100%!important;\n    margin:0!important; padding:16px!important; gap:16px!important;\n  }\n  html.homepagescript-active :is(.space-home,.space-dynamic,.space-upload,.space-subscribe) { flex-direction:column!important; }\n  html.homepagescript-active :is(.space-home > .content,.space-home > .aside,.space-dynamic__left,.space-dynamic__content,.space-dynamic__right,.space-dynamic-inner,.upload-sidenav,.upload-content,.subscribe-sidebar,.subscribe-content) {\n    box-sizing:border-box!important; min-width:0!important; width:100%!important; max-width:100%!important; flex:auto!important; margin:0!important;\n  }\n  html.homepagescript-active :is(.space-main .side-nav,.section-wrap__header,.space-main .breadcrumb,.space-main .radio-filter,.lists-header,.video-list__header,.video-list__actions,.space-home .home-empty-content,.space-home .top-video) {\n    flex-wrap:wrap!important; gap:8px!important; height:auto!important; min-width:0!important; max-width:100%!important;\n  }\n  html.homepagescript-active .space-main .side-nav { display:flex!important; }\n  html.homepagescript-active :is(.space-dynamic__left,.upload-sidenav,.subscribe-sidebar) { position:static!important; inset:auto!important; height:auto!important; min-height:0!important; max-height:none!important; flex:0 0 auto!important; }\n  html.homepagescript-active .space-main .side-nav__item { box-sizing:border-box!important; width:auto!important; flex:0 1 auto!important; margin:0!important; padding:10px 16px!important; }\n  html.homepagescript-active .favlist-aside { position:static!important; inset:auto!important; height:auto!important; margin:0!important; padding:0!important; }\n  html.homepagescript-active .favlist-aside .fav-collapse-wrap { max-height:none!important; overflow:visible!important; }\n  html.homepagescript-active :is(.space-home .section-wrap,.space-home .section-wrap__content,.space-home .wrap,.space-home .home-empty-content__right,.space-home .top-video__right,.space-main .video-list__title,.space-main .lists-content,.space-main .contet-list) { min-width:0!important; max-width:100%!important; }\n  html.homepagescript-active .space-home :is(.section-wrap__title,.video-list__title) { font-size:20px!important; line-height:1.4!important; }\n  html.homepagescript-active .space-home .section-wrap__header { align-items:center!important; gap:8px!important; margin-bottom:16px!important; }\n  html.homepagescript-active .space-home .section-wrap .radio-filter { margin:0!important; }\n  html.homepagescript-active .space-home :is(.btns,.video-list__btns) { display:flex!important; flex-wrap:wrap!important; gap:8px!important; margin:0!important; }\n  html.homepagescript-active .space-home :is(.btns,.video-list__btns) .vui_button { margin:0!important; }\n  html.homepagescript-active .space-home .video-list__header { display:flex!important; flex-direction:column!important; align-items:stretch!important; gap:12px!important; }\n  html.homepagescript-active .space-home .video-list__title { display:flex!important; align-items:baseline!important; gap:6px!important; }\n  html.homepagescript-active .space-home .video-list__title .title { min-width:0!important; -webkit-line-clamp:2!important; overflow-wrap:anywhere!important; }\n  html.homepagescript-active .space-home .video-list__title .amount { flex-shrink:0!important; margin:0!important; }\n  html.homepagescript-active :is(.space-home .items,.space-home .article-list,.space-home .video-list__content,.space-upload .video-list.grid-mode,.space-lists .video-list__content,.space-lists .lists-content > .grid-mode,.space-upload .opus-collection-list) {\n    display:grid!important; grid-template-columns:repeat(var(--homepagescript-columns,2),minmax(0,1fr))!important; gap:16px 12px!important; width:100%!important;\n  }\n  html.homepagescript-active :is(.space-main .bili-video-card,.space-home .fav-card,.space-home .article-list__item,.space-home .article-card,.space-upload .upload-video-card,.space-upload .upload-video-card__left,.space-upload .upload-video-card__main,.space-lists .video-list__item) { min-width:0!important; width:100%!important; max-width:100%!important; }\n  html.homepagescript-active .space-upload .upload-video-card.list-mode { flex-wrap:wrap!important; gap:8px!important; }\n  /* Native masonry writes absolute positions and a fixed container height inline.\n     Override only in narrow mode; widening and destroy reveal those native values. */\n  html.homepagescript-active .space-upload :is(.opus,.opus-body,.opus-feed,.masonry_grid_v2) { min-width:0!important; max-width:100%!important; width:100%!important; }\n  html.homepagescript-active .space-upload .opus-header__top .content-filter { flex-wrap:wrap!important; gap:8px 0!important; }\n  html.homepagescript-active .space-upload .opus-header__top .content-tab { font-size:18px!important; }\n  html.homepagescript-active .space-upload .opus-header__bottom { margin-top:12px!important; }\n  html.homepagescript-active .space-upload .opus-body { margin-top:16px!important; }\n  html.homepagescript-active .space-upload .opus .masonry_grid_v2 > .container { box-sizing:border-box!important; display:grid!important; grid-template-columns:repeat(var(--homepagescript-columns,2),minmax(0,1fr))!important; align-items:start!important; gap:16px 12px!important; width:100%!important; height:auto!important; margin:0!important; }\n  html.homepagescript-active .space-upload .opus .masonry_grid_v2 > .container > .item { position:static!important; inset:auto!important; transform:none!important; box-sizing:border-box!important; width:100%!important; height:auto!important; min-width:0!important; margin:0!important; }\n  html.homepagescript-active .space-upload .opus :is(.opus-card,.upload-opus-collection-card) { min-width:0!important; max-width:100%!important; }\n  html.homepagescript-active :is(.space-home .bangumi-section .items,.space-subscribe .bangumi-items) { display:grid!important; grid-template-columns:minmax(0,1fr)!important; gap:16px!important; }\n  html.homepagescript-active :is(.space-main .bangumi-item,.space-main .bili-bangumi-card) { min-width:0!important; width:100%!important; max-width:100%!important; }\n  html.homepagescript-active .space-main .bili-bangumi-card__cover { flex:0 0 35%!important; width:35%!important; max-width:154px!important; }\n  html.homepagescript-active .space-main .bili-bangumi-card__details { flex:1!important; min-width:0!important; width:auto!important; }\n  html.homepagescript-active :is(.space-dynamic .bili-dyn-item,.space-dynamic .bili-dyn-item__main,.space-dynamic .bili-dyn-item__header,.space-dynamic .bili-dyn-item__body,.space-dynamic .bili-dyn-item__footer) { box-sizing:border-box!important; min-width:0!important; max-width:100%!important; }\n  html.homepagescript-active .space-dynamic .bili-dyn-item__main { padding:12px!important; }\n  html.homepagescript-active .space-dynamic .bili-dyn-item__avatar { position:absolute!important; left:12px!important; top:12px!important; width:48px!important; height:48px!important; margin:0!important; }\n  html.homepagescript-active .space-dynamic .bili-dyn-item__header { padding:0 32px 0 60px!important; min-height:48px!important; }\n  html.homepagescript-active .space-dynamic .bili-dyn-item__ornament { display:none!important; }\n  html.homepagescript-active :is(.space-dynamic .bili-dyn-item__header,.space-dynamic .bili-dyn-item__body,.space-dynamic .bili-dyn-item__footer) { margin-left:0!important; }\n  html.homepagescript-active :is(.space-dynamic .bili-dyn-card-video__header,.space-dynamic .bili-dyn-card-ugc) { box-sizing:border-box!important; max-width:100%!important; }\n  html.homepagescript-active .space-dynamic .bili-dyn-card-ugc__detail { min-width:0!important; flex:1!important; }\n  html.homepagescript-active :is(.space-main .vui_pagenation-go,.space-main .nav-statistics,.space-main .upinfo-detail__bottom) { min-width:0!important; max-width:100%!important; }\n}\n";
 
+  // src/WebPage/Space/favorites.css
+  var favorites_default = '/* Favorites-only rules. Keep the native palette, folder nodes and action buttons. */\n@media(max-width:1099px) {\n  html.homepagescript-active .space-favlist[data-broadcast-favorites-active] {padding:16px!important;gap:12px!important;}\n  html.homepagescript-active .space-favlist[data-broadcast-favorites-active] :is(.favlist-aside,.favlist-main) {box-sizing:border-box!important;min-width:0!important;width:100%!important;}\n  html.homepagescript-active .space-favlist[data-broadcast-favorites-active] .favlist-aside {max-height:none!important;overflow:visible!important;}\n  html.homepagescript-active .space-favlist[data-broadcast-favorites-active] .favlist-main {margin-top:0!important;}\n  html.homepagescript-active .space-favlist[data-broadcast-favorites-active] .fav-collapse-wrap {max-height:220px!important;overflow-x:hidden!important;overflow-y:auto!important;}\n  html.homepagescript-active .space-favlist[data-broadcast-favorites-active] :is(.vui_collapse,.vui_collapse_item,.vui_collapse_item_content,.fav-collapse,.fav-collapse-wrap,.vui_sidebar,.fav-sortable-list,.fav-sidebar-item,.vui_sidebar-item) {box-sizing:border-box!important;min-width:0!important;max-width:100%!important;}\n  html.homepagescript-active .space-favlist[data-broadcast-favorites-active] .vui_sidebar-item {width:100%!important;height:auto!important;min-height:48px!important;}\n  html.homepagescript-active .space-favlist[data-broadcast-favorites-active] .vui_sidebar-item-title {flex:1 1 0!important;min-width:0!important;width:0!important;text-align:left!important;}\n  html.homepagescript-active .space-favlist[data-broadcast-favorites-active] .vui_sidebar-item-title .vui_ellipsis {display:block!important;flex:1 1 0!important;min-width:0!important;width:auto!important;max-width:none!important;height:auto!important;white-space:normal!important;overflow:visible!important;overflow-wrap:anywhere!important;text-overflow:clip!important;-webkit-line-clamp:unset!important;}\n  html.homepagescript-active .space-favlist[data-broadcast-favorites-active] .vui_sidebar-item-right {flex:none!important;margin-left:8px!important;}\n  html.homepagescript-active .space-favlist[data-broadcast-favorites-active] .fav-collapse-create {display:none!important;}\n  html.homepagescript-active .space-favlist[data-broadcast-favorites-active] [data-broadcast-fav-group="hidden"],\n  html.homepagescript-active .space-favlist[data-broadcast-favorites-active] [data-broadcast-fav-group] .vui_collapse_item_header {display:none!important;}\n  html.homepagescript-active .space-favlist[data-broadcast-favorites-active] [data-broadcast-fav-group="selected"] .vui_collapse_item_content {display:block!important;padding-bottom:0!important;}\n  html.homepagescript-active .space-favlist[data-broadcast-favorites-active] [data-broadcast-fav-open="false"] [data-broadcast-fav-group="selected"] {display:none!important;}\n  html.homepagescript-active .space-favlist[data-broadcast-favorites-active] .broadcast-fav-navigation {display:grid;grid-template-columns:minmax(0,1fr);align-items:start;gap:4px 16px;border-bottom:1px solid var(--line_regular,#e3e5e7);margin-bottom:12px;}\n  html.homepagescript-active .space-favlist[data-broadcast-favorites-active] .broadcast-fav-categories {display:flex;flex:1;min-width:0;flex-wrap:wrap;gap:4px 16px;}\n  html.homepagescript-active .space-favlist[data-broadcast-favorites-active] .broadcast-fav-shortcuts {grid-column:1/-1;display:flex;align-items:center;justify-content:flex-end;gap:16px;}\n  html.homepagescript-active .space-favlist[data-broadcast-favorites-active] :is(.broadcast-fav-categories button,.broadcast-fav-create,.broadcast-fav-shortcuts a,.broadcast-fav-directory-toggle) {box-sizing:border-box;font:inherit;color:var(--text1,#18191c);background:transparent;border:0;cursor:pointer;}\n  html.homepagescript-active .space-favlist[data-broadcast-favorites-active] button.broadcast-fav-create {display:inline-flex;flex:none;align-items:center;justify-content:flex-start;gap:6px;margin:0 auto 0 0!important;padding:9px 0!important;white-space:nowrap;color:var(--brand_blue,#00aeec);}\n  html.homepagescript-active .space-favlist[data-broadcast-favorites-active] .broadcast-fav-create :is(svg,.vui_icon) {display:block!important;flex:none;width:20px;height:20px;margin:0!important;color:var(--brand_blue,#00aeec);}\n  html.homepagescript-active .space-favlist[data-broadcast-favorites-active] .broadcast-fav-create[hidden] {display:none;}\n  html.homepagescript-active .space-favlist[data-broadcast-favorites-active] .broadcast-fav-categories button {padding:9px 0;border-bottom:2px solid transparent;}\n  html.homepagescript-active .space-favlist[data-broadcast-favorites-active] .broadcast-fav-categories button[aria-pressed="true"] {color:var(--brand_blue,#00aeec);border-bottom-color:var(--brand_blue,#00aeec);}\n  html.homepagescript-active .space-favlist[data-broadcast-favorites-active] .broadcast-fav-shortcuts a {padding:9px 0;white-space:nowrap;text-decoration:none;color:var(--text2,#61666d);}\n  html.homepagescript-active .space-favlist[data-broadcast-favorites-active] .broadcast-fav-directory-toggle {display:flex;align-items:center;justify-content:space-between;width:100%;text-align:left;padding:8px 0;margin-bottom:8px;}\n  /* Keep the native cover and detail column. Only relocate the social actions;\n     playback stays underneath the title in the original detail column. */\n  html.homepagescript-active .space-favlist[data-broadcast-favorites-active] .favlist-info {display:flex!important;flex-wrap:nowrap!important;align-items:flex-start!important;gap:0!important;height:auto!important;}\n  html.homepagescript-active .space-favlist[data-broadcast-favorites-active] .favlist-info-detail {display:grid!important;flex:1 1 0!important;min-width:0!important;width:auto!important;grid-template-columns:minmax(0,1fr) auto!important;grid-template-rows:auto auto auto!important;gap:4px 12px!important;}\n  html.homepagescript-active .space-favlist[data-broadcast-favorites-active] .favlist-info-detail__actions {display:contents!important;}\n  html.homepagescript-active .space-favlist[data-broadcast-favorites-active] .favlist-info-detail__title {grid-area:1/1/3/2!important;min-width:0!important;align-self:start!important;}\n  html.homepagescript-active .space-favlist[data-broadcast-favorites-active] .favlist-info-detail__title-row {min-width:0!important;max-width:100%!important;flex-wrap:wrap!important;}\n  html.homepagescript-active .space-favlist[data-broadcast-favorites-active] .favlist-info-detail__actions > .vui_button {display:inline-flex!important;flex-direction:row!important;align-items:center!important;justify-content:center!important;flex-wrap:nowrap!important;white-space:nowrap!important;margin:0!important;}\n  html.homepagescript-active .space-favlist[data-broadcast-favorites-active] .playall-btn {grid-area:3/1!important;justify-self:start!important;}\n  html.homepagescript-active .space-favlist[data-broadcast-favorites-active] .favlist-info-batch {grid-area:3/2!important;justify-self:end!important;}\n  html.homepagescript-active .space-favlist[data-broadcast-favorites-active] .favlist-info-action {grid-column:2!important;justify-self:end!important;}\n  html.homepagescript-active .space-favlist[data-broadcast-favorites-active] .favlist-info-action:nth-child(2) {grid-row:1!important;}\n  html.homepagescript-active .space-favlist[data-broadcast-favorites-active] .favlist-info-action:nth-child(3) {grid-row:2!important;}\n  html.homepagescript-active .space-favlist[data-broadcast-favorites-active] .fav-list-header-filter {display:flex!important;flex-direction:column!important;align-items:stretch!important;gap:12px!important;}\n  html.homepagescript-active .space-favlist[data-broadcast-favorites-active] :is(.fav-list-header-filter__left,.fav-list-header-filter__right) {margin:0!important;flex:none!important;}\n  html.homepagescript-active .space-favlist[data-broadcast-favorites-active] .fav-list-header-filter__right > .vui_input {display:flex!important;min-width:0!important;width:100%!important;}\n  html.homepagescript-active .space-favlist[data-broadcast-favorites-active] .fav-list-header-filter .vui_input__prepend {flex:none!important;}\n  html.homepagescript-active .space-favlist[data-broadcast-favorites-active] .fav-list-header-filter .vui_input-wrapper {flex:1!important;min-width:0!important;width:auto!important;}\n  html.homepagescript-active .space-favlist[data-broadcast-favorites-active] .fav-list-header-filter input {flex:1!important;min-width:0!important;width:0!important;}\n}\n@media(max-width:600px) {\n  html.homepagescript-active .space-favlist[data-broadcast-favorites-active] .broadcast-fav-navigation {gap:12px;}\n  html.homepagescript-active .space-favlist[data-broadcast-favorites-active] .broadcast-fav-categories {gap:4px 12px;}\n  html.homepagescript-active .space-favlist[data-broadcast-favorites-active] .broadcast-fav-categories button {min-width:0;max-width:100%;text-align:left;}\n  html.homepagescript-active .space-favlist[data-broadcast-favorites-active] .broadcast-fav-shortcuts {gap:10px;}\n  html.homepagescript-active .space-favlist[data-broadcast-favorites-active] .broadcast-fav-shortcuts a {font-size:12px;}\n}\n@media(max-width:463px) {\n  /* When the native-size cover plus two action columns cannot fit, wrap the\n     whole detail column instead of shrinking the native cover or its buttons. */\n  html.homepagescript-active .space-favlist[data-broadcast-favorites-active] .favlist-info {flex-wrap:wrap!important;gap:12px!important;}\n  html.homepagescript-active .space-favlist[data-broadcast-favorites-active] .favlist-info-detail {flex:1 1 100%!important;margin-left:0!important;}\n}\n';
+
+  // src/WebPage/Space/favorites.js
+  function createFavoritesLayout() {
+    let state = null;
+    const groupAttribute = "data-broadcast-fav-group";
+    function clear() {
+      if (!state) return;
+      state.iconObserver.disconnect();
+      state.events.abort();
+      state.navigation.remove();
+      state.toggle.remove();
+      state.root.removeAttribute("data-broadcast-fav-layout");
+      state.root.removeAttribute("data-broadcast-fav-open");
+      state.page.removeAttribute("data-broadcast-favorites-active");
+      for (const group of state.groups) {
+        if (group.original === null) group.element.removeAttribute(groupAttribute);
+        else group.element.setAttribute(groupAttribute, group.original);
+      }
+      state = null;
+    }
+    function syncCreateIcon() {
+      if (!state) return;
+      const markup = state.iconSource?.outerHTML || "";
+      if (markup === state.iconMarkup) return;
+      state.iconMarkup = markup;
+      state.createIcon?.remove();
+      state.createIcon = state.iconSource?.cloneNode(true) || null;
+      if (state.createIcon) {
+        state.createIcon.setAttribute("aria-hidden", "true");
+        state.create.prepend(state.createIcon);
+      }
+    }
+    function render() {
+      for (const group of state.groups) {
+        const selected = group === state.selected;
+        group.element.setAttribute(groupAttribute, selected ? "selected" : "hidden");
+        group.button?.setAttribute("aria-pressed", String(selected));
+      }
+      state.root.setAttribute("data-broadcast-fav-open", String(state.open));
+      state.create.hidden = !state.createGroup || state.selected !== state.createGroup;
+      state.toggle.setAttribute("aria-expanded", String(state.open));
+      const arrow = state.open ? "▴" : "▾";
+      if (state.arrow.textContent !== arrow) state.arrow.textContent = arrow;
+    }
+    function refresh(active) {
+      const root = active ? document.querySelector(".space-favlist .favlist-aside") : null;
+      if (!root) {
+        clear();
+        return;
+      }
+      const elements = Array.from(root.querySelectorAll(":scope > .vui_collapse > .fav-collapse"));
+      const sources = elements.map((element) => ({
+        element,
+        header: element.querySelector(".vui_collapse_item_header"),
+        content: element.querySelector(".vui_collapse_item_content")
+      })).filter((group) => group.header);
+      if (!sources.some((group) => group.content)) {
+        clear();
+        return;
+      }
+      if (state && (state.root !== root || sources.length !== state.groups.length || sources.some((group, index) => group.element !== state.groups[index].element || group.header !== state.groups[index].header))) clear();
+      if (!state) {
+        const events = new AbortController();
+        const navigation = document.createElement("div");
+        navigation.className = "broadcast-fav-navigation";
+        const categories = document.createElement("nav");
+        categories.className = "broadcast-fav-categories";
+        categories.setAttribute("aria-label", "收藏分类");
+        const shortcuts = document.createElement("nav");
+        shortcuts.className = "broadcast-fav-shortcuts";
+        shortcuts.setAttribute("aria-label", "收藏快捷入口");
+        const create = document.createElement("button");
+        create.type = "button";
+        create.className = "broadcast-fav-create";
+        create.hidden = true;
+        const createLabel = document.createElement("span");
+        create.append(createLabel);
+        shortcuts.append(create);
+        create.addEventListener("click", () => {
+          root.querySelector(".fav-collapse-create")?.click();
+        }, { signal: events.signal });
+        navigation.append(categories, shortcuts);
+        const toggle = document.createElement("button");
+        toggle.type = "button";
+        toggle.className = "broadcast-fav-directory-toggle";
+        const label = document.createElement("span");
+        label.textContent = "收藏夹目录";
+        const arrow = document.createElement("span");
+        arrow.setAttribute("aria-hidden", "true");
+        toggle.append(label, arrow);
+        const groups = sources.map((group) => ({ ...group, original: group.element.getAttribute(groupAttribute) }));
+        const page = root.closest(".space-favlist");
+        state = {
+          root,
+          page,
+          navigation,
+          categories,
+          shortcuts,
+          create,
+          createLabel,
+          createGroup: null,
+          iconSource: null,
+          iconMarkup: "",
+          createIcon: null,
+          iconObserver: new MutationObserver(syncCreateIcon),
+          toggle,
+          arrow,
+          groups,
+          events,
+          selected: groups.find((group) => group.content && group.element.querySelector(".vui_sidebar-item--active")) || groups.find((group) => group.content),
+          open: true,
+          activeItem: null
+        };
+        for (const group of groups) {
+          if (group.content) {
+            const button = document.createElement("button");
+            button.type = "button";
+            group.button = button;
+            categories.append(button);
+            button.addEventListener("click", () => {
+              state.selected = group;
+              state.open = true;
+              render();
+            }, { signal: events.signal });
+          } else if (group.header instanceof HTMLAnchorElement) {
+            group.link = document.createElement("a");
+            shortcuts.append(group.link);
+          }
+        }
+        toggle.addEventListener("click", () => {
+          state.open = !state.open;
+          render();
+        }, { signal: events.signal });
+        root.setAttribute("data-broadcast-fav-layout", "");
+        page.setAttribute("data-broadcast-favorites-active", "");
+        root.prepend(navigation, toggle);
+      }
+      const nativeCreate = root.querySelector(".fav-collapse-create");
+      state.createGroup = nativeCreate ? state.groups.find((group) => group.element.contains(nativeCreate)) : null;
+      if (nativeCreate && state.createLabel.textContent !== nativeCreate.textContent.trim()) {
+        state.createLabel.textContent = nativeCreate.textContent.trim();
+      }
+      const nativeIcon = nativeCreate?.querySelector("svg,.vui_icon") || null;
+      if (nativeIcon !== state.iconSource) {
+        state.iconObserver.disconnect();
+        state.iconSource = nativeIcon;
+        if (nativeIcon) state.iconObserver.observe(nativeIcon, { childList: true, subtree: true, attributes: true });
+      }
+      syncCreateIcon();
+      for (const group of state.groups) {
+        const label = group.header.textContent.trim();
+        const control = group.button || group.link;
+        if (control && control.textContent !== label) control.textContent = label;
+        if (group.link) for (const name of ["href", "target", "rel", "title"]) {
+          const value = group.header.getAttribute(name);
+          if (value === null) {
+            if (group.link.hasAttribute(name)) group.link.removeAttribute(name);
+          } else if (group.link.getAttribute(name) !== value) group.link.setAttribute(name, value);
+        }
+      }
+      const activeItem = root.querySelector(".vui_sidebar-item--active");
+      if (activeItem !== state.activeItem) {
+        const group = state.groups.find((group2) => group2.content && group2.element.contains(activeItem));
+        if (group) {
+          state.selected = group;
+          state.open = true;
+        }
+        state.activeItem = activeItem;
+      }
+      render();
+    }
+    return { refresh, destroy: clear };
+  }
+
   // src/WebPage/Space/module.js
   var early7 = () => createPageOpening();
   function mount7() {
@@ -3162,6 +3220,7 @@ ${content2}
     const avatarNavigation = createAvatarNavigation();
     const html = document.documentElement;
     const narrow = matchMedia("(max-width: 1099px)");
+    const favorites = createFavoritesLayout();
     const dynamicContent = createDynamicContent({ getRoot: () => document.querySelector(".space-dynamic"), isActive: () => narrow.matches });
     const navigationScope = ".bili-header,.bili-header__bar,#homepagescript-menu,.header-channel,.channel-entry-popover,.bili-header-channel-panel,.link-navbar,.charity-header";
     const navigationLinks = navigationScope.split(",").map((selector) => `${selector} a[href]`).join(",");
@@ -3177,6 +3236,7 @@ ${content2}
     style.id = "homepagescript-style";
     style.textContent = homeStyle();
     style.textContent += content_default5;
+    style.textContent += favorites_default;
     style.textContent += `@media(max-width:1099px) { ${dynamicContentStyle("html.homepagescript-active .space-dynamic")} }`;
     const panel = document.createElement("div");
     panel.id = "homepagescript-menu";
@@ -3386,6 +3446,7 @@ ${content2}
         window.bilibiliHomePageScript?.destroy();
         return;
       }
+      favorites.refresh(narrow.matches && /^\/\d+\/(?:favlist|fav(?:\/video)?)\/?$/.test(location.pathname));
       if (narrow.matches) dynamicContent.refresh();
       else dynamicContent.clear();
       fitAvatarMenus();
@@ -3426,7 +3487,7 @@ ${content2}
       }
       for (const container of document.querySelectorAll('.feed2 .recommended-container_floor-aside > .container,.head-cards,.loading-cards,.channel-feed,.popular-list .card-list,.fav-list-main .items,.space-home .items,.space-home .article-list,.space-home .video-list__content,.space-upload .opus-collection-list,.space-upload .opus .masonry_grid_v2 > .container,.space-upload .video-list.grid-mode,.space-lists .video-list__content,.space-lists .lists-content > .grid-mode,.section-cards,#room-card-list,main [class~="grid"],.items-container')) {
         observe(container);
-        const count = innerWidth < 400 ? 1 : Math.max(2, Math.floor((container.clientWidth + 12) / 232));
+        const count = container.matches(".space-favlist[data-broadcast-favorites-active] .fav-list-main .items") ? Math.max(1, Math.floor((container.clientWidth + 12) / 220)) : innerWidth < 400 ? 1 : Math.max(2, Math.floor((container.clientWidth + 12) / 232));
         setColumns(container, count);
       }
     }
@@ -3477,6 +3538,7 @@ ${content2}
     }, { capture: true, signal: events.signal });
     window.bilibiliHomePageScript = {
       destroy() {
+        favorites.destroy();
         dynamicContent.destroy();
         avatarNavigation.destroy();
         headerSearchNavigation.destroy();

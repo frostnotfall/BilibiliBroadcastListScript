@@ -32,7 +32,7 @@ export function createHeaderCards() {
   const html = document.documentElement;
   const narrow = matchMedia('(max-width:1099px)');
   const scope = '.bili-header__bar';
-  const controls = '.favorite-entry,.history-entry,.center-search-container,.right-entry__item:has([data-idx="fav"]),.right-entry__item:has([data-idx="history"])';
+  const controls = '.favorite-entry,.history-entry,.right-entry__item:has([data-idx="fav"]),.right-entry__item:has([data-idx="history"])';
   const properties = ['--homepagescript-card-left','--homepagescript-card-top','--homepagescript-card-height'];
   const saved = new Map(), observed = new Set(), events = new AbortController();
   let frame = 0, stopped = false;
@@ -48,12 +48,10 @@ export function createHeaderCards() {
     const targets = new Set(), cards = new Set();
     for (const control of document.querySelectorAll(`${scope} :is(${controls})`)) {
       targets.add(control);
-      const search = control.matches('.center-search-container');
-      const anchor = search ? control.querySelector('.center-search__bar') : control.querySelector('.right-entry__item-trigger,a');
+      const anchor = control.querySelector('.right-entry__item-trigger,a');
       if (!anchor) continue;
       targets.add(anchor);
-      const popups = search ? control.querySelectorAll('.nav-search-panel,.search-panel:not(.nav-search-panel *)')
-        : control.querySelectorAll('.v-popover-wrap > .v-popover');
+      const popups = control.querySelectorAll('.v-popover-wrap > .v-popover');
       for (const popup of popups) {
         cards.add(popup); targets.add(popup);
         if (!narrow.matches) continue;
@@ -67,7 +65,7 @@ export function createHeaderCards() {
         const inset = parseFloat(getComputedStyle(html).getPropertyValue('--broadcast-navigation-height')) || 0;
         const top = Math.max(inset, Math.min(rect.bottom, innerHeight - 8));
         const width = popup.getBoundingClientRect().width;
-        const left = Math.max(8, Math.min(search ? rect.left : rect.right - width, html.clientWidth - width - 8));
+        const left = Math.max(8, Math.min(rect.right - width, html.clientWidth - width - 8));
         // Account for any zoom already applied to the page by its native layout.
         const scale = width / popup.offsetWidth || 1;
         const values = [`${left / scale}px`, `${top / scale}px`, `${Math.max(0, innerHeight - top - 8) / scale}px`];

@@ -1,6 +1,6 @@
 {
   "name": "bilibili-broadcast-list-script",
-  "version": "2.0.0",
+  "version": "1",
   "private": true,
   "license": "MIT",
   "packageManager": "pnpm@11.25.0",
@@ -10,10 +10,12 @@
   },
   "scripts": {
     "build": "node build.cjs",
+    "build:release": "node build.cjs --release",
     "build:page": "node build.cjs --page",
     "build:debug": "node build.cjs --all-pages",
     "watch": "node build.cjs --watch",
-    "check": "node build.cjs --check"
+    "check": "node build.cjs --check",
+    "check:release": "node build.cjs --check --release"
   },
   "devDependencies": {
     "esbuild": "0.25.12"

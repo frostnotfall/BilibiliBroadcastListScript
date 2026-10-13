@@ -1,6 +1,7 @@
 import {pageId} from './urls.js';
 import {reportResolverFrame} from './opening.js';
 import {mountNavigationBar} from './navigation-bar.js';
+import {version} from './version.js';
 
 export function startDispatcher(modules) {
   if (reportResolverFrame()) return;
@@ -52,7 +53,7 @@ export function startDispatcher(modules) {
   document.addEventListener('DOMContentLoaded', reconcile, {signal:events.signal});
   const poll = setInterval(reconcile, 250);
   const controller = {
-    version:'2.0.0', get activePage() { return active?.id || null; }, reconcile,
+    version, get activePage() { return active?.id || null; }, reconcile,
     destroy() {
       if (stopped) return;
       stopped = true; events.abort(); clearInterval(poll); unmount(); navigation?.destroy(); navigation = null;

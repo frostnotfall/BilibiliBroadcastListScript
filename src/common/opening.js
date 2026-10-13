@@ -1,4 +1,5 @@
 import {urlOf, classifyUrl, isMediaUrl, isPageUrl, isShortUrl} from './urls.js';
+import {version} from './version.js';
 
 const resultType = 'potPlayer.short-link.result';
 const resolverName = 'potPlayer.short-link:';
@@ -168,7 +169,7 @@ export function createPageOpening({beforeMedia = () => {}, ignoreClick = () => f
     if (!frame) frame = requestAnimationFrame(prepare);
   }
   const controller = {
-    version:'2.0.0', classifyUrl, isSupportedUrl:isMediaUrl, resolveUrl,
+    version, classifyUrl, isSupportedUrl:isMediaUrl, resolveUrl,
     ignoreUrl(predicate) {
       if (typeof predicate !== 'function') throw new TypeError('ignoreUrl requires a predicate');
       if (stopped) return () => {};

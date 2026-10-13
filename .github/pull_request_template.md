@@ -10,6 +10,6 @@
 
 ## 提交检查
 
-- [ ] 已从源码重建正式 BroadcastListScript.js，并运行 pnpm run check
+- [ ] 已更新数字版本与 CHANGELOG.md，从源码运行 pnpm run build:release，并通过 pnpm run check:release
 - [ ] 已检查路由退出、重复注入及资源清理（如涉及运行时）
 - [ ] 未提交 tests、docs、.local、调试包、验证输出、凭据或授权不明的第三方素材

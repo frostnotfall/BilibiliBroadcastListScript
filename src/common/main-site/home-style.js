@@ -5,6 +5,7 @@ export function homeStyle(content = '') { return `
     html.homepagescript-active:has(link#__css-map__[href*="/light.css"]) { color-scheme:light!important; }
     html.homepagescript-active:has(link#__css-map__[href*="/dark.css"]) { color-scheme:dark!important; }
     html.homepagescript-active, html.homepagescript-active * { scrollbar-width:thin!important; scrollbar-color:auto!important; }
+    html.homepagescript-active .bili-header__bar :is(.big-logo,.big-logo__logo) { display:none!important; }
     .homepagescript-more, #homepagescript-menu { display:none; }
     @media (max-width:1099px) {
       html.homepagescript-active { --homepagescript-header-height:56px; }
@@ -17,7 +18,7 @@ export function homeStyle(content = '') { return `
       html.homepagescript-active .bili-header__bar .left-entry-main { display:flex!important; width:auto!important; min-width:0!important; }
       html.homepagescript-active .bili-header__bar :is(.home-page-entry,.home-page-panel-entry) { flex:none!important; }
       html.homepagescript-active .bili-header__bar :is(.home-page-entry,.home-page-panel-entry) > a { display:flex!important; align-items:center!important; white-space:nowrap!important; }
-      html.homepagescript-active .bili-header__bar .menu-center { flex:1!important; min-width:0!important; width:auto!important; margin:0 8px!important; }
+      html.homepagescript-active .bili-header__bar .menu-center { flex:1!important; min-width:0!important; width:auto!important; }
       html.homepagescript-active .bili-header__bar .menu-right { flex:0 0 auto!important; width:auto!important; min-width:0!important; }
       /* 定位原生外框，内容留在带背景/边框/阴影的 v-popover-content 内。 */
       html.homepagescript-active .v-popover:has(.bili-header-channel-panel) {
@@ -31,13 +32,8 @@ export function homeStyle(content = '') { return `
       }
       html.homepagescript-active .bili-header-channel-panel .channel-panel__column { min-width:0!important; padding:0 8px!important; }
       html.homepagescript-active .bili-header-channel-panel .channel-panel__item { min-width:0!important; }
-      html.homepagescript-active .bili-header__bar .center-search-container { display:block!important; flex:1!important; min-width:0!important; width:auto!important; margin:0 8px!important; }
-      html.homepagescript-active .bili-header__bar .menu-center .center-search-container { margin:0!important; }
+      html.homepagescript-active .bili-header__bar .center-search-container { display:block!important; flex:1!important; min-width:0!important; }
       html.homepagescript-active .bili-header__bar .center-search__bar { width:100%!important; min-width:0!important; max-width:none!important; }
-      html.homepagescript-active .bili-header__bar :is(#nav-searchform,#nav_searchform,.nav-search-content,.nav-search-input) { box-sizing:border-box!important; min-width:0!important; }
-      html.homepagescript-active .bili-header__bar .nav-search-input { width:100%!important; }
-      html.homepagescript-active .bili-header__bar .nav-search-clean { flex:none!important; }
-      html.homepagescript-active .bili-header__bar :is(#nav-searchform,#nav_searchform) { width:100%!important; }
       html.homepagescript-active .bili-header__bar .right-entry { flex:0 0 auto!important; width:auto!important; min-width:0!important; }
       html.homepagescript-active .bili-header__bar .right-entry__main { gap:8px!important; }
       html.homepagescript-active .bili-header__bar .right-entry__item { min-width:28px!important; margin:0!important; }
@@ -64,8 +60,6 @@ export function homeStyle(content = '') { return `
       html.homepagescript-active .homepagescript-header-card .favorite-panel-popover__content { display:flex!important; flex-direction:column!important; flex:1!important; min-width:0!important; height:100%!important; }
       html.homepagescript-active .homepagescript-header-card .content-scroll { flex:1!important; min-height:0!important; height:auto!important; overflow-y:auto!important; }
       html.homepagescript-active .homepagescript-header-card .content-bottom { position:static!important; flex:none!important; }
-      html.homepagescript-active .center-search-container .homepagescript-header-card { width:min(500px,calc(100vw - 16px))!important; padding:0!important; max-height:var(--homepagescript-card-height)!important; overflow-y:auto!important; }
-      html.homepagescript-active .homepagescript-header-card .search-panel { box-sizing:border-box!important; max-height:var(--homepagescript-card-height)!important; }
       /* 主卡片和二级菜单留在原生父级内，保留悬停开合与点击行为。 */
       html.homepagescript-active :is(.bili-header__bar,.link-navbar) :is(.homepagescript-avatar-menu,.homepagescript-avatar-submenu) {
         position:fixed!important; left:var(--homepagescript-avatar-left,0px)!important; top:var(--homepagescript-avatar-top,0px)!important;

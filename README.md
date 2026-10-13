@@ -33,7 +33,7 @@ window.chrome.webview.postMessage({
 
 宿主接收消息并将 `url` 交给播放器。发送失败时脚本保留原生行为。宿主也应独立校验消息来源、类型和 URL；网页端分类不能代替宿主验证。
 
-维护者的本地回归使用离线 DOM、localhost 重定向与模拟 WebView 消息桥；这些测试暂未公开。公开 CI 只验证构建完整性，**不代表浏览器行为、真实 PotPlayer 或实时 Bilibili 页面已通过验收**。尚未建立最低 PotPlayer/WebView2 版本兼容矩阵；稳定版发布前应记录实际测试版本及安装位置，避免依赖未验证的固定目录。
+维护者的本地回归使用离线 DOM、localhost 重定向与模拟 WebView 消息桥；这些测试暂未公开。本地构建检查只验证构建完整性，**不代表浏览器行为、真实 PotPlayer 或实时 Bilibili 页面已通过验收**。尚未建立最低 PotPlayer/WebView2 版本兼容矩阵；稳定版发布前应记录实际测试版本及安装位置，避免依赖未验证的固定目录。
 
 ## Potplayer 测试
 设置 - 扩展功能 - 工具栏 - 直播列表 - 直播列表中使用的脚本 - 用户自定义，填入 [`BroadcastListScript.js`](BroadcastListScript.js) 内容。
@@ -78,18 +78,19 @@ BilibiliBroadcastListScript/
 │     ├─ navigation-bar.*       # 全页导航栏
 │     ├─ main-site/             # 主站布局、搜索及头像交互
 │     └─ live/                  # 直播布局、控件及导航
-├─ .github/                     # CI、Issue 与 PR 模板
+├─ .github/                     # Issue 与 PR 模板
 ├─ build.cjs                    # 生产、单页、watch 构建与完整性检查
 ├─ package.json
 ├─ pnpm-lock.yaml
 ├─ pnpm-workspace.yaml          # pnpm 配置，仅包含根包
 ├─ BroadcastListScript.js       # 正式交付产物，提交到仓库
+├─ CHANGELOG.md                 # 按递增数字版本记录变化，不记录日期
 ├─ CONTRIBUTING.md              # 贡献与验证约定
 ├─ THIRD_PARTY_NOTICES.md        # 构建依赖与许可
 └─ LICENSE                      # 项目原创内容的 MIT 许可
 ```
 
-以下目录仅在本地使用，**不提交**：`tests/`、`docs/`、`.local/`、`debug/`、`verification/`、`node_modules/`、`.pnpm-store/`。现有测试与 fixture 保留在本地，旧 `docs/` 保存历史开发说明，`.local/` 保存内部记录与本地回归工具。公开构建和 CI 不依赖这些未提交的目录；当前技术与页面维护说明写在 README、CONTRIBUTING 或源码旁。
+以下目录仅在本地使用，**不提交**：`tests/`、`docs/`、`.local/`、`debug/`、`verification/`、`node_modules/`、`.pnpm-store/`。现有测试与 fixture 保留在本地，旧 `docs/` 保存历史开发说明，`.local/` 保存内部记录与本地回归工具。公开构建不依赖这些未提交的目录；当前技术与页面维护说明写在 README、CONTRIBUTING 或源码旁。
 
 页面按需导入公共能力，`src/common/` 不反向依赖 `src/WebPage/`。主站家族与直播家族分别维护交互；LiveArea 复用直播运行时，Follow 通过 `headerOnly` 模式复用直播顶栏。
 
@@ -119,14 +120,15 @@ BilibiliBroadcastListScript/
 ## 打包与单页调试
 
 ```powershell
-pnpm run build                           # 正式产物
+pnpm run build                           # 日常产物，版本为北京时间 yyyy-MM-dd HH:mm:ss
+pnpm run build:release                   # 提交/发布产物，版本取自 package.json
 pnpm run build:page LiveArea              # debug/LiveArea.js
 pnpm run build:debug                      # 所有页面调试包
 pnpm run watch                           # 生产监听重建
 node build.cjs --page LiveArea --watch    # 单页监听重建
 ```
 
-调试包只包含指定页面及其公共依赖。`verification/build-*.json` 是构建依赖图报告；它和 `debug/` 均为临时产物。新增入口或页面 ID 后需要重启 watch。
+日常生产包、单页调试包和 watch 的每次重建都使用北京时间 `yyyy-MM-dd HH:mm:ss` 作为版本。正式构建使用 `package.json` 的数字版本，脚本头部与运行时 controller 的 `version` 保持一致。调试包只包含指定页面及其公共依赖。`verification/build-*.json` 是构建依赖图报告；它和 `debug/` 均为临时产物。新增入口或页面 ID 后需要重启 watch。
 
 不要手工修改生成文件。修改源文件后重建生产包及受影响的调试包。单页包可直接注入已加载页面；验证文档创建时机时，在宿主中注册脚本后再导航或刷新。调试时停用宿主生产包，避免两个版本同时安装。
 
@@ -195,12 +197,22 @@ pnpm run build:debug        # 生成所有单页调试包
 pnpm run check              # 确认源码和正式产物一致
 ```
 
-`pnpm run check` 检查页面 ID/范围一致、生成 JavaScript 的语法、单文件且无外部分块、重复构建一致性、正式文件与源码一致、公共模块依赖方向，以及单页包隔离。检查失败时会返回非零退出码；正式产物过期时先执行 `pnpm run build`。报告输出到被忽略的 `verification/build-check.json`。
+`pnpm run check` 使用现有脚本的版本重新构建以核对源码，不改写脚本、不刷新时间版本。它检查版本一致、页面 ID/范围一致、JavaScript 语法、单文件且无外部分块、相同版本的重复构建一致性、公共模块依赖方向，以及单页包隔离。检查失败时返回非零退出码；日常产物过期时执行 `pnpm run build`，提交或发布前执行 `pnpm run build:release` 和 `pnpm run check:release`。报告输出到被忽略的 `verification/build-check.json`。
 
-GitHub Actions 在 Windows 与 Node.js 24 上运行上述构建检查，重新构建正式文件及所有单页包，检查正式产物未变化，并保存构建报告。CI 不安装 Playwright、不运行本地浏览器回归；测试暂未公开意味着外部贡献者目前无法复现维护者的完整行为回归。站点行为与播放器兼容性需要按操作步骤实际验收；远端 CI 是否通过，以实际运行结果为准。
+项目不使用 GitHub Actions，构建、检查和发布准备均在本地完成。测试暂未公开意味着外部贡献者目前无法复现维护者的完整行为回归。站点行为与播放器兼容性需要按操作步骤实际验收。
 
 ## 贡献与发布
 
 贡献约定见 [CONTRIBUTING.md](CONTRIBUTING.md)，当前已知限制见本 README 的功能边界与验证范围。提交保留源码、构建工具、锁文件、当前技术说明及正式产物；本地测试、旧开发过程、内部评估和验证流水由 `.gitignore` 排除。`.gitattributes` 固定文本换行，方便跨平台构建一致性检查。
 
-建议正式发布提供 `BroadcastListScript.js`、版本号、SHA-256、变更说明和真实宿主验收记录。后续公开行为回归前应核清新增素材的来源与许可；当前公开仓库不包含本地测试 fixture。
+正式版本采用纯数字 `1、2、3……`，每次加一。在 `package.json` 更新版本，并在 [CHANGELOG.md](CHANGELOG.md) 顶部增加同版本的功能变化和修复；条目不记录时间。
+
+```powershell
+pnpm run build:release
+pnpm run check:release
+git add <本次修改的文件> BroadcastListScript.js package.json CHANGELOG.md
+git commit -m "Release 1"
+git push origin main
+```
+
+远程提交成功后，从该提交创建 `1` 标签及 GitHub Release（后续替换为实际数字），使用 changelog 对应条目作为发布说明，并上传本地已提交的 `BroadcastListScript.js`。提交及发布前使用正式构建入口，避免把日常时间版本作为正式产物。发布提供 SHA-256 和实际验收范围；后续公开行为回归前应核清新增素材的来源与许可。

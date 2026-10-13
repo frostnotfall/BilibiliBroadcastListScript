@@ -1,5 +1,7 @@
 import {fitHomeHeader, createHeaderCards} from '../../common/main-site/header-controls.js';
 import contentStyle from './content.css';
+import favoritesStyle from './favorites.css';
+import {createFavoritesLayout} from './favorites.js';
 import {createDynamicContent, dynamicContentStyle} from '../../common/dynamic-content.js';
 import {homeStyle} from '../../common/main-site/home-style.js';
 import {pageId, isPageUrl, isMediaUrl, createPageOpening} from '../../common/index.js';
@@ -18,6 +20,7 @@ export function mount() {
 
   const html = document.documentElement;
   const narrow = matchMedia('(max-width: 1099px)');
+  const favorites = createFavoritesLayout();
   const dynamicContent = createDynamicContent({getRoot:() => document.querySelector('.space-dynamic'),isActive:() => narrow.matches});
   const navigationScope = '.bili-header,.bili-header__bar,#homepagescript-menu,.header-channel,.channel-entry-popover,.bili-header-channel-panel,.link-navbar,.charity-header';
   const navigationLinks = navigationScope.split(',').map(selector => `${selector} a[href]`).join(',');
@@ -34,6 +37,7 @@ export function mount() {
 
   // 本页内容布局；共有控件以上述首页实现为准。
   style.textContent += contentStyle;
+  style.textContent += favoritesStyle;
   style.textContent += `@media(max-width:1099px) { ${dynamicContentStyle('html.homepagescript-active .space-dynamic')} }`;
 
   const panel = document.createElement('div');
@@ -236,6 +240,7 @@ export function mount() {
     frame = 0;
     if (stopped) return;
     if (!matchesPage()) { window.bilibiliHomePageScript?.destroy(); return; }
+    favorites.refresh(narrow.matches && /^\/\d+\/(?:favlist|fav(?:\/video)?)\/?$/.test(location.pathname));
     if (narrow.matches) dynamicContent.refresh(); else dynamicContent.clear();
     fitAvatarMenus();
     // 原生频道弹出菜单可能挂在 body 下，不能只扫描顶栏的后代。
@@ -271,7 +276,9 @@ export function mount() {
     }
     for (const container of document.querySelectorAll('.feed2 .recommended-container_floor-aside > .container,.head-cards,.loading-cards,.channel-feed,.popular-list .card-list,.fav-list-main .items,.space-home .items,.space-home .article-list,.space-home .video-list__content,.space-upload .opus-collection-list,.space-upload .opus .masonry_grid_v2 > .container,.space-upload .video-list.grid-mode,.space-lists .video-list__content,.space-lists .lists-content > .grid-mode,.section-cards,#room-card-list,main [class~="grid"],.items-container')) {
       observe(container);
-      const count = innerWidth < 400 ? 1 : Math.max(2, Math.floor((container.clientWidth + 12) / 232));
+      const count = container.matches('.space-favlist[data-broadcast-favorites-active] .fav-list-main .items')
+        ? Math.max(1, Math.floor((container.clientWidth + 12) / 220))
+        : innerWidth < 400 ? 1 : Math.max(2, Math.floor((container.clientWidth + 12) / 232));
       setColumns(container, count);
     }
   }
@@ -315,6 +322,7 @@ export function mount() {
 
   window.bilibiliHomePageScript = {
     destroy() {
+      favorites.destroy();
       dynamicContent.destroy();
       avatarNavigation.destroy();
       headerSearchNavigation.destroy();

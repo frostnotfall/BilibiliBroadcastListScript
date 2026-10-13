@@ -1,13 +1,108 @@
-@media(max-width:1099px) {
-html.homepagescript-active :is(.history-record,.main-head,.main-content,.breadcrumbs-nav,.history-list,.history-section,.breadcrumbs__top,.breadcrumbs__bottom) {box-sizing:border-box!important;min-width:0!important;width:100%!important;max-width:100%!important;margin-left:0!important;margin-right:0!important;}
-html.homepagescript-active .history-record {padding:8px!important;}
-html.homepagescript-active :is(.main-head,.breadcrumbs__top,.breadcrumbs__top > *,.breadcrumbs .tabs,.radio-filter,.filters) {flex-wrap:wrap!important;gap:8px!important;height:auto!important;}
-html.homepagescript-active .breadcrumbs.fixed {position:static!important;}
-html.homepagescript-active .timeline-item {flex-wrap:wrap!important;}
-html.homepagescript-active .history-timeline-anchor {display:none!important;}
-html.homepagescript-active .section-cards {display:grid!important;grid-template-columns:repeat(var(--homepagescript-columns,2),minmax(0,1fr))!important;gap:16px 12px!important;}
-html.homepagescript-active :is(.history-card,.history-card__left,.history-card__main,.history-card .bili-video-card,.history-card .bili-video-card__wrap) {box-sizing:border-box!important;width:100%!important;min-width:0!important;}
-html.homepagescript-active .history-card .bili-video-card__wrap {flex-direction:column!important;}
-html.homepagescript-active .history-card .bili-video-card__cover {width:100%!important;}
-html.homepagescript-active :is(.fixed-side-menu,.fixed-label-con) {display:none!important;}
+/* Reflow native History content; the shared main-site module owns the header.
+   Keep controls, cards, selection overlays and native handlers in place. */
+@media (max-width:1099px) {
+  html.homepagescript-active .history-record {
+    box-sizing:border-box!important; min-width:0!important; width:100%!important; padding:16px 12px 28px!important;
+  }
+  /* Remove the desktop space reserved for the timeline and side navigation. */
+  html.homepagescript-active .history-record :is(.main-head,.breadcrumbs-nav,.main-content,.history-list,.history-section) {
+    box-sizing:border-box!important; min-width:0!important; width:100%!important; max-width:100%!important;
+    margin-left:0!important; margin-right:0!important; padding-left:0!important; padding-right:0!important;
+  }
+  html.homepagescript-active .history-record .main-head { display:flex!important; align-items:center!important; justify-content:space-between!important; flex-wrap:wrap!important; gap:10px 16px!important; margin-bottom:8px!important; }
+  html.homepagescript-active .history-record .main-title { margin:0!important; font-size:22px!important; line-height:32px!important; white-space:nowrap!important; }
+  html.homepagescript-active .history-record .main-title__icon { font-size:24px!important; margin-right:8px!important; }
+  html.homepagescript-active .history-record .main-actions { gap:12px!important; min-width:0!important; }
+  html.homepagescript-active .history-record .main-actions .split-line { margin:0!important; }
+  html.homepagescript-active .history-record .record-switcher { font-size:13px!important; white-space:nowrap!important; }
+  html.homepagescript-active .history-record .lists-view-mode__action { width:32px!important; height:32px!important; }
+
+  /* A tall sticky toolbar would consume most of a short player viewport. */
+  html.homepagescript-active .history-record .main-breadcrumbs { position:static!important; background:transparent!important; box-shadow:none!important; }
+  html.homepagescript-active .history-record .breadcrumbs-nav { padding-top:0!important; padding-bottom:12px!important; }
+  html.homepagescript-active .history-record .breadcrumbs__top { display:flex!important; flex-direction:column!important; align-items:stretch!important; gap:10px!important; }
+  html.homepagescript-active .history-record .breadcrumbs__top > :is(.left,.right) { min-width:0!important; width:100%!important; margin:0!important; }
+  html.homepagescript-active .history-record .breadcrumbs.normal .tabs { display:flex!important; width:100%!important; min-width:0!important; }
+  html.homepagescript-active .history-record .radio-tabs { flex:1!important; min-width:0!important; column-gap:0!important; }
+  html.homepagescript-active .history-record .radio-tabs__item { flex:1!important; min-width:0!important; padding:10px 6px!important; white-space:nowrap!important; }
+  /* An already-mounted page may retain the desktop cursor's measured offset. */
+  html.homepagescript-active .history-record .radio-tabs__cursor { display:none!important; }
+  html.homepagescript-active .history-record .radio-tabs__item--active { position:relative!important; }
+  html.homepagescript-active .history-record .radio-tabs__item--active::after { content:''; position:absolute; bottom:0; left:50%; transform:translateX(-50%); width:26px; height:3px; border-radius:2px; background:var(--history-brand-color,var(--brand_blue,#00aeec)); }
+  html.homepagescript-active .history-record .breadcrumbs.normal .filter-switcher { margin-left:8px!important; white-space:nowrap!important; }
+  html.homepagescript-active .history-record .breadcrumbs.normal .breadcrumbs__top > .right { display:grid!important; grid-template-columns:minmax(0,1fr) auto auto!important; gap:8px!important; }
+  html.homepagescript-active .history-record .breadcrumbs .action-btn { width:auto!important; min-width:0!important; height:34px!important; margin:0!important; padding:0 10px!important; white-space:nowrap!important; transition:none!important; }
+  html.homepagescript-active .history-record .breadcrumbs .action-btn .btn-txt { max-width:none!important; margin-left:4px!important; }
+  /* Unfold the native input visually without changing its focus/search events. */
+  html.homepagescript-active .history-record .search-bar { --search-bar-bg:var(--graph_bg_regular); --search-bar-side-padding:2px; box-sizing:border-box!important; width:100%!important; min-width:0!important; margin:0!important; transition:none!important; }
+  html.homepagescript-active .history-record .search-bar .input-wrap { min-width:0!important; max-width:none!important; }
+  html.homepagescript-active .history-record .search-bar-input { box-sizing:border-box!important; min-width:0!important; }
+  html.homepagescript-active .history-record .filter-item { flex-wrap:wrap!important; gap:8px!important; }
+  html.homepagescript-active .history-record .radio-filter { gap:6px!important; }
+  html.homepagescript-active .history-record .radio-filter__item { min-width:0!important; padding:0 10px!important; height:32px!important; }
+  html.homepagescript-active .history-record .date-picker-filter { margin-left:0!important; min-width:0!important; }
+  html.homepagescript-active .history-record .search-date-picker__trigger { flex-wrap:wrap!important; gap:4px!important; }
+  html.homepagescript-active .history-record .date-trigger { width:126px!important; }
+  html.homepagescript-active .history-record .search-date-picker__menu { box-sizing:border-box!important; min-width:0!important; width:min(322px,calc(100vw - 24px))!important; max-width:calc(100vw - 24px)!important; max-height:calc(100vh - var(--broadcast-navigation-height,0px) - 24px)!important; overflow:auto!important; }
+  html.homepagescript-active .history-record .breadcrumbs.editing .breadcrumbs__top > .left { display:flex!important; flex-wrap:wrap!important; gap:8px 12px!important; }
+  html.homepagescript-active .history-record .breadcrumbs.editing .selected-tips { min-width:0!important; margin:0!important; }
+  html.homepagescript-active .history-record .breadcrumbs.editing .split-line { display:none!important; }
+  html.homepagescript-active .history-record .breadcrumbs.editing .breadcrumbs__top > .right { justify-content:flex-end!important; }
+
+  html.homepagescript-active .history-record .main-content { margin-top:4px!important; }
+  html.homepagescript-active .history-record.empty .main-content { margin-top:24px!important; }
+  /* Dates stay above their group even when native scrolling applies .fixed
+     and inline top/bottom coordinates to the labels. */
+  html.homepagescript-active .history-record .history-timeline-item { display:flex!important; flex-direction:column!important; gap:12px!important; }
+  html.homepagescript-active .history-record :is(.history-timeline-label,.section-label,.section-title) { position:static!important; inset:auto!important; transform:none!important; height:auto!important; width:auto!important; }
+  html.homepagescript-active .history-record .history-timeline-label { display:block!important; }
+  html.homepagescript-active .history-record .section-label { display:flex!important; align-items:center!important; gap:12px!important; }
+  html.homepagescript-active .history-record .section-label::after { content:''; flex:1; height:1px; background:var(--line_regular,#e3e5e7); }
+  html.homepagescript-active .history-record .section-title { font-size:15px!important; line-height:22px!important; font-weight:500!important; }
+  html.homepagescript-active .history-record :is(.history-timeline-anchor,.section-anchor-icon,.timeline-start-track,.timeline-end-track,.fixed-side-menu,.fixed-label-con) { display:none!important; }
+  html.homepagescript-active .history-record .section-cards { display:grid!important; min-width:0!important; gap:20px 12px!important; padding-bottom:28px!important; }
+  html.homepagescript-active .history-record .section-cards.grid-mode { grid-template-columns:repeat(auto-fill,minmax(min(100%,210px),1fr))!important; }
+  html.homepagescript-active .history-record .section-cards.list-mode { grid-template-columns:minmax(0,1fr)!important; gap:14px!important; }
+  html.homepagescript-active .history-record .section-cards.the-last { padding-bottom:0!important; }
+  html.homepagescript-active .history-record :is(.history-card,.history-card__main,.bili-video-card,.bili-video-card__wrap,.bili-video-card__details) { min-width:0!important; }
+  html.homepagescript-active .history-record .history-card.grid-mode .history-card__left { width:100%!important; min-width:0!important; }
+  html.homepagescript-active .history-record .history-card.grid-mode .history-card__main { width:100%!important; }
+  html.homepagescript-active .history-record .bili-video-card { --bili-video-card-title-font-size:14px; --bili-video-card-title-line-height:20px; --bili-video-card-subtitle-font-size:12px; --bili-video-card-subtitle-line-height:18px; --bili-video-card-details-margin-top:8px; }
+  html.homepagescript-active .history-record .bili-video-card__title { text-indent:0!important; }
+  html.homepagescript-active .history-record .bili-video-card__subtitle { display:flex!important; flex-direction:column!important; align-items:flex-start!important; gap:2px!important; height:auto!important; }
+  html.homepagescript-active .history-record .bili-video-card__author { flex:none!important; width:100%!important; min-width:0!important; }
+  html.homepagescript-active .history-record .bili-video-card__corner { height:auto!important; margin-left:0!important; white-space:nowrap!important; }
+  html.homepagescript-active .history-record .bili-card-aside-action { width:26px!important; height:26px!important; display:flex!important; align-items:center!important; justify-content:center!important; }
+
+  /* Preserve the native list toggle as cover/details rows, not another grid. */
+  html.homepagescript-active .history-record .history-card.list-mode { align-items:flex-start!important; gap:12px!important; }
+  html.homepagescript-active .history-record .history-card.list-mode .history-card__left { flex:0 0 clamp(136px,30%,200px)!important; min-width:0!important; }
+  html.homepagescript-active .history-record .history-card.list-mode .history-card__main { width:100%!important; }
+  html.homepagescript-active .history-record .history-card__right { min-width:0!important; margin-left:0!important; }
+  html.homepagescript-active .history-record .info__top { display:grid!important; grid-template-columns:minmax(0,1fr) auto!important; gap:8px!important; }
+  html.homepagescript-active .history-record .info__top .title { margin:0!important; font-size:14px!important; line-height:20px!important; -webkit-line-clamp:2!important; }
+  html.homepagescript-active .history-record .info__top .right-actions { position:static!important; height:auto!important; flex-direction:column-reverse!important; gap:4px!important; align-self:start!important; }
+  html.homepagescript-active .history-record .right-actions .fav-status { margin:0!important; padding:0!important; box-shadow:none!important; font-size:11px!important; white-space:nowrap!important; }
+  html.homepagescript-active .history-record .right-actions .delete-btn { width:26px!important; height:26px!important; }
+  html.homepagescript-active .history-record .info__bottom .meta { max-width:100%!important; min-width:0!important; font-size:12px!important; line-height:18px!important; margin-top:4px!important; }
+  html.homepagescript-active .history-record .info__bottom .new_ep { margin-left:6px!important; padding-left:6px!important; }
+}
+
+@media (max-width:599px) {
+  html.homepagescript-active .history-record .breadcrumbs.normal .breadcrumbs__top > .right { grid-template-columns:repeat(2,minmax(0,1fr))!important; }
+  html.homepagescript-active .history-record .breadcrumbs.normal .search-input { grid-column:1 / -1!important; }
+}
+
+@media (max-width:459px) {
+  html.homepagescript-active .history-record .section-cards.grid-mode { grid-template-columns:minmax(0,1fr)!important; gap:16px!important; }
+  html.homepagescript-active .history-record .history-card.grid-mode .bili-video-card__wrap { flex-direction:row!important; align-items:flex-start!important; gap:10px!important; }
+  html.homepagescript-active .history-record .history-card.grid-mode .bili-video-card__cover { flex:0 0 40%!important; min-width:0!important; max-width:148px!important; }
+  html.homepagescript-active .history-record .history-card.grid-mode .bili-video-card__details { flex:1!important; margin-top:0!important; }
+  html.homepagescript-active .history-record .history-card.list-mode { gap:10px!important; }
+  html.homepagescript-active .history-record .history-card.list-mode .history-card__left { flex-basis:40%!important; max-width:148px!important; }
+}
+
+@media (max-width:399px) {
+  html.homepagescript-active .history-record .main-actions { width:100%!important; justify-content:flex-end!important; }
+  html.homepagescript-active .history-record .record-switcher { margin-right:auto!important; }
 }
