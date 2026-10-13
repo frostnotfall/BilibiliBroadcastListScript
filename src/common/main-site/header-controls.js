@@ -126,19 +126,6 @@ export function createHeaderCards() {
   narrow.addEventListener('change', schedule, {signal:events.signal});
   window.addEventListener('resize', schedule, {signal:events.signal});
   document.addEventListener('scroll', schedule, {capture:true,passive:true,signal:events.signal});
-  // Delegation also covers folders mounted after the header is initialized.
-  document.addEventListener('wheel', event => {
-    if (!narrow.matches || event.ctrlKey || event.defaultPrevented) return;
-    const nav = event.target.closest?.(`${scope} .homepagescript-header-card .favorite-panel-popover__nav`);
-    if (!nav || getComputedStyle(nav).overflowX !== 'auto' || nav.scrollWidth <= nav.clientWidth) return;
-    const delta = Math.abs(event.deltaX) > Math.abs(event.deltaY) ? event.deltaX : event.deltaY;
-    const unit = event.deltaMode === 1 ? parseFloat(getComputedStyle(nav).lineHeight) || 16 : event.deltaMode === 2 ? nav.clientWidth : 1;
-    if (!delta) return;
-    nav.scrollLeft += delta * unit;
-    // Keep wheel gestures over this strip from scrolling the video list/page,
-    // including when the first or last folder has already been reached.
-    event.preventDefault();
-  }, {passive:false,signal:events.signal});
   for (const type of ['pointerover','focusin']) document.addEventListener(type, event => {
     if (event.target.closest?.(scope)) schedule();
   }, {capture:true,signal:events.signal});

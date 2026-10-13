@@ -8,8 +8,9 @@
 
 ## 功能与边界
 
-- 适配 14 个页面模块，在窄窗口中调整卡片、列表、菜单和头像弹层。
+- 适配 15 个页面模块，在窄窗口中调整卡片、列表、菜单和头像弹层。
 - 为支持页面提供 32px 导航栏：后退、前进、首页、地址编辑和刷新，并跟随页面主题。
+- 横向滚动列表支持鼠标滚轮，包括动态加载的分类栏；纵向列表保留原生滚动。
 - 将视频、直播、番剧、音频和媒体列表链接发送给宿主；支持的普通页面在同一标签页打开。
 - 处理 SPA 路由、动态 DOM、重复注入和完整卸载；保留原生搜索参数、修饰键、中键与下载行为。
 - 提供单页调试包与公开构建检查；浏览器回归测试暂仅保留在本地。
@@ -80,6 +81,7 @@ BilibiliBroadcastListScript/
 │     └─ live/                  # 直播布局、控件及导航
 ├─ .github/                     # Issue 与 PR 模板
 ├─ build.cjs                    # 生产、单页、watch 构建与完整性检查
+├─ release.cjs                  # 本地发布准备与 GitHub CLI 发布
 ├─ package.json
 ├─ pnpm-lock.yaml
 ├─ pnpm-workspace.yaml          # pnpm 配置，仅包含根包
@@ -103,9 +105,10 @@ BilibiliBroadcastListScript/
 | LiveArea | 直播分区 `/p/eden/area-tags` |
 | Feed | 动态站 `t.bilibili.com` |
 | History | 主站 `/history` |
+| Watchlater | 稍后再看 `/watchlater/list` |
 | Follow | 个人中心 `#/user-center/follow/1` 路由 |
 | Space | 数字 UID 空间及声明的视频、动态、列表、收藏等路径 |
-| Search | all、video、bangumi、live、article、upuser |
+| Search | all、video、bangumi、pgc、live、article、upuser |
 | Popular | 热门、每周必看、入站必刷及明确列出的排行榜 |
 | Anime | 番剧、国创首页及各自 timeline/index |
 | PGC | movie、tv、variety、documentary |
@@ -113,7 +116,9 @@ BilibiliBroadcastListScript/
 | UHD | 声明的两个超高清活动地址 |
 | Podcast | 声明的两个播客活动地址 |
 
-精确支持范围以 [`src/page-scopes.json`](src/page-scopes.json) 为准，分派和同标签页导航读取同一份配置。媒体规则在 [`src/common/urls.js`](src/common/urls.js)：数字/blanc 直播间、BV/av 视频、ep/ss/md 番剧、au/am 音频、ml 媒体列表及数字 UID 的 `/list/<uid>`。完整匹配路径，保留查询和片段；不按整个域名判定媒体。
+稍后再看复用主页顶栏公共模块，在 1100px 以下适配工具栏、筛选、搜索、批量操作和原生弹窗；网格按宽度显示 1–4 列，列表视图保留横向卡片，宽窗口使用站点布局。
+
+精确支持范围以 [`src/page-scopes.json`](src/page-scopes.json) 为准，分派和同标签页导航读取同一份配置。媒体规则在 [`src/common/urls.js`](src/common/urls.js)：数字/blanc 直播间、BV/av 视频、ep/ss/md 番剧、au/am 音频、ml 媒体列表、数字 UID 的 `/list/<uid>` 及稍后再看的 `/list/watchlater`。完整匹配路径，保留查询和片段；不按整个域名判定媒体。
 
 `b23.tv` 短链通过隐藏 sandbox 框架跟随重定向，由文档创建注入回传跨域终点，校验窗口来源、随机 token 和 origin。成功缓存、失败不缓存，8 秒超时；失败时回退原短链。此流程需要在真实宿主中验证框架和弹窗限制。
 
@@ -201,18 +206,6 @@ pnpm run check              # 确认源码和正式产物一致
 
 项目不使用 GitHub Actions，构建、检查和发布准备均在本地完成。测试暂未公开意味着外部贡献者目前无法复现维护者的完整行为回归。站点行为与播放器兼容性需要按操作步骤实际验收。
 
-## 贡献与发布
+## 贡献
 
 贡献约定见 [CONTRIBUTING.md](CONTRIBUTING.md)，当前已知限制见本 README 的功能边界与验证范围。提交保留源码、构建工具、锁文件、当前技术说明及正式产物；本地测试、旧开发过程、内部评估和验证流水由 `.gitignore` 排除。`.gitattributes` 固定文本换行，方便跨平台构建一致性检查。
-
-正式版本采用纯数字 `1、2、3……`，每次加一。在 `package.json` 更新版本，并在 [CHANGELOG.md](CHANGELOG.md) 顶部增加同版本的功能变化和修复；条目不记录时间。
-
-```powershell
-pnpm run build:release
-pnpm run check:release
-git add <本次修改的文件> BroadcastListScript.js package.json CHANGELOG.md
-git commit -m "Release 1"
-git push origin main
-```
-
-远程提交成功后，从该提交创建 `1` 标签及 GitHub Release（后续替换为实际数字），使用 changelog 对应条目作为发布说明，并上传本地已提交的 `BroadcastListScript.js`。提交及发布前使用正式构建入口，避免把日常时间版本作为正式产物。发布提供 SHA-256 和实际验收范围；后续公开行为回归前应核清新增素材的来源与许可。

@@ -1,4 +1,4 @@
-// bilibili-broadcast-list-script version: 2
+// bilibili-broadcast-list-script version: 3
 // MIT License
 // 
 // Copyright (c) 2026 BilibiliBroadcastListScript contributors
@@ -125,6 +125,7 @@
         "/all",
         "/video",
         "/bangumi",
+        "/pgc",
         "/live",
         "/article",
         "/upuser"
@@ -245,7 +246,7 @@
   }
 
   // src/common/version.js
-  var version = "2";
+  var version = "3";
 
   // src/common/opening.js
   var resultType = "potPlayer.short-link.result";
@@ -739,6 +740,32 @@ ${location.href}`;
     };
   }
 
+  // src/common/horizontal-wheel.js
+  function mountHorizontalWheel() {
+    const events = new AbortController();
+    document.addEventListener("wheel", (event) => {
+      if (!event.cancelable || event.defaultPrevented || event.ctrlKey || event.metaKey || event.altKey || event.shiftKey || !event.deltaY || Math.abs(event.deltaX) >= Math.abs(event.deltaY)) return;
+      for (const element of event.composedPath()) {
+        if (!(element instanceof Element)) continue;
+        if (element === document.body || element === document.documentElement) return;
+        const horizontal = element.scrollWidth > element.clientWidth + 1;
+        const vertical = element.scrollHeight > element.clientHeight + 1;
+        if (!horizontal && !vertical) continue;
+        const style = getComputedStyle(element);
+        if (vertical && /^(auto|scroll|overlay)$/.test(style.overflowY)) return;
+        if (!horizontal || !/^(auto|scroll|overlay)$/.test(style.overflowX)) continue;
+        const unit = event.deltaMode === 1 ? parseFloat(style.lineHeight) || 16 : event.deltaMode === 2 ? element.clientWidth : 1;
+        const direction = style.direction === "rtl" ? -1 : 1;
+        element.scrollBy({ left: event.deltaY * unit * direction, behavior: "instant" });
+        event.preventDefault();
+        return;
+      }
+    }, { passive: false, signal: events.signal });
+    return { destroy() {
+      events.abort();
+    } };
+  }
+
   // src/common/lifecycle.js
   function startDispatcher(modules) {
     if (reportResolverFrame()) return;
@@ -749,7 +776,7 @@ ${location.href}`;
     }
     window.__potPlayerBilibiliClick?.destroy?.();
     const events = new AbortController();
-    let active = null, navigation = null, stopped = false, lastUrl = "";
+    let active = null, navigation = null, horizontalWheel = null, stopped = false, lastUrl = "";
     function unmount() {
       if (!active) return;
       const old = active;
@@ -772,10 +799,13 @@ ${location.href}`;
       }
       if (active && active.ui) {
         navigation ||= mountNavigationBar();
+        horizontalWheel ||= mountHorizontalWheel();
         navigation.sync();
-      } else if (!active && navigation) {
-        navigation.destroy();
+      } else if (!active) {
+        navigation?.destroy();
         navigation = null;
+        horizontalWheel?.destroy();
+        horizontalWheel = null;
       }
       if (active && lastUrl !== location.href) {
         active.module.routeChanged?.();
@@ -811,6 +841,8 @@ ${location.href}`;
         unmount();
         navigation?.destroy();
         navigation = null;
+        horizontalWheel?.destroy();
+        horizontalWheel = null;
         for (const [name, { original, wrapped }] of originals) if (history[name] === wrapped) history[name] = original;
         if (window.__bilibiliBroadcast === controller) delete window.__bilibiliBroadcast;
       }
@@ -967,16 +999,6 @@ ${location.href}`;
     narrow.addEventListener("change", schedule, { signal: events.signal });
     window.addEventListener("resize", schedule, { signal: events.signal });
     document.addEventListener("scroll", schedule, { capture: true, passive: true, signal: events.signal });
-    document.addEventListener("wheel", (event) => {
-      if (!narrow.matches || event.ctrlKey || event.defaultPrevented) return;
-      const nav = event.target.closest?.(`${scope} .homepagescript-header-card .favorite-panel-popover__nav`);
-      if (!nav || getComputedStyle(nav).overflowX !== "auto" || nav.scrollWidth <= nav.clientWidth) return;
-      const delta = Math.abs(event.deltaX) > Math.abs(event.deltaY) ? event.deltaX : event.deltaY;
-      const unit = event.deltaMode === 1 ? parseFloat(getComputedStyle(nav).lineHeight) || 16 : event.deltaMode === 2 ? nav.clientWidth : 1;
-      if (!delta) return;
-      nav.scrollLeft += delta * unit;
-      event.preventDefault();
-    }, { passive: false, signal: events.signal });
     for (const type of ["pointerover", "focusin"]) document.addEventListener(type, (event) => {
       if (event.target.closest?.(scope)) schedule();
     }, { capture: true, signal: events.signal });

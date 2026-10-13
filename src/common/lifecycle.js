@@ -1,6 +1,7 @@
 import {pageId} from './urls.js';
 import {reportResolverFrame} from './opening.js';
 import {mountNavigationBar} from './navigation-bar.js';
+import {mountHorizontalWheel} from './horizontal-wheel.js';
 import {version} from './version.js';
 
 export function startDispatcher(modules) {
@@ -12,7 +13,7 @@ export function startDispatcher(modules) {
   }
   window.__potPlayerBilibiliClick?.destroy?.();
   const events = new AbortController();
-  let active = null, navigation = null, stopped = false, lastUrl = '';
+  let active = null, navigation = null, horizontalWheel = null, stopped = false, lastUrl = '';
   function unmount() {
     if (!active) return;
     const old = active; active = null;
@@ -31,8 +32,12 @@ export function startDispatcher(modules) {
     }
     if (active && active.ui) {
       navigation ||= mountNavigationBar();
+      horizontalWheel ||= mountHorizontalWheel();
       navigation.sync();
-    } else if (!active && navigation) { navigation.destroy(); navigation = null; }
+    } else if (!active) {
+      navigation?.destroy(); navigation = null;
+      horizontalWheel?.destroy(); horizontalWheel = null;
+    }
     if (active && lastUrl !== location.href) {
       active.module.routeChanged?.(); navigation?.routeChanged();
     }
@@ -57,6 +62,7 @@ export function startDispatcher(modules) {
     destroy() {
       if (stopped) return;
       stopped = true; events.abort(); clearInterval(poll); unmount(); navigation?.destroy(); navigation = null;
+      horizontalWheel?.destroy(); horizontalWheel = null;
       for (const [name, {original, wrapped}] of originals) if (history[name] === wrapped) history[name] = original;
       if (window.__bilibiliBroadcast === controller) delete window.__bilibiliBroadcast;
     },
