@@ -1,0 +1,36 @@
+# Local dependencies and caches
+node_modules/
+.pnpm-store/
+
+# Private tests, legacy documentation, local history and generated output
+/tests/
+/docs/
+/.local/
+/debug/
+verification/
+/dist/
+/build/
+coverage/
+playwright-report/
+test-results/
+
+# Temporary files, logs and local configuration
+*.log
+*.tmp
+*.temp
+*.bak
+*.swp
+*.swo
+*~
+.env
+.env.*
+!.env.example
+/.codex/
+/.agents/
+/.aws/
+/.vscode/
+/.idea/
+.DS_Store
+Thumbs.db
+
+# BroadcastListScript.js is the official deliverable and stays tracked.

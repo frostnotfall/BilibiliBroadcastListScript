@@ -1,0 +1,17 @@
+    /* 与 FeedScript 一致，原生滚动条配色跟随站点主题；所有宽度和滚动容器均生效。 */
+    html.homepagescript-active { color-scheme:light!important; }
+    html.homepagescript-active.bili_dark { color-scheme:dark!important; }
+    html.homepagescript-active:has(link#__css-map__[href*="/light.css"]) { color-scheme:light!important; }
+    html.homepagescript-active:has(link#__css-map__[href*="/dark.css"]) { color-scheme:dark!important; }
+    html.homepagescript-active, html.homepagescript-active * { scrollbar-width:thin!important; scrollbar-color:auto!important; }
+
+@media(max-width:1099px) {
+  html.homepagescript-active, html.homepagescript-active body {min-width:0!important;overflow-x:clip!important;}
+  html.homepagescript-active .homepagescript-hidden {display:none!important;}
+  html.homepagescript-active :is(.bili-header__bar,.link-navbar) :is(.homepagescript-avatar-menu,.homepagescript-avatar-submenu) {
+    position:fixed!important;left:var(--homepagescript-avatar-left,0px)!important;top:var(--homepagescript-avatar-top,0px)!important;
+    right:auto!important;bottom:auto!important;margin:0!important;transform:none!important;
+    zoom:var(--homepagescript-avatar-zoom,1)!important;transition-property:opacity!important;
+  }
+  html.homepagescript-active .homepagescript-avatar-submenu-left {padding-left:0!important;padding-right:10px!important;}
+}

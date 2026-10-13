@@ -1,0 +1,76 @@
+/* LiveHome only: layout changes stay in CSS so native controls keep their events. */
+@media(max-width:1099px) {
+html.homepagescript-active #app {box-sizing:border-box!important;min-width:0!important;width:100%!important;}
+/* Old homepage: full-width sections, including descendants mounted by lazy-component. */
+html.homepagescript-active #app :is(.area-detail-ctnr,.grid-area-ctnr,.highlight-areas-ctnr,.recommend-area-ctnr) {box-sizing:border-box!important;min-width:0!important;width:calc(100% - 24px)!important;margin:24px 12px!important;}
+html.homepagescript-active .player-area-ctnr {box-sizing:border-box!important;display:flex!important;flex-direction:column!important;gap:12px!important;width:100%!important;min-width:0!important;margin:0!important;padding:12px!important;white-space:normal!important;}
+html.homepagescript-active .player-area-ctnr .player-ctnr {flex:none!important;width:100%!important;height:auto!important;aspect-ratio:16/9;}
+html.homepagescript-active .player-area-ctnr #live-video {position:absolute!important;inset:0!important;width:100%!important;height:100%!important;}
+html.homepagescript-active .player-aside {display:grid!important;grid-template-columns:repeat(auto-fit,minmax(min(140px,100%),1fr))!important;gap:8px!important;box-sizing:border-box!important;width:100%!important;height:auto!important;padding:8px!important;margin:0!important;}
+html.homepagescript-active .player-aside .aside-item {width:100%!important;height:auto!important;aspect-ratio:16/9;margin:0!important;}
+html.homepagescript-active .grid-focus-highlight-area {display:flex!important;flex-direction:column!important;gap:36px!important;}
+html.homepagescript-active :is(.focus-area-ctnr,.grid-col) {box-sizing:border-box!important;width:100%!important;min-width:0!important;margin:0!important;}
+html.homepagescript-active .focus-area-ctnr .focus-content-ctnr {box-sizing:border-box!important;display:flex!important;flex-wrap:wrap!important;justify-content:flex-start!important;gap:12px!important;width:100%!important;padding:16px!important;}
+html.homepagescript-active .focus-area-ctnr .focus-content-ctnr .focus-item {flex:0 0 64px!important;width:auto!important;margin:0!important;padding:0!important;}
+html.homepagescript-active .focus-area-ctnr .focus-item.focus-content-item {flex:1 1 180px!important;}
+html.homepagescript-active #app .grid-focus-highlight-area .highlight-areas-ctnr {width:100%!important;margin:0!important;}
+html.homepagescript-active .highlight-areas-ctnr {display:grid!important;grid-template-columns:repeat(auto-fit,minmax(min(100px,100%),1fr))!important;gap:8px!important;white-space:normal!important;}
+html.homepagescript-active .highlight-areas-ctnr .highlight-area-item {position:static!important;box-sizing:border-box!important;min-width:0!important;width:100%!important;margin:0!important;padding:12px 4px!important;}
+html.homepagescript-active .highlight-areas-ctnr .area-detail {width:100%!important;min-width:0!important;margin:0!important;}
+/* Anchor the recommendation popup to its section, preserving native hover/click events. */
+html.homepagescript-active #app .highlight-areas-ctnr .hover-panel-wrap {position:absolute!important;inset:100% 0 auto!important;width:100%!important;min-width:0!important;margin:8px 0 0!important;padding:12px!important;box-sizing:border-box!important;max-height:calc(100dvh - 80px)!important;overflow:auto!important;z-index:10003!important;}
+html.homepagescript-active .highlight-areas-ctnr .area-banner {width:100%!important;height:auto!important;aspect-ratio:420/112;}
+html.homepagescript-active .highlight-areas-ctnr .sec-areas {display:grid!important;grid-template-columns:repeat(auto-fit,minmax(min(80px,100%),1fr))!important;gap:12px!important;}
+html.homepagescript-active .highlight-areas-ctnr .sec-area-item {width:100%!important;min-width:0!important;margin:0!important;}
+html.homepagescript-active .grid-area-ctnr {display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:16px!important;white-space:normal!important;}
+html.homepagescript-active .large-banner-ctnr {width:100%!important;height:auto!important;aspect-ratio:532/238;}
+html.homepagescript-active .small-banner-ctnr {display:flex!important;gap:12px!important;height:auto!important;}
+html.homepagescript-active .small-banner-ctnr .small-banner {position:relative!important;inset:auto!important;flex:1 1 0!important;width:auto!important;min-width:0!important;height:auto!important;aspect-ratio:256/130;}
+html.homepagescript-active .small-loop-banner-wrap {height:auto!important;aspect-ratio:532/130;}
+html.homepagescript-active :is(.hab-ctnr,.news-ctnr) {height:auto!important;min-height:0!important;padding:12px!important;}
+html.homepagescript-active .banner-ctnr {display:flex!important;gap:8px!important;}
+html.homepagescript-active .banner-item-ctnr {flex:1 1 0!important;min-width:0!important;margin:0!important;}
+html.homepagescript-active .banner-item-ctnr .banner-img {width:100%!important;height:auto!important;aspect-ratio:120/76;}
+html.homepagescript-active .rank-ctnr {height:auto!important;padding:12px!important;}
+html.homepagescript-active .rank-ctnr .rank-item {display:flex!important;align-items:center!important;gap:8px!important;}
+html.homepagescript-active .rank-item > :is(.rank-icon,.rank-idx,.avatar-ctnr) {flex:none!important;margin-left:0!important;}
+html.homepagescript-active .rank-ctnr .info-col {flex:1 1 0!important;min-width:0!important;max-width:none!important;margin:0!important;padding:0!important;}
+html.homepagescript-active .rank-ctnr .rank-txt {box-sizing:border-box!important;width:100%!important;max-width:none!important;}
+html.homepagescript-active .rank-ctnr .meta-row {position:static!important;transform:none!important;flex:none!important;margin-left:auto!important;}
+html.homepagescript-active .area-title-row {display:flex!important;flex-wrap:wrap!important;justify-content:space-between!important;gap:8px!important;padding:0!important;margin-bottom:12px!important;}
+html.homepagescript-active .area-title-row .area-link {position:static!important;}
+html.homepagescript-active .area-detail-ctnr .room-ctnr {display:grid!important;grid-template-columns:repeat(auto-fit,minmax(min(220px,calc((100% - 12px)/2)),1fr))!important;gap:16px 12px!important;white-space:normal!important;}
+html.homepagescript-active #app .room-card-wrapper {box-sizing:border-box!important;float:none!important;width:100%!important;min-width:0!important;margin:0!important;}
+html.homepagescript-active #app .room-card-wrapper :is(.room-card-ctnr,.card-content,.text-info-ctnr,.cover-wrapper) {box-sizing:border-box!important;width:100%!important;min-width:0!important;max-width:100%!important;}
+html.homepagescript-active .room-card-wrapper .cover-wrapper {position:relative!important;height:auto!important;padding:0!important;aspect-ratio:16/9;}
+html.homepagescript-active .room-card-wrapper .hover-panel-wrapper {box-sizing:border-box!important;left:0!important;top:0!important;width:100%!important;}
+html.homepagescript-active .room-card-wrapper :is(.room-title,.room-anchor) {min-width:0!important;max-width:100%!important;overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important;}
+html.homepagescript-active :is(.area-banner-ctnr,.recommend-area-ctnr .title-text,.activity-pushing-out) {box-sizing:border-box!important;width:100%!important;min-width:0!important;}
+html.homepagescript-active .area-banner-ctnr {height:auto!important;aspect-ratio:1360/114;}
+html.homepagescript-active .recommend-area-ctnr .content-ctnr {display:grid!important;grid-template-columns:repeat(auto-fit,minmax(min(86px,100%),1fr))!important;gap:8px!important;white-space:normal!important;}
+html.homepagescript-active .recommend-area-ctnr .rec-area-item {width:100%!important;min-width:0!important;margin:0!important;}
+html.homepagescript-active .link-footer {box-sizing:border-box!important;min-width:0!important;width:100%!important;padding:12px!important;}
+html.homepagescript-active .link-footer :is(.footer-linker,.footer-img-linker) {display:flex!important;flex-wrap:wrap!important;gap:12px!important;min-width:0!important;width:100%!important;margin:0!important;}
+/* New homepage: preserve its scroll container and player controls, resize content only. */
+html.homepagescript-active #app [class~="min-w-1190px"] {min-width:0!important;width:100%!important;}
+html.homepagescript-active #app nav[class~="flex-nowrap"] {flex-wrap:wrap!important;gap:8px!important;}
+html.homepagescript-active #app nav[class~="flex-nowrap"] > [class~="group"] {flex:0 0 calc(25% - 6px)!important;margin:0!important;}
+html.homepagescript-active #app nav[class~="flex-nowrap"] > .group:is(:hover,:focus-within) {z-index:2!important;}
+html.homepagescript-active #app nav[class~="flex-nowrap"] > .group > .absolute {box-sizing:border-box!important;top:100%!important;left:0!important;right:auto!important;z-index:3!important;width:max-content!important;min-width:0!important;max-width:calc(100vw - 24px)!important;max-height:calc(100dvh - 160px)!important;overflow-y:auto!important;overflow-x:hidden!important;}
+html.homepagescript-active #app nav[class~="flex-nowrap"] > .group:nth-child(4n) > .absolute {left:auto!important;right:0!important;}
+html.homepagescript-active #app nav[class~="flex-nowrap"] .group > .absolute a {display:block!important;width:auto!important;max-width:100%!important;white-space:nowrap!important;}
+html.homepagescript-active #app main {margin:0 12px!important;}
+html.homepagescript-active #app main > .flex {flex-direction:column!important;height:auto!important;gap:12px!important;}
+html.homepagescript-active #app main > .flex > * {width:100%!important;min-width:0!important;flex:none!important;height:auto!important;margin:0!important;}
+html.homepagescript-active #app main .main-player {height:auto!important;aspect-ratio:16/9;}
+html.homepagescript-active #app main .flex-wrap:has(> div) {gap:12px!important;}
+html.homepagescript-active #app main .flex-wrap > div {width:calc(50% - 6px)!important;margin:0!important;}
+html.homepagescript-active #app main [class~="grid"] {grid-template-columns:repeat(var(--homepagescript-columns,2),minmax(0,1fr))!important;}
+html.homepagescript-active #app main [class~="grid"] > * {min-width:0!important;width:100%!important;}
+}
+@media(max-width:399px) {
+html.homepagescript-active #app nav[class~="flex-nowrap"] > [class~="group"] {flex-basis:calc(50% - 4px)!important;}
+html.homepagescript-active #app nav[class~="flex-nowrap"] > .group:nth-child(2n) > .absolute {left:auto!important;right:0!important;}
+html.homepagescript-active .area-detail-ctnr .room-ctnr {grid-template-columns:minmax(0,1fr)!important;}
+html.homepagescript-active #app main .flex-wrap > div {width:100%!important;}
+}

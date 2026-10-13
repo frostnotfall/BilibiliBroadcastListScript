@@ -1,0 +1,169 @@
+[
+  {
+    "id": "HomePage",
+    "host": "www.bilibili.com",
+    "paths": [
+      "/",
+      "/index.html",
+      "/c/douga",
+      "/c/game",
+      "/c/kichiku",
+      "/c/music",
+      "/c/dance",
+      "/c/cinephile",
+      "/c/ent",
+      "/c/knowledge",
+      "/c/tech",
+      "/c/information",
+      "/c/food",
+      "/c/shortplay",
+      "/c/car",
+      "/c/fashion",
+      "/c/sports",
+      "/c/animal",
+      "/c/vlog",
+      "/c/painting",
+      "/c/ai",
+      "/c/home",
+      "/c/outdoors",
+      "/c/gym",
+      "/c/handmake",
+      "/c/travel",
+      "/c/rural",
+      "/c/parenting",
+      "/c/health",
+      "/c/emotion",
+      "/c/life_joy",
+      "/c/life_experience"
+    ]
+  },
+  {
+    "id": "LiveHome",
+    "host": "live.bilibili.com",
+    "paths": [
+      "/",
+      "/all"
+    ],
+    "protocols": [
+      "https:"
+    ]
+  },
+  {
+    "id": "LiveArea",
+    "host": "live.bilibili.com",
+    "paths": [
+      "/p/eden/area-tags"
+    ]
+  },
+  {
+    "id": "Feed",
+    "host": "t.bilibili.com",
+    "pathPattern": "^/.*$"
+  },
+  {
+    "id": "History",
+    "host": "www.bilibili.com",
+    "paths": [
+      "/history"
+    ]
+  },
+  {
+    "id": "Follow",
+    "host": "link.bilibili.com",
+    "paths": ["/p/center/index"],
+    "hashPattern": "^#/user-center/follow/1/?(?:\\?.*)?$"
+  },
+  {
+    "id": "Space",
+    "host": "space.bilibili.com",
+    "pathPattern": "^/\\d+(?:/(?:dynamic|upload(?:/(?:video|opus))?|lists|bangumi)|/(?:favlist|fav)(?:/.*)?)?/?$"
+  },
+  {
+    "id": "Search",
+    "host": "search.bilibili.com",
+    "paths": [
+      "/all",
+      "/video",
+      "/bangumi",
+      "/live",
+      "/article",
+      "/upuser"
+    ]
+  },
+  {
+    "id": "Popular",
+    "host": "www.bilibili.com",
+    "paths": [
+      "/v/popular/all",
+      "/v/popular/weekly",
+      "/v/popular/history",
+      "/v/popular/rank/all",
+      "/v/popular/rank/anime",
+      "/v/popular/rank/guochuang",
+      "/v/popular/rank/documentary",
+      "/v/popular/rank/movie",
+      "/v/popular/rank/tv",
+      "/v/popular/rank/variety",
+      "/v/popular/rank/douga",
+      "/v/popular/rank/game",
+      "/v/popular/rank/kichiku",
+      "/v/popular/rank/music",
+      "/v/popular/rank/dance",
+      "/v/popular/rank/cinephile",
+      "/v/popular/rank/ent",
+      "/v/popular/rank/knowledge",
+      "/v/popular/rank/tech",
+      "/v/popular/rank/food",
+      "/v/popular/rank/car",
+      "/v/popular/rank/fashion",
+      "/v/popular/rank/sports",
+      "/v/popular/rank/animal",
+      "/v/popular/music"
+    ]
+  },
+  {
+    "id": "Anime",
+    "host": "www.bilibili.com",
+    "paths": [
+      "/anime",
+      "/guochuang",
+      "/anime/timeline",
+      "/anime/index",
+      "/guochuang/timeline",
+      "/guochuang/index"
+    ]
+  },
+  {
+    "id": "PGC",
+    "host": "www.bilibili.com",
+    "paths": [
+      "/movie",
+      "/tv",
+      "/variety",
+      "/documentary"
+    ]
+  },
+  {
+    "id": "Charity",
+    "host": "love.bilibili.com",
+    "paths": [
+      "/"
+    ]
+  },
+  {
+    "id": "UHD",
+    "host": "www.bilibili.com",
+    "paths": [
+      "/blackboard/era/Vp41b8bsU9Wkog3X.html",
+      "/blackboard/era/LqwJ5qsaKiEE0yj8.html"
+    ]
+  },
+  {
+    "id": "Podcast",
+    "host": "www.bilibili.com",
+    "paths": [
+      "/blackboard/era/jpyPhRRrMn3fmZ2B.html",
+      "/blackboard/era/V9NZUSEYujbTPmT0.html"
+    ]
+  }
+]

@@ -1,0 +1,26 @@
+/* Native /all wrappers and room cards. */
+@media(max-width:1099px) {
+html.homepagescript-active :is(#app,#main) {min-width:0!important;width:100%!important;}
+html.homepagescript-active :is(.all__area-top-ctnr,.all__special-area-recommend-list-ctnr,.all__card-list-ctnr) {box-sizing:border-box!important;min-width:0!important;width:calc(100% - 24px)!important;margin:24px 12px!important;padding:0!important;}
+html.homepagescript-active :is(.all__area-top-ctnr,.all__special-area-recommend-list-ctnr,.all__card-list-ctnr:not(#area-tag-list)) :is(.top__header-wrap,.header__wrap,.tab__bar-wrap,.tabs) {display:flex!important;flex-wrap:wrap!important;align-items:center!important;gap:8px!important;min-width:0!important;padding:0!important;}
+html.homepagescript-active [class*="index_room-card-list_"] {display:grid!important;grid-template-columns:repeat(auto-fit,minmax(min(220px,calc((100% - 12px)/2)),1fr))!important;gap:16px 12px!important;padding-bottom:16px!important;min-width:0!important;width:100%!important;}
+html.homepagescript-active [class*="index_room-card-list_"] > * {width:100%!important;min-width:0!important;margin:0!important;}
+html.homepagescript-active [class*="Item_card-item_"] {height:auto!important;}
+html.homepagescript-active [class*="Item_card-item-ctnr_"] {box-sizing:border-box!important;position:relative!important;top:auto!important;left:auto!important;width:100%!important;min-width:0!important;padding:0!important;}
+html.homepagescript-active [class*="Item_cover-wrap_"] {width:100%!important;height:auto!important;aspect-ratio:16/9;}
+html.homepagescript-active [class*="Item_lowerRow_"] {width:100%!important;min-width:0!important;padding:0!important;}
+html.homepagescript-active [class*="Item_right_"] {flex:1!important;min-width:0!important;}
+html.homepagescript-active [class*="Item_nickName_"] {min-width:0!important;}
+}
+/* /all uses fixed-width list wrappers and fixed card covers in the native CSS. */
+@media(max-width:1099px) {
+html.homepagescript-active #main:has(.all__card-list-ctnr) {box-sizing:border-box!important;min-width:0!important;max-width:100%!important;overflow-x:clip!important;}
+html.homepagescript-active #app:has(.all__card-list-ctnr) [class*="app_wrap_"] {box-sizing:border-box!important;min-width:0!important;width:100%!important;max-width:100%!important;}
+html.homepagescript-active .all__card-list-ctnr :is(.tab__bar-wrap,.tabs) {height:auto!important;max-width:100%!important;}
+html.homepagescript-active .all__card-list-ctnr:not(#area-tag-list) .tabs > * {margin:0!important;max-width:100%!important;}
+html.homepagescript-active :is(.all__area-top-ctnr,.all__special-area-recommend-list-ctnr,.all__card-list-ctnr) [class*="Item_cover-wrap_"] {max-width:100%!important;}
+html.homepagescript-active .all__card-list-ctnr [class*="Item_roomTitle_"] {min-width:0!important;max-width:100%!important;}
+}
+@media(max-width:399px) {
+html.homepagescript-active :is(.all__area-top-ctnr,.all__special-area-recommend-list-ctnr,.all__card-list-ctnr) [class*="index_room-card-list_"] {grid-template-columns:minmax(0,1fr)!important;}
+}

@@ -1,0 +1,16 @@
+import {startDispatcher} from './common/index.js';
+import * as HomePage from './WebPage/HomePage/module.js';
+import * as LiveHome from './WebPage/LiveHome/module.js';
+import * as LiveArea from './WebPage/LiveArea/module.js';
+import * as Feed from './WebPage/Feed/module.js';
+import * as History from './WebPage/History/module.js';
+import * as Follow from './WebPage/Follow/module.js';
+import * as Space from './WebPage/Space/module.js';
+import * as Search from './WebPage/Search/module.js';
+import * as Popular from './WebPage/Popular/module.js';
+import * as Anime from './WebPage/Anime/module.js';
+import * as PGC from './WebPage/PGC/module.js';
+import * as Charity from './WebPage/Charity/module.js';
+import * as UHD from './WebPage/UHD/module.js';
+import * as Podcast from './WebPage/Podcast/module.js';
+startDispatcher({HomePage,LiveHome,LiveArea,Feed,History,Follow,Space,Search,Popular,Anime,PGC,Charity,UHD,Podcast});

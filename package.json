@@ -1,0 +1,21 @@
+{
+  "name": "bilibili-broadcast-list-script",
+  "version": "2.0.0",
+  "private": true,
+  "license": "MIT",
+  "packageManager": "pnpm@11.25.0",
+  "description": "Standalone Bilibili page scripts for native PotPlayer BroadcastList injection",
+  "engines": {
+    "node": ">=22.13.0"
+  },
+  "scripts": {
+    "build": "node build.cjs",
+    "build:page": "node build.cjs --page",
+    "build:debug": "node build.cjs --all-pages",
+    "watch": "node build.cjs --watch",
+    "check": "node build.cjs --check"
+  },
+  "devDependencies": {
+    "esbuild": "0.25.12"
+  }
+}

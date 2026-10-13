@@ -1,0 +1,167 @@
+
+@media(max-width:1099px) {
+ html.homepagescript-active .home-v3-app-container {min-width:0!important;width:100%!important;}
+ html.homepagescript-active .inner-content-wrapper {box-sizing:border-box!important;width:100%!important;max-width:100%!important;min-width:0!important;margin-left:0!important;margin-right:0!important;padding-left:8px!important;padding-right:8px!important;}
+ html.homepagescript-active .home-banner-wrapper {height:auto!important;min-height:0!important;padding-top:56px!important;}
+ html.homepagescript-active .banner-item-ratio-scale-container {padding-top:0!important;height:auto!important;aspect-ratio:16/9;}
+ html.homepagescript-active .banner-item-ratio-scale-inner {position:relative!important;inset:auto!important;width:100%!important;height:100%!important;}
+ html.homepagescript-active .banner-hover-group {position:relative!important;inset:auto!important;width:100%!important;padding:8px!important;box-sizing:border-box!important;}
+ html.homepagescript-active .banner-hover-group-title {width:100%!important;padding:0!important;}
+ html.homepagescript-active .banner-hover-group-body {box-sizing:border-box!important;width:100%!important;height:auto!important;min-height:0!important;max-height:none!important;gap:8px!important;overflow-x:auto!important;overflow-y:hidden!important;align-items:start!important;padding:8px 0!important;}
+ html.homepagescript-active .banner-hover-group-item {flex:0 0 140px!important;width:140px!important;}
+ html.homepagescript-active .home-index-wrapper .inner-content-body {display:grid!important;grid-template-columns:1fr!important;gap:8px!important;}
+ html.homepagescript-active .inner-content-item-index {width:100%!important;margin:0!important;}
+ html.homepagescript-active :is(.home-page-switch-wrapper .inner-content-body,.feenline-vcard-wrapper) {display:grid!important;grid-template-columns:repeat(auto-fit,minmax(min(150px,100%),1fr))!important;gap:16px 12px!important;}
+ html.homepagescript-active :is(.home-page-switch-wrapper .inner-content-body,.feenline-vcard-wrapper) > * {box-sizing:border-box!important;min-width:0!important;width:100%!important;max-width:100%!important;margin:0!important;}
+ html.homepagescript-active .section-title-v2-wrapper {align-items:flex-start!important;gap:8px!important;flex-wrap:wrap!important;}
+ html.homepagescript-active .title-right {min-width:0!important;max-width:100%!important;overflow-x:auto!important;}
+ html.homepagescript-active .home-page-switch-wrapper :is(.next-page,.prev-page) {position:static!important;transform:none!important;margin:8px auto!important;}
+ html.homepagescript-active .content-wrap {display:flex!important;flex-direction:column!important;min-width:0!important;width:100%!important;height:auto!important;}
+ html.homepagescript-active .info-wrap {position:relative!important;inset:auto!important;width:100%!important;height:auto!important;min-height:0!important;}
+ html.homepagescript-active .info-content-wrap {box-sizing:border-box!important;width:100%!important;height:auto!important;padding:12px!important;}
+ html.homepagescript-active .video-wrap {position:relative!important;inset:auto!important;width:100%!important;height:auto!important;aspect-ratio:16/9;}
+ html.homepagescript-active .carousel-wrap {width:100%!important;overflow-x:auto!important;position:relative!important;inset:auto!important;}
+ html.homepagescript-active .feed-line-rank-body-container {flex-direction:column!important;gap:12px!important;}
+ html.homepagescript-active .feed-line-rank-body-inner {min-width:0!important;width:100%!important;max-width:100%!important;}
+ /* 电影/电视剧等页面采用 inner-c + grid 的另一套 PGC 模板。 */
+ html.homepagescript-active .inner-c {box-sizing:border-box!important;min-width:0!important;width:100%!important;max-width:100%!important;margin-left:0!important;margin-right:0!important;padding-left:8px!important;padding-right:8px!important;}
+ html.homepagescript-active .banner-wrapper {min-width:0!important;height:auto!important;padding-top:56px!important;}
+ html.homepagescript-active .banner-wrapper .bg-container {position:relative!important;inset:auto!important;width:100%!important;height:240px!important;}
+ html.homepagescript-active .banner-wrapper .inner-c {height:auto!important;}
+ html.homepagescript-active .side-list-wrp {position:relative!important;inset:auto!important;width:100%!important;height:auto!important;}
+ html.homepagescript-active .side-list {flex-direction:row!important;width:100%!important;overflow-x:auto!important;gap:8px!important;padding:8px 0!important;}
+ html.homepagescript-active .side-item {flex:0 0 150px!important;width:150px!important;}
+ html.homepagescript-active .index-module > .inner-c {display:grid!important;grid-template-columns:repeat(auto-fit,minmax(min(220px,100%),1fr))!important;gap:12px!important;}
+ html.homepagescript-active .index-item {width:100%!important;margin:0!important;}
+ html.homepagescript-active .grid {grid-template-columns:repeat(auto-fit,minmax(min(150px,100%),1fr))!important;grid-template-rows:none!important;grid-auto-rows:auto!important;gap:16px 12px!important;}
+ html.homepagescript-active .grid > * {box-sizing:border-box!important;grid-column:auto!important;grid-row:auto!important;min-width:0!important;width:100%!important;max-width:100%!important;margin-left:0!important;margin-right:0!important;}
+ html.homepagescript-active .hot-module > .left {grid-column:1/-1!important;aspect-ratio:16/9;height:auto!important;}
+ html.homepagescript-active .hot-item .cover {width:100%!important;height:auto!important;aspect-ratio:3/4;}
+}
+
+@media(max-width:1099px) {
+ /* 可收起的浮动导航，不压缩页面内容。 */
+ html.homepagescript-active .nav-tool-container {z-index:40!important;}
+ html.homepagescript-active .anime-sidebar {
+  position:fixed;right:8px;bottom:12px;width:44px;pointer-events:auto;
+  transform:translateX(calc(100% + 8px));transition:transform .18s ease;z-index:30;
+ }
+ html.homepagescript-active .anime-sidebar[data-open] {transform:none;}
+ html.homepagescript-active .anime-sidebar-toggle {
+  position:absolute;right:100%;top:0;width:24px;height:44px;padding:0;border:1px solid var(--line_light,#444);
+  border-radius:6px 0 0 6px;background:var(--bg1_float,#252627);color:var(--text1,#eee);font-size:24px;cursor:pointer;
+ }
+ html.homepagescript-active .anime-sidebar-toggle:focus-visible {outline:2px solid #00aeec;outline-offset:2px;}
+ html.homepagescript-active .anime-sidebar .nav-tool {
+  position:relative!important;box-sizing:border-box!important;inset:auto!important;
+  transform:none!important;max-height:calc(100vh - 80px)!important;max-height:calc(100dvh - 80px)!important;
+  overflow-y:auto!important;overflow-x:hidden!important;
+ }
+ html.homepagescript-active .nav-tool-container .section {box-sizing:border-box!important;opacity:1!important;}
+ html.homepagescript-active .nav-tool-container .top:not(.show) {opacity:0!important;pointer-events:none!important;}
+
+ /* 原布局依赖视频撑高信息区；纵向排列后，文字及缩略图必须自行撑高。 */
+ html.homepagescript-active .new-hot-wrap .content-wrap {gap:12px!important;padding-bottom:0!important;}
+ html.homepagescript-active .new-hot-wrap .info-wrap {flex:none!important;justify-content:flex-start!important;}
+ html.homepagescript-active .new-hot-wrap .info-content-wrap {min-width:0!important;justify-content:flex-start!important;gap:12px!important;padding:16px!important;}
+ html.homepagescript-active .new-hot-wrap .info-content-wrap > :not(.season-cover) {flex-shrink:0!important;margin:0!important;}
+ html.homepagescript-active .new-hot-wrap .info-content-wrap > .season-cover {pointer-events:none!important;}
+ html.homepagescript-active .new-hot-wrap .info-content-wrap > .title {
+  height:auto!important;min-height:0!important;padding:0!important;font-size:clamp(20px,3vw,28px)!important;
+  line-height:1.4!important;white-space:normal!important;overflow-wrap:anywhere!important;
+ }
+ html.homepagescript-active .new-hot-wrap .rating-wrap {height:auto!important;min-height:40px!important;padding:0!important;}
+ html.homepagescript-active .new-hot-wrap .rating-wrap .right-wrap {min-width:0!important;width:auto!important;flex:1!important;}
+ html.homepagescript-active .new-hot-wrap .info-content-wrap > .desc {
+  display:-webkit-box!important;height:auto!important;max-height:none!important;padding:0!important;
+  line-height:1.5!important;white-space:normal!important;overflow-wrap:anywhere!important;-webkit-line-clamp:3!important;
+ }
+ html.homepagescript-active .new-hot-wrap .button-group {gap:12px!important;}
+ html.homepagescript-active .new-hot-wrap .button-group .button {flex-shrink:0!important;margin-right:0!important;}
+ html.homepagescript-active .new-hot-wrap .carousel-wrap {
+  display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:8px!important;
+  height:auto!important;min-width:0!important;overflow:visible!important;
+ }
+ html.homepagescript-active .new-hot-wrap .carousel-item-wrap {
+  position:relative!important;inset:auto!important;width:100%!important;min-width:0!important;
+  transform:none!important;transition:none!important;border-width:3px!important;
+ }
+ html.homepagescript-active .new-hot-wrap .video-wrap {flex:none!important;aspect-ratio:auto!important;}
+ html.homepagescript-active .new-hot-wrap .video-area {height:0!important;padding-bottom:56.25%!important;}
+
+ /* 首页横幅、索引及时间表同样存在原生定高或定宽的内部节点。 */
+ html.homepagescript-active .home-banner-wrapper {margin-top:0!important;}
+ html.homepagescript-active .home-index-wrapper .index-categary-content-container {height:auto!important;overflow:visible!important;}
+ html.homepagescript-active .home-index-wrapper .vertical-items-group {height:auto!important;gap:8px!important;margin-right:16px!important;}
+ html.homepagescript-active .home-index-wrapper .index-background-icon {pointer-events:none!important;}
+ html.homepagescript-active .section-title-v2-wrapper .title-left {min-width:0!important;max-width:100%!important;flex-wrap:wrap!important;gap:8px!important;}
+ html.homepagescript-active .section-title-v2-wrapper .week-day-wrapper {max-width:100%!important;margin-left:0!important;overflow-x:auto!important;}
+ html.homepagescript-active .section-title-v2-wrapper .week-day-item {flex-shrink:0!important;}
+ html.homepagescript-active .time-line-body .timeline-common-content {box-sizing:border-box!important;width:100%!important;min-width:0!important;margin:0!important;padding:8px!important;display:grid!important;grid-template-columns:1fr 1fr!important;}
+ html.homepagescript-active .time-line-body .timeline-common-content-list-container {grid-column:1/-1!important;}
+ html.homepagescript-active .time-line-wrapper .time-line-body {overflow:visible!important;}
+ html.homepagescript-active .time-line-body .timeline-weekday-item {min-width:0!important;width:100%!important;}
+ /* 日期标签伸出卡片顶部，展开时一并遮住相邻卡片的标签。 */
+ html.homepagescript-active .time-line-body .timeline-weekday-item.is-hover-active::before {content:'';position:absolute;inset:-12px 0 0;background:var(--bg1,#171819);z-index:-1;}
+ html.homepagescript-active .time-line-body :is(.timeline-special-content-left,.timeline-special-content-right) {display:none!important;}
+ html.homepagescript-active .time-line-body :is(.next-page,.prev-page) {position:static!important;transform:none!important;margin:8px auto!important;}
+ html.homepagescript-active .recommend-feed-line-rank-wrapper .subject-titles {position:relative!important;inset:auto!important;width:100%!important;}
+ html.homepagescript-active .recommend-feed-line-rank-wrapper .subject-picture {pointer-events:none!important;}
+ html.homepagescript-active .recommend-feed-line-rank-wrapper .feed-line-rank-body-inner {flex:none!important;}
+}
+
+/* 宽屏保留原生导航的位置和可访问性。 */
+@media(min-width:1100px) {
+ html.homepagescript-active .anime-sidebar {display:contents;}
+ html.homepagescript-active .anime-sidebar-toggle {display:none;}
+}
+
+@media(max-width:1099px) {
+ /* 独立时间表：日期行切换对应日程，标题与条目不再挤在三列固定宽度内。 */
+ html.homepagescript-active #app :is(.bread-crumb,.timeline-container) {box-sizing:border-box!important;width:100%!important;min-width:0!important;margin:0!important;padding-left:8px!important;padding-right:8px!important;}
+ html.homepagescript-active #app .timeline-container {padding-top:0!important;}
+ html.homepagescript-active #app .timeline-header {position:sticky!important;inset:auto!important;top:56px!important;box-sizing:border-box!important;width:100%!important;height:76px!important;margin:0!important;}
+ html.homepagescript-active #app .timeline-header :is(.arrow-left,.arrow-right) {display:none!important;}
+ html.homepagescript-active #app .tl-weeks {height:76px!important;overflow-x:auto!important;overflow-y:hidden!important;}
+ html.homepagescript-active #app .tl-head-list {display:flex!important;width:max-content!important;transform:none!important;transition:none!important;}
+ html.homepagescript-active #app .tl-head {float:none!important;flex:0 0 130px!important;width:130px!important;animation:none!important;cursor:pointer;}
+ html.homepagescript-active #app .tl-head .tl-day {left:0!important;}
+ html.homepagescript-active #app .tl-head[data-anime-selected] .indicator {background:var(--brand_blue,#00aeec)!important;}
+ html.homepagescript-active #app .tl-head:focus-visible {outline:2px solid #00aeec;outline-offset:-2px;}
+ html.homepagescript-active #app .timeline-wrapper {width:100%!important;overflow:visible!important;}
+ html.homepagescript-active #app .tl-body-list {width:100%!important;transform:none!important;transition:none!important;}
+ html.homepagescript-active #app .season-timeline {box-sizing:border-box!important;float:none!important;width:100%!important;animation:none!important;}
+ html.homepagescript-active #app .season-timeline:not([data-anime-selected]) {display:none!important;}
+ html.homepagescript-active #app .season-group {box-sizing:border-box!important;left:12px!important;padding-right:20px!important;}
+ html.homepagescript-active #app .season-item .season-body {min-height:72px!important;}
+ html.homepagescript-active #app .season-item .season-desc {position:relative!important;width:auto!important;max-width:100%!important;margin-top:8px!important;}
+ html.homepagescript-active #app .bread-crumb ul {display:flex!important;gap:16px!important;flex-wrap:wrap!important;}
+ html.homepagescript-active #app .bread-crumb li {float:none!important;margin-left:0!important;}
+
+ /* 索引：筛选控件先于结果，保持原生筛选、排序和翻页。 */
+ html.homepagescript-active .bangumi-index-wrapper {box-sizing:border-box!important;width:100%!important;min-width:0!important;padding:0 8px!important;margin:0!important;}
+ html.homepagescript-active .bangumi-index-body {display:grid!important;grid-template-columns:minmax(0,1fr)!important;}
+ html.homepagescript-active .bangumi-index-body :is(.filter-wrapper,.filter-body) {float:none!important;width:100%!important;min-width:0!important;}
+ html.homepagescript-active .bangumi-index-body .filter-wrapper {grid-row:1;}
+ html.homepagescript-active .bangumi-index-body .filter-body {grid-row:2;}
+ html.homepagescript-active .bangumi-index-wrapper .filter-list {display:grid!important;grid-template-columns:repeat(auto-fit,minmax(min(260px,100%),1fr))!important;gap:0 16px!important;align-items:start!important;}
+ html.homepagescript-active .bangumi-index-wrapper .filter-block {display:grid!important;grid-template-columns:52px minmax(0,1fr)!important;align-items:start!important;}
+ html.homepagescript-active .bangumi-index-wrapper .filter-item-wrapper {position:relative!important;float:none!important;width:100%!important;min-width:0!important;height:var(--anime-filter-height,auto)!important;transition:none!important;}
+ html.homepagescript-active .bangumi-index-wrapper .btn-expand {right:0!important;}
+ html.homepagescript-active .bangumi-index-wrapper .btn-expand::after {display:none!important;}
+ html.homepagescript-active .bangumi-index-wrapper .btn-expand[data-anime-filter-toggle=hidden] {display:none!important;}
+ html.homepagescript-active .bangumi-index-wrapper .sort-banner {height:auto!important;display:flex!important;flex-wrap:wrap!important;gap:16px 8px!important;margin-bottom:16px!important;}
+ html.homepagescript-active .bangumi-index-wrapper .sort-item {float:none!important;margin-right:0!important;flex:0 0 80px!important;}
+ html.homepagescript-active .bangumi-index-wrapper .bangumi-list {display:grid!important;grid-template-columns:repeat(auto-fit,minmax(min(140px,100%),1fr))!important;gap:20px 12px!important;}
+ html.homepagescript-active .bangumi-index-wrapper .bangumi-item {box-sizing:border-box!important;width:100%!important;height:auto!important;margin-right:0!important;min-width:0!important;}
+ html.homepagescript-active .bangumi-index-wrapper .cover-wrapper {height:auto!important;aspect-ratio:3/4;}
+ html.homepagescript-active .bangumi-index-wrapper .cover-wrapper img {object-fit:cover;}
+ html.homepagescript-active .bangumi-index-wrapper .pagelistbox {display:flex!important;flex-wrap:wrap!important;gap:4px!important;height:auto!important;padding-right:0!important;margin:20px 0!important;}
+ html.homepagescript-active .bangumi-index-wrapper .pagelistbox :is(.p,strong,.custom-right) {float:none!important;margin-right:0!important;}
+ html.homepagescript-active .bangumi-index-crumb ul {display:flex!important;flex-wrap:wrap!important;gap:16px!important;}
+ html.homepagescript-active .bangumi-index-crumb li {padding:0!important;float:none!important;}
+}
+
+@media(max-width:479px) {
+ html.homepagescript-active .new-hot-wrap .carousel-wrap {grid-template-columns:repeat(2,minmax(0,1fr))!important;}
+}

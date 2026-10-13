@@ -1,0 +1,27 @@
+      /* HOME_CONTENT_START */
+      html.homepagescript-active .bili-feed4-layout { padding:0 8px!important; }
+      html.homepagescript-active .fixed-channel-shim { width:100%!important; min-width:0!important; }
+      html.homepagescript-active .feed2 :is(.recommended-container_floor-aside,.container,.feed-card,.bili-feed-card,.bili-video-card,.bili-video-card__wrap,.bili-video-card__skeleton) {
+        box-sizing:border-box!important; min-width:0!important; max-width:100%!important; width:100%!important;
+      }
+      html.homepagescript-active .feed2 .recommended-container_floor-aside > .container {
+        display:grid!important; grid-template-columns:repeat(var(--homepagescript-columns,2),minmax(0,1fr))!important;
+        grid-template-rows:none!important; grid-auto-rows:auto!important; gap:16px 12px!important;
+      }
+      html.homepagescript-active .feed2 .container > .feed-card { grid-column:auto!important; grid-row:auto!important; }
+      html.homepagescript-active .feed2 .bili-video-card__info { min-width:0!important; }
+      html.homepagescript-active .feed2 .recommended-swipe { grid-column:1 / -1!important; grid-row:auto!important; min-width:0!important; width:100%!important; height:auto!important; }
+      html.homepagescript-active .feed2 .recommended-swipe-core { height:auto!important; }
+      html.homepagescript-active .feed2 .recommended-swipe-shim { display:none!important; }
+      html.homepagescript-active .feed2 .recommended-swipe-body { position:relative!important; inset:auto!important; width:100%!important; height:auto!important; aspect-ratio:16 / 9; }
+      html.homepagescript-active .feed2 .feed-roll-btn { position:static!important; display:flex!important; justify-content:center; margin:12px auto!important; width:auto!important; height:auto!important; }
+      /* /c/ 频道共用首页控件，内容区是新的 feedchannel 模板。 */
+      html.homepagescript-active :is(.feedchannel,.feedchannel-body,.feedchannel-main,.channel-header,.channel-page,.channel-page__body) { box-sizing:border-box!important; min-width:0!important; width:100%!important; max-width:100%!important; }
+      html.homepagescript-active .channel-page { padding:0 8px!important; }
+      html.homepagescript-active :is(.head-cards,.loading-cards,.channel-feed) { display:grid!important; grid-template-columns:repeat(var(--homepagescript-columns,2),minmax(0,1fr))!important; grid-template-rows:none!important; grid-auto-rows:auto!important; gap:16px 12px!important; }
+      html.homepagescript-active :is(.head-cards,.loading-cards,.channel-feed) > * { box-sizing:border-box!important; min-width:0!important; width:100%!important; max-width:100%!important; grid-row:auto!important; grid-column:auto!important; }
+      html.homepagescript-active .head-cards .channel-carousel { grid-column:1 / -1!important; height:auto!important; aspect-ratio:16 / 9; }
+      html.homepagescript-active .channel-carousel :is(.vui_carousel,.vui_carousel__slides,.banner-carousel__item,.cover-wrap) { width:100%!important; height:100%!important; }
+      html.homepagescript-active .feedchannel :is(.bili-video-card,.bili-video-card__wrap,.bili-video-card__cover,.bili-video-card__details) { min-width:0!important; max-width:100%!important; width:100%!important; }
+      html.homepagescript-active :is(.channel-entry-more,.channel-entry-more__link) { display:none!important; }
+      /* HOME_CONTENT_END */

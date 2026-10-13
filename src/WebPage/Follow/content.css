@@ -1,0 +1,101 @@
+@media (max-width:1099px) {
+  html.follow-script-active .follow-script-hidden {display:none!important;}
+  html.follow-script-active .nav-ctnr:has(.link-navbar) {
+    box-sizing:border-box!important;
+    width:100%!important;
+    min-width:0!important;
+    height:56px!important;
+    overflow:visible!important;
+  }
+  html.follow-script-active .nav-ctnr .link-navbar-wrap {height:56px!important;}
+  /* Native table cells otherwise enforce the search input's desktop minimum. */
+  html.follow-script-active .link-navbar :is(.search-bar-ctnr,.nomarl-cell) {display:block!important;}
+  html.follow-script-active .link-navbar .nav-search-content {padding:0 4px!important;}
+  html.follow-script-active,
+  html.follow-script-active .follow-script-shell {
+    box-sizing:border-box!important;
+    min-width:0!important;
+    width:100%!important;
+    max-width:100%!important;
+    height:auto!important;
+    min-height:0!important;
+    margin:0!important;
+    padding:0!important;
+    float:none!important;
+    overflow:visible!important;
+  }
+  html.follow-script-active .main-ctnr.p-relative.f-right {
+    box-sizing:border-box!important;
+    float:none!important;
+    width:100%!important;
+    min-width:0!important;
+    min-height:0!important;
+    margin:0!important;
+    padding:12px!important;
+  }
+  html.follow-script-active .main-ctnr :is(article,.personal-info,.section-block,.card-ctnr) {
+    box-sizing:border-box!important;
+    width:100%!important;
+    min-width:0!important;
+    max-width:100%!important;
+    min-height:0!important;
+  }
+  html.follow-script-active .main-ctnr .page-title {
+    display:flex!important; flex-wrap:wrap!important; align-items:center!important;
+    gap:6px 10px!important; height:auto!important; margin-bottom:16px!important;
+  }
+  html.follow-script-active .main-ctnr .page-title .liveCount {margin-left:0!important;}
+  html.follow-script-active .main-ctnr .favourite-cards {
+    display:grid!important;
+    grid-template-columns:repeat(auto-fill,minmax(min(100%,260px),1fr))!important;
+    gap:12px!important;
+  }
+  html.follow-script-active .main-ctnr .favourite-card {
+    box-sizing:border-box!important; width:100%!important; min-width:0!important;
+    margin:0!important; height:auto!important; min-height:203px!important;
+    display:flex!important; padding:16px 12px!important; gap:8px!important;
+    float:none!important; vertical-align:top!important;
+  }
+  html.follow-script-active .main-ctnr .favourite-card .avatar {
+    flex:0 0 53px!important; margin:0!important; height:auto!important;
+  }
+  html.follow-script-active .main-ctnr .favourite-card .anchor-info {
+    position:relative!important; top:auto!important; left:auto!important;
+    flex:1!important; width:0!important; min-width:0!important; height:auto!important;
+    display:flex!important; flex-direction:column!important; border:0!important;
+  }
+  html.follow-script-active .main-ctnr .anchor-info :is(.anchor,.title,.live-detail) {
+    box-sizing:border-box!important; width:100%!important; min-width:0!important;
+  }
+  html.follow-script-active .main-ctnr .anchor-info .anchor-name {min-width:0!important;}
+  html.follow-script-active .main-ctnr .anchor-info .top {flex-shrink:0!important;}
+  html.follow-script-active .main-ctnr .anchor-info .live-detail {
+    height:auto!important; aspect-ratio:16/9; flex-shrink:0!important;
+  }
+  html.follow-script-active .main-ctnr .live-detail .content {height:100%!important;}
+  html.follow-script-active .main-ctnr .live-detail .notice {width:100%!important; max-height:100%!important;}
+  html.follow-script-active .main-ctnr .live-detail .block {min-width:0!important; flex:1!important;}
+  html.follow-script-active .main-ctnr .live-detail .views {flex-shrink:0!important;}
+  html.follow-script-active .main-ctnr .spot-mark .isCancel {right:0!important;}
+  html.follow-script-active .main-ctnr .favourite-card:has(> .unlive-anchor) {
+    flex-direction:column!important; justify-content:center!important; align-items:flex-start!important;
+    gap:12px!important;
+  }
+  html.follow-script-active .main-ctnr .favourite-card :is(.surplus-avatars,.unlive-anchor,.all-follow) {
+    position:static!important; inset:auto!important; margin:0!important;
+    box-sizing:border-box!important; max-width:100%!important;
+  }
+  html.follow-script-active .main-ctnr .favourite-card .unlive-anchor {
+    width:100%!important; height:auto!important; overflow-wrap:anywhere!important;
+  }
+  html.follow-script-active .main-ctnr .link-panigation-ctnr {
+    display:flex!important; flex-wrap:wrap!important; justify-content:center!important;
+    align-items:center!important; gap:8px!important; margin:16px 0 0!important;
+  }
+  html.follow-script-active .main-ctnr .link-panigation {
+    display:flex!important; flex-wrap:wrap!important; justify-content:center!important;
+    gap:6px!important;
+  }
+  html.follow-script-active .main-ctnr .panigation {margin:0!important;}
+  html.follow-script-active .main-ctnr .jumping-ctnr {margin:0!important; white-space:nowrap!important;}
+}

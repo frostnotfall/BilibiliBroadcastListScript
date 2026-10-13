@@ -1,0 +1,7 @@
+@media(max-width:1099px) {
+html.homepagescript-active :is(.rendererRoot,.layerWrapperRoot,[class*="_layoutContainerRoot_"],[class*="_layoutContainer_"],.video-list) {box-sizing:border-box!important;min-width:0!important;max-width:100%!important;}
+html.homepagescript-active .items-container {box-sizing:border-box!important;display:grid!important;width:100%!important;padding:8px!important;grid-template-columns:repeat(var(--homepagescript-columns,2),minmax(0,1fr))!important;gap:16px 12px!important;}
+html.homepagescript-active .VideoItem {width:100%!important;min-width:0!important;margin:0!important;}
+html.homepagescript-active .VideoItem-Top {width:100%!important;height:auto!important;aspect-ratio:16/9;}
+html.homepagescript-active .VideoItem-Bottom {height:auto!important;min-height:40px!important;}
+}
