@@ -13,10 +13,12 @@ export function homeStyle(content = '') { return `
       html.homepagescript-active :is(.bili-feed4,.bili-header,.bili-header__banner,.bili-header__bar,.bili-header__channel,.header-channel,.bili-feed4-layout) {
         box-sizing:border-box!important; min-width:0!important; width:100%!important; max-width:100%!important;
       }
-      html.homepagescript-active .bili-header__bar { height:var(--homepagescript-header-height)!important; padding:0 8px!important; }
+      /* 统一横向留白，避免原生搜索框和头像边距叠加；保持顶栏及控件高度。 */
+      html.homepagescript-active .bili-header__bar { height:var(--homepagescript-header-height)!important; padding:0 4px!important; column-gap:4px!important; }
+      html.homepagescript-active .bili-header__bar :is(.left-entry,.menu-left,.menu-center,.center-search-container,.right-entry,.menu-right,.header-avatar-wrap,.header-avatar-unlogin-wrap) { margin-left:0!important; margin-right:0!important; }
       html.homepagescript-active .bili-header__bar :is(.left-entry,.menu-left) { display:flex!important; flex:0 0 auto!important; width:auto!important; min-width:0!important; }
       html.homepagescript-active .bili-header__bar .left-entry-main { display:flex!important; width:auto!important; min-width:0!important; }
-      html.homepagescript-active .bili-header__bar :is(.home-page-entry,.home-page-panel-entry) { flex:none!important; }
+      html.homepagescript-active .bili-header__bar :is(.home-page-entry,.home-page-panel-entry) { flex:none!important; margin-left:0!important; margin-right:0!important; }
       html.homepagescript-active .bili-header__bar :is(.home-page-entry,.home-page-panel-entry) > a { display:flex!important; align-items:center!important; white-space:nowrap!important; }
       html.homepagescript-active .bili-header__bar .menu-center { flex:1!important; min-width:0!important; width:auto!important; }
       html.homepagescript-active .bili-header__bar .menu-right { flex:0 0 auto!important; width:auto!important; min-width:0!important; }
@@ -35,7 +37,10 @@ export function homeStyle(content = '') { return `
       html.homepagescript-active .bili-header__bar .center-search-container { display:block!important; flex:1!important; min-width:0!important; }
       html.homepagescript-active .bili-header__bar .center-search__bar { width:100%!important; min-width:0!important; max-width:none!important; }
       html.homepagescript-active .bili-header__bar .right-entry { flex:0 0 auto!important; width:auto!important; min-width:0!important; }
-      html.homepagescript-active .bili-header__bar .right-entry__main { gap:8px!important; }
+      html.homepagescript-active .bili-header__bar .right-entry__main { gap:4px!important; }
+      /* 原生头像以 50px 容器承载 38px 图像，并额外留出 10px 右边距。仅收掉横向占位。 */
+      html.homepagescript-active .bili-header__bar .header-avatar-wrap .header-avatar-wrap--container { width:38px!important; margin-left:0!important; margin-right:0!important; }
+      html.homepagescript-active .bili-header__bar .header-avatar-unlogin-wrap .header-avatar-unlogin-inner { min-width:36px!important; }
       html.homepagescript-active .bili-header__bar .right-entry__item { min-width:28px!important; margin:0!important; }
       html.homepagescript-active .bili-header__bar .right-entry__item-trigger .trigger-text { display:block!important; font-size:12px!important; white-space:nowrap!important; }
       /* 外框留在原生悬停区域内；只调整坐标和尺寸，保留背景、状态及内容事件。 */

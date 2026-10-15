@@ -1,13 +1,16 @@
 import {urlOf} from '../urls.js';
+import {createHeaderSearchControls} from '../header-search-controls.js';
   // 保留原生搜索处理器生成的地址、关键词、默认词和来源参数。
   export function createHeaderSearchNavigation() {
     const events = new AbortController(), attributes = new Map();
+    const searchControls = createHeaderSearchControls({signal:events.signal});
     const headers = '.bili-header__bar,.mini-header,.international-header,.bili-header-m,.bili-mini-header,.b-header,.link-navbar,.charity-header,.search-fixed-header';
     const components = '#nav-searchform,#nav_searchform,.center-search-container,.nav-search,.nav-search-box,.search-block,.search-bar-ctnr,.search-box,.search-container,.search-panel,.nav-search-panel,.search-input-wrap,.charity-header .search-input';
     const originalOpen = window.open;
     let api = null, restoreIgnore = () => {}, pending = null, stopped = false;
 
     function searchControl(node) {
+      if (node instanceof Element && node.closest('.broadcast-search-close')) return null;
       const component = node instanceof Element ? node.closest(components) : null;
       return component?.closest(headers) ? component : null;
     }
@@ -73,6 +76,7 @@ import {urlOf} from '../urls.js';
     const poll = setInterval(sync, 500);
     return { destroy() {
       stopped = true; pending = null; events.abort(); clearInterval(poll); restoreIgnore();
+      searchControls.destroy();
       if (window.open === open) window.open = originalOpen;
       for (const [element, saved] of attributes) for (const [name, value] of saved) {
         if (element.getAttribute(name) !== '_self') continue;

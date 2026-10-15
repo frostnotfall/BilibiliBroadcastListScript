@@ -21,12 +21,15 @@ export function dynamicContentStyle(scope, prefix = 'feedscript') {
     ${scope} .${prefix}-media :is(img,video,canvas) { max-width:none!important; }
     ${scope} img.${prefix}-media { height:auto!important; }
     ${scope} .${prefix}-image-tools {
-      display:flex!important; flex-wrap:wrap!important; align-items:center!important; gap:8px!important; box-sizing:border-box!important;
+      display:flex!important; flex-wrap:wrap!important; align-items:center!important; justify-content:flex-start!important; gap:4px 12px!important; box-sizing:border-box!important;
       min-width:0!important; white-space:nowrap!important; word-break:normal!important; overflow-wrap:normal!important;
-      width:calc(100% * var(--${prefix}-scale,1))!important; zoom:calc(1 / var(--${prefix}-scale,1))!important;
+      height:auto!important; padding:4px 0!important; font-size:12px!important; line-height:20px!important;
+      width:100%!important; zoom:calc(1 / var(--${prefix}-scale,1))!important;
     }
-    ${scope} .${prefix}-image-tools > * { display:flex!important; align-items:center!important; gap:4px!important; flex:1 1 auto!important; width:auto!important; min-width:max-content!important; }
-    ${scope} .${prefix}-image-tools :is(span,a,button) { white-space:nowrap!important; word-break:normal!important; overflow-wrap:normal!important; min-width:max-content!important; }
+    ${scope} .${prefix}-image-tools > * { display:flex!important; flex-direction:row!important; align-items:center!important; gap:4px!important; flex:0 0 auto!important; width:auto!important; height:auto!important; min-width:max-content!important; min-height:24px!important; margin:0!important; padding:0!important; font-size:inherit!important; line-height:inherit!important; }
+    ${scope} .${prefix}-image-tools * { white-space:nowrap!important; word-break:normal!important; overflow-wrap:normal!important; }
+    ${scope} .${prefix}-image-tools :is(span,a,button,div) { width:auto!important; min-width:max-content!important; font-size:inherit!important; line-height:inherit!important; }
+    ${scope} .${prefix}-image-tools > * > * { flex-shrink:0!important; margin:0!important; }
   `;
 }
 
@@ -75,6 +78,10 @@ export function createDynamicContent({getRoot, prefix = 'feedscript', popup = '[
     const root=getRoot();
     if(stopped || !isActive() || !root) {clear();return;}
     const images=collectMedia(root);
+    // Expanded controls may be siblings of the image or already fit without zoom.
+    for(const tool of root.querySelectorAll('*')) {
+      if(tool.children.length>=2 && !tool.closest(popup) && isTools(tool) && ![...tool.children].some(isTools)) mark(tool,'image-tools');
+    }
     for(const element of images) {
       for(let parent=element.parentElement;parent && parent!==root;parent=parent.parentElement) {
         mark(parent,'fit');if(parent.matches('.bili-dyn-item')) break;
@@ -88,9 +95,6 @@ export function createDynamicContent({getRoot, prefix = 'feedscript', popup = '[
       const scale=Math.min(1,Math.max(0,available)/Math.max(1,natural));
       if(!natural || !scale || scale===1) continue;
       mark(element,'media');
-      for(const tool of element.querySelectorAll('*')) {
-        if(tool.children.length>=2 && isTools(tool) && ![...tool.children].some(isTools)) mark(tool,'image-tools');
-      }
       const values={ [`--${prefix}-media-width`]:`${natural}px`, [`--${prefix}-scale`]:String(scale) };
       mediaStyles.set(element,saveStyles(element,Object.keys(values)));
       for(const [name,value] of Object.entries(values)) element.style.setProperty(name,value,'important');

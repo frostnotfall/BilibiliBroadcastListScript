@@ -11,11 +11,11 @@
  html.homepagescript-active .banner-hover-group-item {flex:0 0 140px!important;width:140px!important;}
  html.homepagescript-active .home-index-wrapper .inner-content-body {display:grid!important;grid-template-columns:1fr!important;gap:8px!important;}
  html.homepagescript-active .inner-content-item-index {width:100%!important;margin:0!important;}
- html.homepagescript-active :is(.home-page-switch-wrapper .inner-content-body,.feenline-vcard-wrapper) {display:grid!important;grid-template-columns:repeat(auto-fit,minmax(min(150px,100%),1fr))!important;gap:16px 12px!important;}
- html.homepagescript-active :is(.home-page-switch-wrapper .inner-content-body,.feenline-vcard-wrapper) > * {box-sizing:border-box!important;min-width:0!important;width:100%!important;max-width:100%!important;margin:0!important;}
+ html.homepagescript-active :is(.home-page-switch-wrapper .inner-content-body:not(:has(.ranking-cell-index)),.feenline-vcard-wrapper) {display:grid!important;grid-template-columns:repeat(auto-fit,minmax(min(150px,100%),1fr))!important;gap:16px 12px!important;}
+ html.homepagescript-active :is(.home-page-switch-wrapper .inner-content-body:not(:has(.ranking-cell-index)),.feenline-vcard-wrapper) > * {box-sizing:border-box!important;min-width:0!important;width:100%!important;max-width:100%!important;margin:0!important;}
  html.homepagescript-active .section-title-v2-wrapper {align-items:flex-start!important;gap:8px!important;flex-wrap:wrap!important;}
  html.homepagescript-active .title-right {min-width:0!important;max-width:100%!important;overflow-x:auto!important;}
- html.homepagescript-active .home-page-switch-wrapper :is(.next-page,.prev-page) {position:static!important;transform:none!important;margin:8px auto!important;}
+ html.homepagescript-active .home-page-switch-wrapper:not(:has(.ranking-cell-index)) :is(.next-page,.prev-page) {position:static!important;transform:none!important;margin:8px auto!important;}
  html.homepagescript-active .content-wrap {display:flex!important;flex-direction:column!important;min-width:0!important;width:100%!important;height:auto!important;}
  html.homepagescript-active .info-wrap {position:relative!important;inset:auto!important;width:100%!important;height:auto!important;min-height:0!important;}
  html.homepagescript-active .info-content-wrap {box-sizing:border-box!important;width:100%!important;height:auto!important;padding:12px!important;}
@@ -48,7 +48,7 @@
  }
  html.homepagescript-active .anime-sidebar[data-open] {transform:none;}
  html.homepagescript-active .anime-sidebar-toggle {
-  position:absolute;right:100%;top:0;width:24px;height:44px;padding:0;border:1px solid var(--line_light,#444);
+  position:absolute;right:100%;top:50%;transform:translateY(-50%);width:24px;height:44px;padding:0;border:1px solid var(--line_light,#444);
   border-radius:6px 0 0 6px;background:var(--bg1_float,#252627);color:var(--text1,#eee);font-size:24px;cursor:pointer;
  }
  html.homepagescript-active .anime-sidebar-toggle:focus-visible {outline:2px solid #00aeec;outline-offset:2px;}
@@ -108,6 +108,13 @@
  html.homepagescript-active .recommend-feed-line-rank-wrapper .subject-titles {position:relative!important;inset:auto!important;width:100%!important;}
  html.homepagescript-active .recommend-feed-line-rank-wrapper .subject-picture {pointer-events:none!important;}
  html.homepagescript-active .recommend-feed-line-rank-wrapper .feed-line-rank-body-inner {flex:none!important;}
+}
+
+/* Change only the column geometry; arrows, colours and transitions are native. */
+@media(max-width:1099px) {
+ html.homepagescript-active .home-page-switch-wrapper.inner-content-wrapper:has(.ranking-cell-index) {padding-left:20px!important;padding-right:20px!important;}
+ html.homepagescript-active [data-anime-ranking-row] > .hot-ranking-cell-wrapper {flex-basis:var(--anime-ranking-card-width)!important;width:var(--anime-ranking-card-width)!important;}
+ html.homepagescript-active [data-anime-ranking-row] > .hot-ranking-cell-wrapper.is-hover-active-play {flex-basis:calc(var(--anime-ranking-card-width) * 2 + 20px)!important;}
 }
 
 /* 宽屏保留原生导航的位置和可访问性。 */

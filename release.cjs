@@ -2,7 +2,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const assert = require('node:assert/strict');
 const {spawnSync} = require('node:child_process');
-const {build, check, releaseVersion} = require('./build.cjs');
+const {build, check, releaseVersion, productionFilename} = require('./build.cjs');
 const root = __dirname;
 
 function ghEnvironment() {
@@ -30,7 +30,7 @@ function notes(version, sha256) {
   const changelog=fs.readFileSync(path.join(root,'CHANGELOG.md'),'utf8');
   const section=changelog.split(new RegExp('^## '+version+'\\r?\\n','m'))[1]?.split(/^## /m)[0].trim();
   assert(section,'Current changelog entry must contain release notes');
-  return section+'\n\n## 文件\n\nBroadcastListScript.js\n\nSHA-256: '+sha256+
+  return section+'\n\n## 文件\n\n'+productionFilename+'\n\nSHA-256: '+sha256+
     '\n\n构建完整性检查通过；真实 PotPlayer 和实时站点行为请按发布验收记录确认。\n';
 }
 async function main(args=process.argv.slice(2)) {
@@ -49,7 +49,7 @@ async function main(args=process.argv.slice(2)) {
   const match=origin.match(/^(?:git@github\.com:|https:\/\/github\.com\/|ssh:\/\/git@github\.com\/)([\w.-]+\/[\w.-]+?)(?:\.git)?$/);
   assert(match,'origin must identify a GitHub repository');
   const repo=match[1];
-  const create=['release','create',version,'BroadcastListScript.js','--repo',repo,
+  const create=['release','create',version,productionFilename,'--repo',repo,
     '--verify-tag','--title',version,'--notes-file',notesFile,'--latest'];
   if (args[0]==='--preview') {
     console.log(JSON.stringify({version,repo,sha256:report.sha256,notesFile,command:['gh',...create]},null,2));

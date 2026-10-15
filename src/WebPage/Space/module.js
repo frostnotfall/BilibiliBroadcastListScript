@@ -145,8 +145,8 @@ export function mount() {
   const isCompletedNavigation = isPageUrl;
 
   // BroadcastListScript 的规则属于安装实例；加载顺序和重新注入都需重新同步。
-  function isNavigationIgnored(url) {
-    return isCompletedNavigation(url);
+  function isNavigationIgnored(url, {explicit = false} = {}) {
+    return !explicit && isCompletedNavigation(url);
   }
 
   function syncPotPlayerIgnore() {

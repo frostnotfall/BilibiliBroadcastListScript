@@ -27,6 +27,7 @@ export function createLiveNavigation({id, signal, isStopped, rememberAttribute, 
     return Boolean(isPageUrl(url) && (link.closest('.bili-header-channel-panel') || link.closest(navigationScope)));
   }
   function searchControl(node) {
+    if (node instanceof Element && node.closest('.broadcast-search-close')) return null;
     const component = node instanceof Element ? node.closest(searchComponents) : null;
     return component?.closest(searchHeaders) ? component : null;
   }
@@ -37,17 +38,17 @@ export function createLiveNavigation({id, signal, isStopped, rememberAttribute, 
       try { video.pause(); } catch { /* A failed preview pause must not block the room handoff. */ }
     }
   }
-  function isNavigationIgnored(url) {
+  function isNavigationIgnored(url, {probe = false, explicit = false} = {}) {
     // Preserve native asynchronous searches and suggestion links, including native default URLs.
     if (pendingSearch?.component.isConnected) return true;
     if (url.hostname === 'live.bilibili.com') {
-      if (isLiveDestination(url)) return true;
+      if (isLiveDestination(url)) return !explicit;
       // ignoreUrl is checked synchronously before the bridge posts a playback message.
       // Pause the native preview here, then return false so room playback stays with the bridge.
-      if (/^\/(?:blanc\/)?\d+\/?$/.test(url.pathname)) pauseHomePreview();
+      if (!probe && /^\/(?:blanc\/)?\d+\/?$/.test(url.pathname)) pauseHomePreview();
       return false;
     }
-    return isCompletedNavigation(url);
+    return !explicit && isCompletedNavigation(url);
   }
   function syncPotPlayerIgnore() {
     const api = window.__potPlayerBilibiliClick;

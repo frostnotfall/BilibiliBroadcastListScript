@@ -18,7 +18,8 @@ import {isPageUrl} from '../urls.js';
         || link.closest('.charity-header') && link.matches('.user') && link.querySelector('.face')) ? link : null;
     }
     function isLink(link) { return Boolean(control(link) && link.hasAttribute('href') && destination(link.href)); }
-    function ignored(url) {
+    function ignored(url, {explicit = false} = {}) {
+      if (explicit) return false;
       return Boolean(active && destination(url.href)) || Array.from(document.querySelectorAll('a[href]'))
         .some(link => isLink(link) && link.href === url.href);
     }

@@ -54,6 +54,12 @@ export function mount() {
       :is(.feedscript-path,.feedscript-main,.feedscript-fit,.feedscript-scroll), .feedscript-main > ${pageChild},
       .feedscript-main :is(${fullWidth},${content}) { box-sizing:border-box!important; min-width:0!important; max-width:100%!important; }
       :is(.feedscript-path,.feedscript-main) { width:100%!important; }
+      /* 固定信息栏必须以视口定位；祖先的变换/隔离会把 fixed 变成随正文滚动。 */
+      .feedscript-viewport {
+        transform:none!important; translate:none!important; rotate:none!important; scale:none!important;
+        filter:none!important; backdrop-filter:none!important; perspective:none!important;
+        contain:none!important; will-change:auto!important; content-visibility:visible!important;
+      }
       .bili-dyn-home--member { padding-inline:0!important; }
       .feedscript-main { margin-inline:0!important; padding:8px!important; }
       .feedscript-main > ${pageChild}, .feedscript-main :is(${fullWidth}) { width:100%!important; margin-left:0!important; margin-right:0!important; }
@@ -207,6 +213,8 @@ export function mount() {
         for (let parent = top.parentElement; parent && !next.has(parent); parent = parent.parentElement) mark(parent,'path');
       }
       for (const target of [main,left]) for (let parent = target?.parentElement; parent && !next.has(parent); parent = parent.parentElement) mark(parent,'path');
+      // 独立遍历信息栏祖先，不能因顶栏/正文已标记同一容器而提前停止。
+      for (let parent = left?.parentElement; parent; parent = parent.parentElement) mark(parent,'viewport');
       for (const [parent,names] of [...next]) if (names.has('feedscript-path')) for (const child of parent.children) {
         if (!next.has(child) && child.matches(extra)) mark(child,'hidden');
       }

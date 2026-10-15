@@ -1,0 +1,49 @@
+:host {
+  all: initial; position: fixed; z-index: 2147483647;
+  --menu-bg: #fff; --menu-text: #18191c; --menu-muted: #74787d;
+  --menu-border: #e3e5e7; --menu-hover: #f1f3f5; --menu-shadow: #0002;
+  color-scheme: light;
+}
+:host([data-theme="dark"]) {
+  --menu-bg: #242628; --menu-text: #f1f2f3; --menu-muted: #a1a6ac;
+  --menu-border: #45484c; --menu-hover: #363a3e; --menu-shadow: #0007;
+  color-scheme: dark;
+}
+[role="menu"] {
+  box-sizing: border-box; display: flex; flex-direction: column;
+  width: max-content; max-width: calc(100vw - 12px);
+  max-height: calc(100vh - 12px); overflow: auto; padding: 4px;
+  border: 1px solid var(--menu-border); border-radius: 7px;
+  background: var(--menu-bg); color: var(--menu-text);
+  box-shadow: 0 4px 16px var(--menu-shadow); font: 12px/1.5 system-ui, sans-serif;
+}
+button {
+  all: unset; box-sizing: border-box; display: flex; align-items: center; gap: 8px;
+  min-height: 27px; padding: 4px 7px; border-radius: 4px; cursor: default;
+}
+button:hover, button:focus-visible { background: var(--menu-hover); }
+button:focus-visible { outline: 1px solid #00aeec; outline-offset: -1px; }
+.icon { display: flex; flex: 0 0 16px; width: 16px; height: 16px; }
+svg, img { display: block; width: 16px; height: 16px; }
+.label { min-width: 0; overflow-wrap: anywhere; }
+.hint { color: var(--menu-muted); font-size: 11px; }
+[role="separator"] { height: 1px; flex-shrink: 0; margin: 4px 5px; background: var(--menu-border); }
+.copy-status { padding: 0 7px; color: var(--menu-muted); font-size: 11px; }
+.copy-status:empty { display: none; }
+dialog {
+  box-sizing: border-box; width: max-content; max-width: calc(100vw - 24px);
+  max-height: calc(100vh - 24px); overflow: auto; padding: 10px 16px;
+  border: 2px solid var(--menu-border); border-radius: 8px;
+  background: var(--menu-bg); color: var(--menu-text);
+  box-shadow: 0 4px 24px var(--menu-shadow); font: 14px/1.6 system-ui, sans-serif;
+}
+dialog::backdrop { background: #0006; }
+dialog p { margin: 0 0 10px; overflow-wrap: anywhere; }
+.dialog-actions { display: flex; justify-content: center; gap: 30px; }
+.dialog-actions button {
+  justify-content: center; width: 90px; min-width: 0; min-height: 28px;
+  border: 2px solid var(--menu-border); cursor: pointer;
+}
+@media (pointer: coarse) {
+  .dialog-actions button { min-height: 44px; }
+}

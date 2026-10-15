@@ -1,0 +1,9 @@
+.broadcast-search-closed {display:none!important;}
+.broadcast-search-header {display:flex!important;align-items:center!important;}
+.broadcast-search-header .title {flex:1 1 auto;min-width:0;}
+.broadcast-search-header .clear {flex:none;}
+/* Account for the icon's 4px inset: clear-to-icon spacing matches the native 16px gutter. */
+.broadcast-search-header .broadcast-search-close {box-sizing:border-box!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;flex:none!important;width:calc(var(--broadcast-search-close-size,12px) + 8px)!important;height:calc(var(--broadcast-search-close-size,12px) + 8px)!important;margin:0 -4px 0 12px!important;padding:0!important;border:0!important;border-radius:4px;background:transparent;color:#9499a0;font-size:var(--broadcast-search-close-size,12px)!important;line-height:1;cursor:pointer;}
+.broadcast-search-close svg {display:block;width:1em!important;height:1em!important;pointer-events:none;}
+.broadcast-search-header .broadcast-search-close:hover {color:#00aeec;background:rgba(148,153,160,.12);}
+.broadcast-search-header .broadcast-search-close:focus-visible {outline:2px solid #00aeec;outline-offset:2px;}

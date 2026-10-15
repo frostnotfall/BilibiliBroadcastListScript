@@ -2,6 +2,7 @@ import {pageId} from '../index.js';
 import {createLiveNavigation} from './navigation.js';
 import {createLiveAvatarLayout} from './avatar-layout.js';
 import {createLiveControls} from './home-controls.js';
+import {createHeaderSearchControls} from '../header-search-controls.js';
 import {liveStyle, liveHeaderStyle} from './style.js';
 export function mountLivePage({id = 'LiveHome', extraStyle = '', contentSelector = '#app main [class~="grid"]', headerOnly = false} = {}) {
   const matchesPage = () => pageId(location.href) === id;
@@ -81,6 +82,7 @@ export function mountLivePage({id = 'LiveHome', extraStyle = '', contentSelector
     observe, schedule});
   const controls = createLiveControls({html, narrow, signal:events.signal, schedule, ownClass, fit,
     includeSidebar:!headerOnly});
+  const searchControls = createHeaderSearchControls({signal:events.signal});
 
   function updateLiveHome() {
     frame = 0;
@@ -145,6 +147,7 @@ export function mountLivePage({id = 'LiveHome', extraStyle = '', contentSelector
     clearInterval(syncTimer); cancelAnimationFrame(frame);
     navigation.destroy();
     controls.destroy();
+    searchControls.destroy();
     avatarLayout.destroy();
     for (const [element,saved] of attributes) for (const name of [...saved.keys()]) restoreAttribute(element,name);
     for (const [element,saved] of properties) for (const name of [...saved.keys()]) restoreProperty(element,name);

@@ -107,6 +107,7 @@
       "/v/popular/history",
       "/v/popular/rank/all",
       "/v/popular/rank/anime",
+      "/v/popular/rank/bangumi",
       "/v/popular/rank/guochuang",
       "/v/popular/rank/documentary",
       "/v/popular/rank/movie",
@@ -173,5 +174,24 @@
       "/blackboard/era/jpyPhRRrMn3fmZ2B.html",
       "/blackboard/era/V9NZUSEYujbTPmT0.html"
     ]
+  },
+  {
+    "id": "Music",
+    "host": "music.bilibili.com",
+    "paths": [
+      "/pc/music-center",
+      "/pc/music-detail",
+      "/pc/rank",
+      "/h5/rank"
+    ]
+  },
+  {
+    "id": "Article",
+    "host": "www.bilibili.com",
+    "paths": [
+      "/read/home",
+      "/opus"
+    ],
+    "pathPattern": "^/(?:opus/\\d+|read/cv\\d+)/?$"
   }
 ]

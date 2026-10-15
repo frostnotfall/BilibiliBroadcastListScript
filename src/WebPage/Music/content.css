@@ -1,0 +1,220 @@
+/* Music uses CSS modules. Match component names, not their generated hashes;
+   keep generic names local to their component, never to the site header. */
+html.musicscript-active { color-scheme:dark!important; }
+
+@media (max-width:1099px) {
+  html.musicscript-active #app {
+    box-sizing:border-box!important; width:100%!important; min-width:0!important; max-width:100%!important;
+  }
+  html.musicscript-active #app > :is([class*="_newMusic_"],[class*="_hotRank_"],[class*="_musician_"],[class*="_originalMusic_"],[class*="_reviews_"],[class*="_moreMusic_"]) {
+    box-sizing:border-box!important; width:100%!important; min-width:0!important; max-width:100%!important;
+    padding:0 8px!important; margin:0 0 24px!important;
+  }
+  html.musicscript-active #app > :is([class*="_newMusic_"],[class*="_hotRank_"],[class*="_musician_"],[class*="_originalMusic_"],[class*="_reviews_"],[class*="_moreMusic_"]) > [class*="_header_"] {
+    width:100%!important; min-width:0!important; height:auto!important; flex-wrap:wrap!important; gap:8px!important; margin-bottom:12px!important;
+  }
+
+  /* The native banner retains its carousel and thumbnail controls. */
+  html.musicscript-active #app > [class*="_bannerTop_"] {
+    width:100%!important; min-width:0!important; height:clamp(130px,20.75vw,228px)!important;
+    padding:0!important; margin:0 0 16px!important;
+  }
+  html.musicscript-active #app > [class*="_bannerTop_"] :is([class*="_slideShow_"],[class*="_containerWraper_"],[class*="_container_"],[class*="_item_"]) {
+    width:100%!important; min-width:0!important; height:100%!important;
+  }
+  html.musicscript-active #app > [class*="_bannerTop_"] [class*="_item_"] > [class*="_img_"] { width:100%!important; height:100%!important; }
+  html.musicscript-active #app > [class*="_bannerTop_"] [class*="_smallPic_"] { width:100%!important; }
+  html.musicscript-active #app > [class*="_bannerTop_"] [class*="_content_"] { box-sizing:border-box!important; width:100%!important; padding:0 8px!important; }
+  html.musicscript-active #app > [class*="_bannerTop_"] [class*="_content_"] > span { min-width:0!important; overflow:hidden!important; text-overflow:ellipsis!important; white-space:nowrap!important; }
+  html.musicscript-active #app > [class*="_nav_"] {
+    box-sizing:border-box!important; width:100%!important; min-width:0!important; height:auto!important;
+    padding:0 8px 6px!important; margin:0 0 20px!important; gap:8px!important; overflow-x:auto!important; overflow-y:hidden!important;
+  }
+  html.musicscript-active #app > [class*="_nav_"] > a { flex:0 0 148px!important; }
+
+  /* Two rows retain the native arrow/counter pagination. The page module
+     updates the column count and slide distance from the real list width. */
+  html.musicscript-active #app > :is([class*="_newMusic_"],[class*="_hotRank_"]) > [class*="_main_"] {
+    display:flex!important; flex-direction:column!important; width:100%!important; min-width:0!important; height:auto!important; gap:12px!important;
+  }
+  html.musicscript-active #app > [class*="_newMusic_"] [class*="_banner_"] {
+    width:100%!important; max-width:480px!important; height:auto!important; aspect-ratio:16/9!important; padding:0!important; margin:0 auto!important;
+  }
+  html.musicscript-active #app > [class*="_newMusic_"] [class*="_banner_"] :is([class*="_slideShow_"],[class*="_containerWraper_"],[class*="_container_"],[class*="_item_"],[class*="_imgContainer_"]) {
+    width:100%!important; height:100%!important; padding:0!important;
+  }
+  html.musicscript-active #app > [class*="_hotRank_"] :is([class*="_banner_"],[class*="_topFive_"]) {
+    box-sizing:border-box!important; width:100%!important; min-width:0!important; height:auto!important; padding:0!important;
+  }
+  html.musicscript-active #app > [class*="_hotRank_"] [class*="_topFive_"] { position:relative!important; }
+  /* Native em sizing shrinks this whole panel with the desktop column width.
+     Fix its base unit; only the metadata column gives up horizontal space. */
+  html.musicscript-active #app > [class*="_hotRank_"] [class*="_topFive_"] { font-size:10px!important; zoom:1!important; transform:none!important; }
+  html.musicscript-active #app [class*="_topFiveHeader_"] { box-sizing:border-box!important; height:auto!important; min-height:48px!important; padding:10px 12px!important; gap:8px!important; }
+  html.musicscript-active #app [class*="_topFiveHeaderLeft_"] { flex:1!important; min-width:0!important; height:auto!important; flex-wrap:wrap!important; gap:6px!important; }
+  html.musicscript-active #app [class*="_topFiveHeaderLeft_"] > img { flex:none!important; width:128px!important; height:auto!important; }
+  html.musicscript-active #app [class*="_topFiveHeaderLeft_"] > span { font-size:12px!important; line-height:18px!important; }
+  html.musicscript-active #app [class*="_topFiveHeaderRight_"] { flex:none!important; width:auto!important; height:auto!important; font-size:12px!important; white-space:nowrap!important; }
+  html.musicscript-active #app [class*="_topFiveBody_"] { width:100%!important; height:auto!important; }
+  html.musicscript-active #app [class*="_topFiveBodyLine_"] { box-sizing:border-box!important; width:100%!important; height:auto!important; min-height:84px!important; padding:8px 12px!important; }
+  html.musicscript-active #app [class*="_topFiveBodyLineContent_"] { width:100%!important; height:auto!important; min-height:64px!important; align-items:center!important; }
+  html.musicscript-active #app [class*="_topFiveBodyLineContent_"] > [class*="_rank_"] { flex:0 0 24px!important; width:24px!important; }
+  html.musicscript-active #app [class*="_topFiveBodyLineContent_"] > [class*="_body_"] { flex:1!important; min-width:0!important; width:auto!important; margin-left:8px!important; }
+  html.musicscript-active #app [class*="_topFiveBodyLineContent_"] [class*="_cover_"] { flex:none!important; width:64px!important; height:64px!important; margin-right:10px!important; }
+  html.musicscript-active #app [class*="_topFiveCenter_"] { flex:1!important; min-width:0!important; width:auto!important; height:auto!important; }
+  html.musicscript-active #app [class*="_topFiveBodyLineContent_"] > [class*="_hot_"] { flex:0 0 76px!important; width:76px!important; }
+  html.musicscript-active #app > :is([class*="_newMusic_"],[class*="_hotRank_"]) > [class*="_main_"] > [class*="_container_"],
+  html.musicscript-active #app > [class*="_reviews_"] > [class*="_container_"] {
+    box-sizing:border-box!important; width:100%!important; min-width:0!important; height:auto!important; margin:0!important;
+    padding:0!important; overflow:hidden!important;
+  }
+  html.musicscript-active #app > :is([class*="_newMusic_"],[class*="_hotRank_"],[class*="_reviews_"]) :is([class*="_first-floor_"],[class*="_second-floor_"]) {
+    display:grid!important; grid-auto-flow:column!important;
+    grid-auto-columns:calc((100% - (var(--musicscript-columns,1) - 1) * 12px) / var(--musicscript-columns,1))!important;
+    width:100%!important; height:auto!important; gap:12px!important; left:0!important;
+    transform:translateX(calc(-1 * var(--musicscript-page,0) * (100% + 12px)))!important;
+    transition:transform .3s ease!important;
+  }
+  html.musicscript-active #app > :is([class*="_newMusic_"],[class*="_hotRank_"],[class*="_reviews_"]) :is([class*="_first-floor_"],[class*="_second-floor_"]) > * {
+    box-sizing:border-box!important; width:100%!important; min-width:0!important; margin:0!important;
+  }
+  html.musicscript-active #app .musicscript-page-out { visibility:hidden!important; pointer-events:none!important; }
+  /* Native width transitions also drive the row offset, keeping the first
+     column's left edge and the last column's right edge fixed in every frame. */
+  html.musicscript-active #app > :is([class*="_newMusic_"],[class*="_hotRank_"]) :is([class*="_first-floor_"],[class*="_second-floor_"]) {
+    grid-auto-columns:max-content!important; transition:transform .3s ease!important;
+    left:var(--musicscript-hover-offset,0px)!important;
+  }
+  html.musicscript-active #app .musicscript-paged :is([class*="_first-floor_"],[class*="_second-floor_"]) > [style*="--musicscript-hover-offset"] {
+    width:var(--musicscript-cover-size)!important; left:0!important;
+    transition:width .3s ease!important;
+  }
+  html.musicscript-active #app .musicscript-paged :is([class*="_first-floor_"],[class*="_second-floor_"]) > [class*="_expandItem_"] {
+    width:var(--musicscript-hover-width)!important;
+    z-index:20!important; background:#111!important;
+  }
+  html.musicscript-active #app .musicscript-paged [class*="_inlineVideoSquare_"] {
+    box-sizing:border-box!important; flex:none!important; min-height:0!important;
+    width:100%!important; height:var(--musicscript-cover-size)!important; padding:0!important;
+  }
+  html.musicscript-active #app .musicscript-paged [class*="_expandItem_"] > [class*="_inlineVideoSquare_"] {
+    height:var(--musicscript-hover-height)!important;
+  }
+  html.musicscript-active #app .musicscript-paged [class*="_inlineVideoSquare_"] > :is([class*="_imgCon_"],[class*="_video_"]) {
+    box-sizing:border-box!important; width:100%!important; height:100%!important; top:0!important; left:0!important;
+  }
+  html.musicscript-active #app .musicscript-paged [class*="_headerControl_"] { display:flex!important; width:auto!important; height:30px!important; gap:8px!important; margin-left:auto!important; }
+  html.musicscript-active #app .musicscript-paged [class*="_headerControl_"] > span:not(.musicscript-page-count) { display:none!important; }
+  html.musicscript-active #app .musicscript-page-count { min-width:42px; text-align:center; font-size:14px; white-space:nowrap; }
+  html.musicscript-active #app [data-musicscript-page-action] {
+    display:flex!important; align-items:center!important; justify-content:center!important; width:28px!important; height:28px!important;
+    color:#e3e5e7!important; background:#ffffff14!important; border-radius:6px!important; opacity:1!important; cursor:pointer!important;
+  }
+  html.musicscript-active #app [data-musicscript-page-action][aria-disabled="true"] { opacity:.35!important; cursor:default!important; }
+  html.musicscript-active #app [data-musicscript-page-action] svg path { fill:currentColor!important; }
+  html.musicscript-active #app [data-musicscript-page-action]:focus-visible { outline:2px solid #00aeec; outline-offset:2px; }
+  /* Every numbered pager belongs immediately above its own list. Featured
+     banners and rank summaries precede the pager in narrow layouts. Flatten
+     only layout wrappers; keep the native nodes and events intact. */
+  html.musicscript-active #app > :is([class*="_newMusic_"],[class*="_hotRank_"],[class*="_reviews_"]) {
+    display:grid!important; grid-template-columns:minmax(0,1fr) auto!important; gap:12px!important;
+  }
+  html.musicscript-active #app > :is([class*="_newMusic_"],[class*="_hotRank_"],[class*="_reviews_"]) > :is([class*="_header_"],[class*="_main_"]) { display:contents!important; }
+  html.musicscript-active #app > :is([class*="_newMusic_"],[class*="_hotRank_"],[class*="_reviews_"]) > [class*="_header_"] > [class*="_title_"] { grid-column:1 / -1!important; grid-row:1!important; }
+  html.musicscript-active #app > :is([class*="_newMusic_"],[class*="_hotRank_"]) > [class*="_main_"] > [class*="_banner_"] { grid-column:1 / -1!important; grid-row:2!important; }
+  html.musicscript-active #app > :is([class*="_newMusic_"],[class*="_hotRank_"],[class*="_reviews_"]) > [class*="_header_"] > [class*="_headerControl_"] { grid-column:2!important; grid-row:3!important; justify-self:end!important; }
+  html.musicscript-active #app > :is([class*="_newMusic_"],[class*="_hotRank_"]) > [class*="_main_"] > [class*="_container_"] { grid-column:1 / -1!important; grid-row:4!important; }
+  html.musicscript-active #app > [class*="_reviews_"] > [class*="_header_"] > [class*="_headerControl_"] { grid-row:2!important; }
+  html.musicscript-active #app > [class*="_reviews_"] > [class*="_container_"] { grid-column:1 / -1!important; grid-row:3!important; }
+  html.musicscript-active #app > [class*="_musician_"] :is([class*="_title_"],[class*="_tabs_"]) { flex-wrap:wrap!important; height:auto!important; gap:8px!important; }
+  html.musicscript-active #app > [class*="_musician_"] [class*="_container_"] { width:100%!important; overflow-x:auto!important; overflow-y:hidden!important; padding-bottom:6px!important; }
+  html.musicscript-active #app > [class*="_musician_"] [class*="_content_"] { display:flex!important; width:max-content!important; transform:none!important; gap:12px!important; }
+  html.musicscript-active #app > [class*="_musician_"] [class*="_content_"] > * { box-sizing:border-box!important; flex:0 0 320px!important; width:320px!important; margin:0!important; transform:none!important; }
+  html.musicscript-active #app > [class*="_musician_"] [class*="_nextBtn_"] { display:none!important; }
+
+  /* Video grids: let native cover ratios and click handlers do their work. */
+  html.musicscript-active #app > [class*="_originalMusic_"] > [class*="_cardList_"],
+  html.musicscript-active #app .appMainList .videoList {
+    display:grid!important; grid-template-columns:repeat(auto-fit,minmax(min(200px,100%),1fr))!important;
+    width:100%!important; gap:16px 12px!important; height:auto!important; overflow:visible!important;
+  }
+  html.musicscript-active #app > [class*="_moreMusic_"] > [class*="_cardList_"] {
+    display:grid!important; grid-template-columns:repeat(auto-fit,minmax(min(300px,100%),1fr))!important; gap:12px!important; width:100%!important;
+  }
+  html.musicscript-active #app > :is([class*="_originalMusic_"],[class*="_moreMusic_"]) > [class*="_cardList_"] > *,
+  html.musicscript-active #app .appMainList .videoList > .card {
+    box-sizing:border-box!important; width:100%!important; min-width:0!important; height:auto!important; margin:0!important;
+  }
+  html.musicscript-active #app :is(.appMain,.appMainList,.appMainList > .container) {
+    box-sizing:border-box!important; width:100%!important; min-width:0!important; max-width:100%!important; margin-left:0!important; margin-right:0!important;
+  }
+  html.musicscript-active #app .appMain { padding:0 8px!important; }
+  html.musicscript-active #app .appMainInfo { box-sizing:border-box!important; width:100%!important; min-width:0!important; height:auto!important; padding:0!important; gap:12px!important; align-items:flex-start!important; }
+  html.musicscript-active #app .appMainInfo > .left { flex:0 0 96px!important; width:96px!important; height:96px!important; }
+  html.musicscript-active #app .appMainInfo > .left .cover { flex:none!important; width:96px!important; min-width:0!important; max-width:100%!important; height:96px!important; margin:0!important; object-fit:cover!important; }
+  html.musicscript-active #app .appMainInfo > .right { flex:1!important; width:auto!important; min-width:0!important; height:auto!important; }
+  html.musicscript-active #app .appMainInfo :is(.titleWrapper,.center,.centerContent,.ups,[class*="_musicInfo_"]) { min-width:0!important; max-width:100%!important; }
+  html.musicscript-active #app .appMainInfo :is(.centerContent,.ups,[class*="_desc_"],.musicInfoBtns) { flex-wrap:wrap!important; height:auto!important; row-gap:6px!important; }
+  html.musicscript-active #app .appMainInfo .fewSinger { flex-shrink:1!important; min-width:0!important; }
+  html.musicscript-active #app .appMainInfo .musicInfoBtns .btn { padding:0 10px!important; white-space:nowrap!important; }
+  html.musicscript-active #app .appMainList .noMore { width:100%!important; height:auto!important; }
+  html.musicscript-active #app .appMainList .bottomBtn { box-sizing:border-box!important; width:min(280px,100%)!important; margin:0 auto!important; }
+
+  /* Rank shell and both tab contents. Background artwork must not set width. */
+  html.musicscript-active #app > :is([class*="_pcBackground_"],[class*="_basic-"]) { width:100%!important; min-width:0!important; max-width:100%!important; }
+  html.musicscript-active #app > :is([class*="_detailArea_"],[class*="_appContent_"]) {
+    box-sizing:border-box!important; width:100%!important; min-width:0!important; margin:0!important; padding:12px 8px!important;
+  }
+  html.musicscript-active #app > [class*="_detailArea_"] { flex-wrap:wrap!important; height:auto!important; gap:16px!important; }
+  html.musicscript-active #app > [class*="_detailArea_"] > [class*="_left_"] { width:auto!important; min-width:0!important; margin:0!important; }
+  html.musicscript-active #app > [class*="_detailArea_"] [class*="_headerPortal_"] { margin-bottom:16px!important; }
+  html.musicscript-active #app > [class*="_detailArea_"] > [class*="_right_"] { width:100%!important; height:auto!important; }
+  html.musicscript-active #app > [class*="_detailArea_"] [class*="_actions_"] { flex-wrap:wrap!important; width:auto!important; min-width:0!important; gap:8px!important; }
+  html.musicscript-active #app > [class*="_detailArea_"] [class*="_cover_"] { width:88px!important; height:88px!important; margin-left:auto!important; }
+  html.musicscript-active #app > [class*="_appContent_"] [class*="_cardList_"] {
+    display:grid!important; grid-template-columns:repeat(auto-fit,minmax(min(360px,100%),1fr))!important; width:100%!important; gap:12px!important;
+  }
+  html.musicscript-active #app > [class*="_appContent_"] [class*="_cardList_"] > [class*="_card_"] {
+    box-sizing:border-box!important; width:100%!important; min-width:0!important; height:auto!important; margin:0!important; padding:10px!important;
+  }
+  html.musicscript-active #app [class*="_cardList_"] > [class*="_card_"] > [class*="_right_"] { flex:1!important; min-width:0!important; width:auto!important; }
+  html.musicscript-active #app [class*="_cardList_"] > [class*="_card_"] :is([class*="_musicInfo_"],[class*="_info_"],[class*="_top_"],[class*="_left_"],[class*="_vidoInfo_"]) { min-width:0!important; }
+  html.musicscript-active #app [class*="_vidoInfo_"] > [class*="_cover_"] { flex:0 0 112px!important; width:112px!important; height:63px!important; }
+  html.musicscript-active #app [class*="_vidoInfo_"] [class*="_coverImg_"] { width:100%!important; height:100%!important; object-fit:cover!important; }
+  html.musicscript-active #app [class*="_cardContainer_"] { box-sizing:border-box!important; flex-direction:column!important; width:100%!important; height:auto!important; padding:12px 8px!important; gap:12px!important; }
+  html.musicscript-active #app [class*="_cardContainer_"] [class*="_cardLeft_"] { width:100%!important; height:auto!important; }
+  html.musicscript-active #app [class*="_cardContainer_"] [class*="_musicSection_"] { flex:1!important; flex-direction:row!important; width:auto!important; height:auto!important; gap:12px!important; }
+  html.musicscript-active #app [class*="_cardContainer_"] [class*="_musicMeta_"] { flex:1!important; width:auto!important; min-width:0!important; height:auto!important; }
+  html.musicscript-active #app [class*="_cardContainer_"] [class*="_divider_"] { display:none!important; }
+  html.musicscript-active #app [class*="_cardContainer_"] [class*="_videoList_"] { flex:none!important; width:100%!important; min-width:0!important; height:auto!important; overflow-x:auto!important; overflow-y:hidden!important; padding-bottom:6px!important; }
+  html.musicscript-active #app [class*="_bottomTermSelect_"] { box-sizing:border-box!important; width:100%!important; max-width:100%!important; min-width:0!important; }
+  html.musicscript-active #app [class*="_scrollWrapper_"] { width:100%!important; min-width:0!important; }
+  html.musicscript-active #app [class*="_scrollContainer_"] { min-width:0!important; overflow-x:auto!important; }
+  html.musicscript-active #app [class*="_floatBox_"] { right:8px!important; }
+}
+
+@media (prefers-reduced-motion:reduce) {
+  /* Preserve native card expansion even when the host reports reduced motion.
+     Its width drives the anchored row offset; only pagination skips sliding. */
+  html.musicscript-active #app .musicscript-paged :is([class*="_first-floor_"],[class*="_second-floor_"]) { transition:none!important; }
+}
+
+@media (max-width:399px) {
+  html.musicscript-active #app [class*="_topFiveHeaderLeft_"] > span { flex:1 0 100%!important; width:100%!important; min-width:0!important; }
+  html.musicscript-active #app .appMainInfo { flex-wrap:wrap!important; }
+  html.musicscript-active #app .appMainInfo > .right { flex-basis:100%!important; }
+  html.musicscript-active #app > [class*="_detailArea_"] [class*="_cover_"] { display:none!important; }
+  html.musicscript-active #app > [class*="_musician_"] [class*="_content_"] > * { flex-basis:280px!important; width:280px!important; padding:12px!important; }
+  html.musicscript-active #app [class*="_cardList_"] > [class*="_card_"] [class*="_musicInfo_"] {
+    display:grid!important; position:relative!important; grid-template-columns:90px minmax(0,1fr)!important;
+    grid-template-rows:auto auto!important; gap:4px 10px!important; height:auto!important; min-height:90px!important;
+  }
+  html.musicscript-active #app [class*="_musicInfo_"] > svg { grid-column:1!important; grid-row:1 / 3!important; margin:0!important; }
+  html.musicscript-active #app [class*="_musicInfo_"] > [class*="_cover_"] { left:0!important; top:0!important; }
+  html.musicscript-active #app [class*="_musicInfo_"] > [class*="_info_"] { grid-column:2!important; grid-row:1!important; width:auto!important; height:auto!important; margin:0!important; }
+  html.musicscript-active #app [class*="_musicInfo_"] > [class*="_otherInfo_"] { grid-column:2!important; grid-row:2!important; width:auto!important; }
+  html.musicscript-active #app [class*="_cardList_"] > [class*="_card_"] [class*="_top_"] { flex-direction:column!important; align-items:flex-start!important; height:auto!important; }
+  html.musicscript-active #app [class*="_cardList_"] > [class*="_card_"] [class*="_top_"] > [class*="_left_"] { flex:none!important; width:100%!important; }
+  html.musicscript-active #app [class*="_cardList_"] > [class*="_card_"] [class*="_otherInfo_"] { height:auto!important; margin-top:4px!important; }
+  html.musicscript-active #app [class*="_cardList_"] > [class*="_card_"] [class*="_heat_"] { margin-bottom:0!important; }
+}

@@ -14,4 +14,6 @@ import * as PGC from './WebPage/PGC/module.js';
 import * as Charity from './WebPage/Charity/module.js';
 import * as UHD from './WebPage/UHD/module.js';
 import * as Podcast from './WebPage/Podcast/module.js';
-startDispatcher({HomePage,LiveHome,LiveArea,Feed,History,Watchlater,Follow,Space,Search,Popular,Anime,PGC,Charity,UHD,Podcast});
+import * as Music from './WebPage/Music/module.js';
+import * as Article from './WebPage/Article/module.js';
+startDispatcher({HomePage,LiveHome,LiveArea,Feed,History,Watchlater,Follow,Space,Search,Popular,Anime,PGC,Charity,UHD,Podcast,Music,Article});

@@ -52,8 +52,11 @@ export function mount() {
       html.homepagescript-active .rank-item { box-sizing:border-box!important; width:100%!important; min-width:0!important; margin:0!important; }
       html.homepagescript-active .rank-item .content { display:flex!important; flex-direction:column!important; width:100%!important; min-width:0!important; }
       html.homepagescript-active .rank-item :is(.img,.info,.detail,.detail-state) { box-sizing:border-box!important; width:100%!important; min-width:0!important; height:auto!important; margin:0!important; }
-      html.homepagescript-active .rank-item .img { aspect-ratio:16/9; }
-      html.homepagescript-active .rank-item .img :is(a,img) { display:block; width:100%!important; height:100%!important; }
+      html.homepagescript-active .rank-list:not(.pgc-list) .rank-item .img { aspect-ratio:16/9; }
+      html.homepagescript-active .rank-item .img :is(a,img) { display:block; width:100%!important; }
+      html.homepagescript-active .rank-list:not(.pgc-list) .rank-item .img :is(a,img) { height:100%!important; }
+      /* 官方 pgc-list 使用竖封面；解除固定高度，沿用原生缩略图比例。 */
+      html.homepagescript-active .rank-list.pgc-list .rank-item .img :is(a,img) { height:auto!important; }
       html.homepagescript-active .rank-item .info { padding:8px 0 0!important; }
       html.homepagescript-active .rank-item .title { width:100%!important; }
       html.homepagescript-active .rank-item .detail-state { display:flex!important; flex-wrap:wrap!important; gap:4px 10px!important; }
@@ -182,8 +185,8 @@ export function mount() {
   const isCompletedNavigation = isPageUrl;
 
   // BroadcastListScript 的规则属于安装实例；加载顺序和重新注入都需重新同步。
-  function isNavigationIgnored(url) {
-    return isCompletedNavigation(url);
+  function isNavigationIgnored(url, {explicit = false} = {}) {
+    return !explicit && isCompletedNavigation(url);
   }
 
   function syncPotPlayerIgnore() {

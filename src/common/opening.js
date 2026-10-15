@@ -1,4 +1,5 @@
-import {urlOf, classifyUrl, isMediaUrl, isPageUrl, isShortUrl} from './urls.js';
+import {urlOf, classifyUrl, isMediaUrl, isPlayitemUrl, isPlaylistUrl, isPlayerUrl, isPageUrl, isShortUrl, playerCommandUri} from './urls.js';
+import {createMediaMenu} from './media-menu.js';
 import {version} from './version.js';
 
 const resultType = 'potPlayer.short-link.result';
@@ -23,9 +24,9 @@ export function createPageOpening({beforeMedia = () => {}, ignoreClick = () => f
   const pendingNodes = new Set(), watchedTags = new Set();
   let stopped = false, click = null, timer = 0, frame = 0;
   const normalized = value => urlOf(value)?.href || '';
-  function isIgnored(value) {
+  function isIgnored(value, probe = false, explicit = false) {
     for (const rule of ignored) {
-      try { if (rule(new URL(value))) return true; }
+      try { if (rule(new URL(value), {probe, explicit})) return true; }
       catch (error) { console.warn('[BroadcastListScript] ignoreUrl failed', error); }
     }
     return false;
@@ -78,13 +79,16 @@ export function createPageOpening({beforeMedia = () => {}, ignoreClick = () => f
     });
     return entry.promise;
   }
-  function send(value, state) {
-    if (stopped || !isMediaUrl(value)) return false;
+  function send(value, state, {playlist = false, explicit = false} = {}) {
+    if (stopped || !(playlist ? isPlayerUrl(value) : isMediaUrl(value))) return false;
     if (state.sent.has(value)) return true;
     if (typeof window.chrome?.webview?.postMessage !== 'function') return false;
-    if (isIgnored(value)) return false;
+    if (isIgnored(value, false, explicit)) return false;
     try {
       beforeMedia(new URL(value));
+      // The host contract is type + url only, with no command-line options or
+      // capability acknowledgement. New processes use the registered URI
+      // protocol instead of adding unsupported options to this message.
       window.chrome.webview.postMessage({type:'potPlayer.video-click', url:value});
       state.sent.add(value);
       return true;
@@ -92,11 +96,20 @@ export function createPageOpening({beforeMedia = () => {}, ignoreClick = () => f
   }
   function dispatch(value, state) {
     if (stopped) return false;
+    if (state.explicit && isPlayerUrl(value)) return send(value, state, {playlist:true, explicit:true});
+    if (isPlayitemUrl(value)) return send(value, state);
     if (isPageUrl(value)) {
       if (!state.sent.has(value)) { state.sent.add(value); location.assign(value); }
       return true;
     }
-    return send(value, state);
+    // Native "play all" buttons open playlist URLs without an anchor. Keep
+    // that media intent; an ordinary link to an unadapted page asks to leave.
+    if (state.nativeMedia && isMediaUrl(value)) return send(value, state, {playlist:true});
+    if (typeof window.chrome?.webview?.postMessage === 'function' && !isIgnored(value, true)) {
+      if (state.sent.has(value)) return true;
+      if (mediaMenu.confirmExternal(value)) { state.sent.add(value); return true; }
+    }
+    return false;
   }
   function handle(value, state, fallback) {
     const url = normalized(value);
@@ -112,6 +125,61 @@ export function createPageOpening({beforeMedia = () => {}, ignoreClick = () => f
     return true;
   }
   function clearClick() { clearTimeout(timer); timer = 0; click = null; }
+  function linkTarget(event) {
+    if (ignoreClick(event)) return null;
+    const anchor = event.composedPath().find(node => node.matches?.('a[href]')) || event.target?.closest?.('a[href]');
+    if (!anchor || anchor.hasAttribute('download')) return null;
+    const url = normalized(anchor.getAttribute('href'));
+    if (!url) return null;
+    const target = anchor.getAttribute('target') || document.querySelector('base[target]')?.getAttribute('target') || '_self';
+    return {anchor, url, fallback:() => target === '_self' ? location.assign(url) : Reflect.apply(originalOpen, window, [url, target])};
+  }
+  function playerCommand({url, fallback}, command, target, playback = false) {
+    clearClick();
+    function launch(value) {
+      const uri = playerCommandUri(value, command);
+      if (!uri || stopped || isIgnored(value, !playback, true)) return false;
+      try {
+        if (playback) beforeMedia(new URL(value));
+        // VOD/live hosts can claim _self media navigation. Player commands use
+        // the native new-window path; /current directs playlist edits back to
+        // the running player.
+        Reflect.apply(originalOpen, window, [uri, target]);
+        return true;
+      } catch { return false; }
+    }
+    const cached = shortLinks.get(url)?.url;
+    if (isShortUrl(url) && !cached) resolveUrl(url).then(value => {if (!stopped && !launch(value)) fallback();});
+    else if (!launch(cached || url)) fallback();
+  }
+  const mediaMenu = createMediaMenu({
+    getTarget(event) {
+      if (typeof window.chrome?.webview?.postMessage !== 'function') return null;
+      const target = linkTarget(event);
+      if (!target || isIgnored(target.url, true, true)) return null;
+      const resolved = shortLinks.get(target.url)?.url || target.url;
+      if (isIgnored(resolved, true, true)) return null;
+      const kind = isPlayitemUrl(resolved) || isShortUrl(resolved) ? 'media' : isPageUrl(resolved) ? 'page' : 'native';
+      return {...target, kind, playlist:isPlaylistUrl(resolved)};
+    },
+    openPage({url, fallback}) {
+      clearClick();
+      if (!handle(url, {sent:new Set(), pending:new Set()}, fallback)) fallback();
+    },
+    play({url, fallback}) {
+      clearClick();
+      if (!handle(url, {sent:new Set(), pending:new Set(), explicit:true}, fallback)) fallback();
+    },
+    openNew:target => playerCommand(target, 'new', '_blank', true),
+    addNext:target => playerCommand(target, 'insert', '_blank'),
+    addLast:target => playerCommand(target, 'add', '_blank'),
+    openExternal({url}) {
+      clearClick();
+      // Use the native new-window path, like a normal middle click. Do not run
+      // the click-scoped window.open wrapper, which would send media to play.
+      Reflect.apply(originalOpen, window, [url, '_blank', 'noopener']);
+    },
+  });
   function onClick(event) {
     if (stopped || !event.isTrusted || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey || event.defaultPrevented) return;
     clearClick();
@@ -120,6 +188,7 @@ export function createPageOpening({beforeMedia = () => {}, ignoreClick = () => f
     const state = {sent:new Set(), pending:new Set()};
     click = state; timer = setTimeout(clearClick, 0);
     const anchor = event.composedPath().find(node => node.matches?.('a[href]')) || event.target?.closest?.('a[href]');
+    state.nativeMedia = !anchor;
     if (!anchor || anchor.hasAttribute('download')) { if (anchor) clearClick(); return; }
     const url = normalized(anchor.getAttribute('href'));
     if (!url) return;
@@ -131,6 +200,16 @@ export function createPageOpening({beforeMedia = () => {}, ignoreClick = () => f
   function open(...args) {
     if (!stopped && click && handle(args[0], click, () => Reflect.apply(originalOpen, this, args))) return null;
     return Reflect.apply(originalOpen, this, args);
+  }
+  function onAuxClick(event) {
+    if (stopped || !event.isTrusted || event.button !== 1 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey || event.defaultPrevented) return;
+    if (typeof window.chrome?.webview?.postMessage !== 'function') return;
+    const target = linkTarget(event);
+    if (!target) return;
+    const resolved = shortLinks.get(target.url)?.url || target.url;
+    if (!isPageUrl(resolved) || isPlayitemUrl(resolved) || isIgnored(resolved, true, true)) return;
+    event.preventDefault(); event.stopImmediatePropagation(); clearClick();
+    Reflect.apply(originalOpen, window, [target.url, '_blank', 'noopener']);
   }
   function scan(node) {
     if (stopped || !node.querySelectorAll) return;
@@ -173,14 +252,15 @@ export function createPageOpening({beforeMedia = () => {}, ignoreClick = () => f
     ignoreUrl(predicate) {
       if (typeof predicate !== 'function') throw new TypeError('ignoreUrl requires a predicate');
       if (stopped) return () => {};
-      const rule = url => predicate(url); ignored.add(rule);
+      // Menu eligibility probes must leave playback side effects for the action.
+      const rule = (url, context) => predicate(url, context); ignored.add(rule);
       return () => ignored.delete(rule);
     },
     // Compatibility API sends media only; page navigation is an explicit click action.
     async open(value) { return send(await resolveUrl(value), click || {sent:new Set(), pending:new Set()}); },
     destroy() {
       if (stopped) return;
-      stopped = true; events.abort(); clearClick(); cancelAnimationFrame(frame);
+      stopped = true; events.abort(); mediaMenu.destroy(); clearClick(); cancelAnimationFrame(frame);
       for (const observer of observers.values()) observer.disconnect();
       observers.clear(); pendingNodes.clear(); ignored.clear(); watchedTags.clear();
       for (const entry of shortLinks.values()) entry.cancel();
@@ -193,6 +273,7 @@ export function createPageOpening({beforeMedia = () => {}, ignoreClick = () => f
   window.open = open;
   // Window capture handlers in page modules get to preserve native search first.
   document.addEventListener('click', onClick, {capture:true, passive:false, signal:events.signal});
+  document.addEventListener('auxclick', onAuxClick, {capture:true, passive:false, signal:events.signal});
   document.addEventListener('DOMContentLoaded', () => schedule(document), {signal:events.signal});
   observe(document); schedule(document);
   return controller;

@@ -1,13 +1,15 @@
 import {mountCardHoverLayout} from '../../common/card-hover-layout.js';
+import {mountRankingLayout} from './ranking-layout.js';
 // Page-local controls. Keep native cards, links, previews and handlers in place.
 export function mountAnimeContent() {
   const narrow = matchMedia('(max-width:1099px)');
   const events = new AbortController();
   const properties = new Map(), attributes = new Map(), rails = new Map(), timelines = new Map(), filters = new Map();
   const cards = mountCardHoverLayout({
-    rowSelector:'.feenline-vcard-wrapper,.home-page-switch-wrapper .inner-content-body:has(> .hot-ranking-cell-wrapper),.timeline-common-content-list-container:not(.is-empty)',
+    rowSelector:'.feenline-vcard-wrapper,.home-page-switch-wrapper .inner-content-body:has(> .hot-ranking-cell-wrapper):not(:has(.ranking-cell-index)),.timeline-common-content-list-container:not(.is-empty)',
     cardSelector:':scope > .hot-ranking-cell-wrapper,:scope > .timeline-weekday-item',
   });
+  const rankings = mountRankingLayout();
   let frame = 0, stopped = false;
   function property(element, name, value) {
     let saved = properties.get(element);
@@ -127,6 +129,7 @@ export function mountAnimeContent() {
   update();
   return {destroy() {
     cards.destroy();
+    rankings.destroy();
     stopped = true;events.abort();mutations.disconnect();resize.disconnect();cancelAnimationFrame(frame);
     for (const rail of rails.values()) {
       rail.panel.inert = rail.originalInert;
