@@ -11,11 +11,8 @@
  html.homepagescript-active .banner-hover-group-item {flex:0 0 140px!important;width:140px!important;}
  html.homepagescript-active .home-index-wrapper .inner-content-body {display:grid!important;grid-template-columns:1fr!important;gap:8px!important;}
  html.homepagescript-active .inner-content-item-index {width:100%!important;margin:0!important;}
- html.homepagescript-active :is(.home-page-switch-wrapper .inner-content-body:not(:has(.ranking-cell-index)),.feenline-vcard-wrapper) {display:grid!important;grid-template-columns:repeat(auto-fit,minmax(min(150px,100%),1fr))!important;gap:16px 12px!important;}
- html.homepagescript-active :is(.home-page-switch-wrapper .inner-content-body:not(:has(.ranking-cell-index)),.feenline-vcard-wrapper) > * {box-sizing:border-box!important;min-width:0!important;width:100%!important;max-width:100%!important;margin:0!important;}
  html.homepagescript-active .section-title-v2-wrapper {align-items:flex-start!important;gap:8px!important;flex-wrap:wrap!important;}
  html.homepagescript-active .title-right {min-width:0!important;max-width:100%!important;overflow-x:auto!important;}
- html.homepagescript-active .home-page-switch-wrapper:not(:has(.ranking-cell-index)) :is(.next-page,.prev-page) {position:static!important;transform:none!important;margin:8px auto!important;}
  html.homepagescript-active .content-wrap {display:flex!important;flex-direction:column!important;min-width:0!important;width:100%!important;height:auto!important;}
  html.homepagescript-active .info-wrap {position:relative!important;inset:auto!important;width:100%!important;height:auto!important;min-height:0!important;}
  html.homepagescript-active .info-content-wrap {box-sizing:border-box!important;width:100%!important;height:auto!important;padding:12px!important;}
@@ -95,26 +92,27 @@
  html.homepagescript-active .home-index-wrapper .vertical-items-group {height:auto!important;gap:8px!important;margin-right:16px!important;}
  html.homepagescript-active .home-index-wrapper .index-background-icon {pointer-events:none!important;}
  html.homepagescript-active .section-title-v2-wrapper .title-left {min-width:0!important;max-width:100%!important;flex-wrap:wrap!important;gap:8px!important;}
- html.homepagescript-active .section-title-v2-wrapper .week-day-wrapper {max-width:100%!important;margin-left:0!important;overflow-x:auto!important;}
- html.homepagescript-active .section-title-v2-wrapper .week-day-item {flex-shrink:0!important;}
- html.homepagescript-active .time-line-body .timeline-common-content {box-sizing:border-box!important;width:100%!important;min-width:0!important;margin:0!important;padding:8px!important;display:grid!important;grid-template-columns:1fr 1fr!important;}
- html.homepagescript-active .time-line-body .timeline-common-content-list-container {grid-column:1/-1!important;}
+ /* The timeline head has its own native 1020px width; it is not an
+    inner-content-wrapper. Constrain it before laying out its date controls. */
+ html.homepagescript-active .time-line-wrapper .time-line-head {box-sizing:border-box!important;width:100%!important;max-width:100%!important;min-width:0!important;margin:0!important;padding:0 8px!important;}
+ html.homepagescript-active .section-title-v2-wrapper .title-left:has(.week-day-wrapper) {width:100%!important;}
+ /* Vue wraps the date list in an unclassed flex item. Give that item its
+    own line and a shrinkable width, including when the list is a direct child. */
+ html.homepagescript-active .section-title-v2-wrapper .title-left > :is(.week-day-wrapper,:has(> .week-day-wrapper)) {box-sizing:border-box!important;flex:0 0 100%!important;width:100%!important;min-width:0!important;max-width:100%!important;}
+ html.homepagescript-active .section-title-v2-wrapper .week-day-wrapper {
+  box-sizing:border-box!important;display:grid!important;grid-template-columns:minmax(72px,1.6fr) repeat(7,minmax(0,1fr))!important;
+  width:100%!important;max-width:100%!important;min-width:0!important;margin:0!important;padding:2px!important;overflow:visible!important;
+ }
+ html.homepagescript-active .section-title-v2-wrapper .week-day-item {box-sizing:border-box!important;min-width:0!important;padding:6px 4px!important;white-space:nowrap!important;text-align:center!important;}
+ html.homepagescript-active .time-line-body .timeline-common-content {box-sizing:border-box!important;width:100%!important;min-width:0!important;margin:0!important;padding:8px!important;}
  html.homepagescript-active .time-line-wrapper .time-line-body {overflow:visible!important;}
  html.homepagescript-active .time-line-body .timeline-weekday-item {min-width:0!important;width:100%!important;}
  /* 日期标签伸出卡片顶部，展开时一并遮住相邻卡片的标签。 */
  html.homepagescript-active .time-line-body .timeline-weekday-item.is-hover-active::before {content:'';position:absolute;inset:-12px 0 0;background:var(--bg1,#171819);z-index:-1;}
  html.homepagescript-active .time-line-body :is(.timeline-special-content-left,.timeline-special-content-right) {display:none!important;}
- html.homepagescript-active .time-line-body :is(.next-page,.prev-page) {position:static!important;transform:none!important;margin:8px auto!important;}
  html.homepagescript-active .recommend-feed-line-rank-wrapper .subject-titles {position:relative!important;inset:auto!important;width:100%!important;}
  html.homepagescript-active .recommend-feed-line-rank-wrapper .subject-picture {pointer-events:none!important;}
  html.homepagescript-active .recommend-feed-line-rank-wrapper .feed-line-rank-body-inner {flex:none!important;}
-}
-
-/* Change only the column geometry; arrows, colours and transitions are native. */
-@media(max-width:1099px) {
- html.homepagescript-active .home-page-switch-wrapper.inner-content-wrapper:has(.ranking-cell-index) {padding-left:20px!important;padding-right:20px!important;}
- html.homepagescript-active [data-anime-ranking-row] > .hot-ranking-cell-wrapper {flex-basis:var(--anime-ranking-card-width)!important;width:var(--anime-ranking-card-width)!important;}
- html.homepagescript-active [data-anime-ranking-row] > .hot-ranking-cell-wrapper.is-hover-active-play {flex-basis:calc(var(--anime-ranking-card-width) * 2 + 20px)!important;}
 }
 
 /* 宽屏保留原生导航的位置和可访问性。 */
@@ -170,5 +168,6 @@
 }
 
 @media(max-width:479px) {
+ html.homepagescript-active .section-title-v2-wrapper .week-day-wrapper {grid-template-columns:repeat(4,minmax(0,1fr))!important;}
  html.homepagescript-active .new-hot-wrap .carousel-wrap {grid-template-columns:repeat(2,minmax(0,1fr))!important;}
 }

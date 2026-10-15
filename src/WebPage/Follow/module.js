@@ -44,7 +44,9 @@ export function mount() {
         const parent = branch.parentElement;
         keep.add(parent);
         for (const sibling of parent.children) {
-          if (sibling === branch || ['broadcast-navigation','live-home-more-menu'].includes(sibling.id)) continue;
+          // Shared overlays live beside the page root. Hiding a modal's shadow
+          // host leaves showModal() active and makes the whole page inert.
+          if (sibling === branch || ['broadcast-navigation','broadcast-media-menu','broadcast-external-dialog','live-home-more-menu'].includes(sibling.id)) continue;
           if (sibling.matches('.link-navbar') || sibling.querySelector('.link-navbar')) continue;
           hide.add(sibling);
         }

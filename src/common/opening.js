@@ -17,7 +17,7 @@ export function reportResolverFrame() {
 
 // Called explicitly by the selected page's early hook; importing this module
 // never installs events. A single instance owns the page's playback/navigation.
-export function createPageOpening({beforeMedia = () => {}, ignoreClick = () => false, timeout = 8000} = {}) {
+export function createPageOpening({beforeMedia = () => {}, ignoreClick = () => false, resolveLink = () => null, timeout = 8000} = {}) {
   const originalOpen = window.open;
   const events = new AbortController();
   const shortLinks = new Map(), ignored = new Set(), observers = new Map();
@@ -128,11 +128,16 @@ export function createPageOpening({beforeMedia = () => {}, ignoreClick = () => f
   function linkTarget(event) {
     if (ignoreClick(event)) return null;
     const anchor = event.composedPath().find(node => node.matches?.('a[href]')) || event.target?.closest?.('a[href]');
-    if (!anchor || anchor.hasAttribute('download')) return null;
-    const url = normalized(anchor.getAttribute('href'));
+    if (anchor?.hasAttribute('download')) return null;
+    // Some page components use native click handlers without an href. Let the
+    // page read their destination without running that handler on right click.
+    const resolved = anchor ? null : resolveLink(event);
+    const owner = anchor || resolved?.anchor;
+    if (!owner || owner.hasAttribute('download')) return null;
+    const url = normalized(anchor ? anchor.getAttribute('href') : resolved.url);
     if (!url) return null;
-    const target = anchor.getAttribute('target') || document.querySelector('base[target]')?.getAttribute('target') || '_self';
-    return {anchor, url, fallback:() => target === '_self' ? location.assign(url) : Reflect.apply(originalOpen, window, [url, target])};
+    const target = owner.getAttribute('target') || document.querySelector('base[target]')?.getAttribute('target') || '_self';
+    return {anchor:owner, url, fallback:() => target === '_self' ? location.assign(url) : Reflect.apply(originalOpen, window, [url, target])};
   }
   function playerCommand({url, fallback}, command, target, playback = false) {
     clearClick();

@@ -1,3 +1,5 @@
+import {expandedRowOffset} from '../../common/card-hover-motion.js';
+
 const sections = '#app > [class*="_newMusic_"],#app > [class*="_hotRank_"],#app > [class*="_reviews_"]';
 const floors = '[class*="_first-floor_"],[class*="_second-floor_"]';
 const actionAttribute = 'data-musicscript-page-action';
@@ -88,8 +90,9 @@ export function mountMusicPagination() {
       // Measure relative to the row so its previous shift cancels out. This
       // includes neighbouring cards that may still be finishing a transition.
       // Width is the single animation source: the right edge never jumps first.
-      offset = Math.min(0, (index + 1) * size + index * 12
-        - (card.getBoundingClientRect().right - row.getBoundingClientRect().left));
+      offset = expandedRowOffset({rowWidth:state.container.clientWidth,cardWidth:size,
+        expandedWidth:card.getBoundingClientRect().right - row.getBoundingClientRect().left - index * (size + 12),
+        index:index % state.columns,gap:12});
     }
     setOffset(state, row, `${offset}px`);
     const size = parseFloat(state.section.style.getPropertyValue('--musicscript-cover-size'));

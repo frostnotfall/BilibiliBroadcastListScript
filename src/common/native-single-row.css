@@ -1,0 +1,26 @@
+@media(max-width:1099px) {
+ html.homepagescript-active [data-native-single-row-container] {position:relative!important;display:block!important;min-width:0!important;}
+ html.homepagescript-active [data-native-single-row-container] > :is(.prev-page,.next-page) {position:absolute!important;top:50%!important;margin:-24px 0 0!important;z-index:30!important;width:48px!important;min-width:48px!important;max-width:48px!important;height:48px!important;min-height:48px!important;max-height:48px!important;flex:none!important;}
+ html.homepagescript-active [data-native-single-row-container] > .prev-page {left:0!important;right:auto!important;}
+ html.homepagescript-active [data-native-single-row-container] > .next-page {right:0!important;left:auto!important;}
+ html.homepagescript-active [data-native-single-row]:is(.inner-content-body,.timeline-common-content-list-container) {
+  position:relative!important;display:flex!important;flex-flow:row nowrap!important;justify-content:flex-start!important;
+  gap:0 var(--single-row-gap)!important;width:100%!important;min-width:0!important;overflow:hidden!important;
+ }
+ /* Native date badges extend 12px above the card. Keep them inside the
+    vertical clipping area while the row still clips horizontal expansion. */
+ html.homepagescript-active [data-native-single-row].timeline-common-content-list-container {padding-top:12px!important;}
+ html.homepagescript-active [data-native-single-row]:is(.inner-content-body,.timeline-common-content-list-container) > :is(.hot-ranking-cell-wrapper,.horizontal-cell-wrapper,.timeline-weekday-item) {
+  box-sizing:border-box!important;position:relative!important;left:var(--single-row-hover-offset,0px)!important;
+  flex:0 0 var(--single-row-card-width)!important;width:var(--single-row-card-width)!important;max-width:none!important;min-width:0!important;margin:0!important;
+ }
+ html.homepagescript-active [data-native-single-row]:is(.inner-content-body,.timeline-common-content-list-container) > :is(.is-hover-active-play,.is-hover-active) {
+  flex-basis:var(--single-row-expanded-width)!important;width:var(--single-row-expanded-width)!important;z-index:20!important;
+ }
+ html.homepagescript-active [data-native-single-row]:is(.inner-content-body,.timeline-common-content-list-container) > :is(.hot-ranking-cell-wrapper,.timeline-weekday-item) :is(.ranking-ratio-item-container,.img-cover-ratio-item-container) {height:var(--single-row-cover-height)!important;}
+ html.homepagescript-active [data-native-single-row]:is(.inner-content-body,.timeline-common-content-list-container) > .horizontal-cell-wrapper .horizontal-ratio-item-container {height:var(--single-row-cover-height)!important;padding-top:0!important;}
+ html.homepagescript-active [data-native-single-row]:is(.inner-content-body,.timeline-common-content-list-container) > .timeline-common-content-list-blank {display:none!important;}
+ /* Left follows the measured flex animation on every frame. A second native
+    left transition would lag behind the cover and leave the right edge loose. */
+ html.homepagescript-active [data-native-single-row]:is(.inner-content-body,.timeline-common-content-list-container) > :is(.hot-ranking-cell-wrapper,.horizontal-cell-wrapper,.timeline-weekday-item) {transition-property:flex-basis,flex-grow,width!important;}
+}

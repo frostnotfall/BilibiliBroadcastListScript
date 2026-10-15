@@ -80,7 +80,8 @@ export function mountLivePage({id = 'LiveHome', extraStyle = '', contentSelector
     rememberAttribute, restoreAttribute});
   const avatarLayout = createLiveAvatarLayout({html, narrow, ownClass, setProperty, restoreProperty,
     observe, schedule});
-  const controls = createLiveControls({html, narrow, signal:events.signal, schedule, ownClass, fit,
+  const controls = createLiveControls({html, narrow, signal:events.signal, ownClass, fit,
+    rememberAttribute, restoreAttribute, setProperty, restoreProperty,
     includeSidebar:!headerOnly});
   const searchControls = createHeaderSearchControls({signal:events.signal});
 
@@ -93,6 +94,16 @@ export function mountLivePage({id = 'LiveHome', extraStyle = '', contentSelector
     avatarLayout.update();
     for (const element of observed) if (!element.isConnected) {
       resize.unobserve(element); observed.delete(element);
+    }
+    if (id === 'LiveHome' && !headerOnly) for (const section of document.querySelectorAll('.highlight-areas-ctnr')) {
+      if (narrow.matches) observe(section);
+      for (const item of section.querySelectorAll('.highlight-area-item')) {
+        if (narrow.matches) {
+          observe(item);
+          // Items stay static so each popup can span the section horizontally.
+          setProperty(item,'--broadcast-live-recommendation-top',`${item.offsetTop + item.offsetHeight}px`);
+        } else restoreProperty(item,'--broadcast-live-recommendation-top');
+      }
     }
     for (const container of !headerOnly && contentSelector ? document.querySelectorAll(contentSelector) : []) {
       if (narrow.matches) {

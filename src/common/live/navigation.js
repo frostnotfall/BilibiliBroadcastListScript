@@ -23,7 +23,8 @@ export function createLiveNavigation({id, signal, isStopped, rememberAttribute, 
     const url = urlOf(link.href);
     if (!url) return false;
     if (isFollowDestination(url)) return true;
-    if (url.hostname === 'live.bilibili.com') return isLiveDestination(url);
+    if (url.hostname === 'live.bilibili.com') return isLiveDestination(url)
+      || pageId(url) === 'LiveHome' && Boolean(link.closest(navigationScope));
     return Boolean(isPageUrl(url) && (link.closest('.bili-header-channel-panel') || link.closest(navigationScope)));
   }
   function searchControl(node) {

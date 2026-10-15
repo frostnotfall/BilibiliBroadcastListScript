@@ -1,10 +1,10 @@
 @media(max-width:1099px) {
- html.homepagescript-active :is(.feenline-vcard-wrapper,.home-page-switch-wrapper .inner-content-body:has(> .hot-ranking-cell-wrapper),.time-line-body .timeline-common-content-list-container:not(.is-empty),.module .list-c:has(> .hover-c)) {display:grid!important;grid-template-columns:repeat(var(--pgc-card-columns,2),minmax(0,1fr))!important;gap:16px 12px!important;overflow:visible!important;}
- html.homepagescript-active :is(.hot-ranking-cell-wrapper,.time-line-body .timeline-weekday-item,.module .list-c > .hover-c) {position:relative!important;left:0!important;min-width:0!important;width:100%!important;max-width:none!important;margin-right:0!important;transition:none!important;}
- html.homepagescript-active :is(.hot-ranking-cell-wrapper.is-hover-active-play,.time-line-body .timeline-weekday-item.is-hover-active,.module .list-c > .hover-c.hoverShow) {width:var(--pgc-hover-width,100%)!important;left:var(--pgc-hover-offset,0px)!important;z-index:20!important;}
+ html.homepagescript-active :is(.feenline-vcard-wrapper,.module .list-c:has(> .hover-c)) {display:grid!important;grid-template-columns:repeat(var(--pgc-card-columns,2),minmax(0,1fr))!important;gap:16px 12px!important;overflow:visible!important;}
+ html.homepagescript-active :is(.feenline-vcard-wrapper > .hot-ranking-cell-wrapper,.module .list-c > .hover-c) {position:relative!important;left:0!important;min-width:0!important;width:100%!important;max-width:none!important;margin-right:0!important;transition:width .3s,left .3s!important;}
+ html.homepagescript-active :is(.feenline-vcard-wrapper > .hot-ranking-cell-wrapper.is-hover-active-play,.module .list-c > .hover-c.hoverShow) {width:var(--pgc-hover-width,100%)!important;left:var(--pgc-hover-offset,0px)!important;z-index:20!important;}
  /* Cover the full expanded caption as well as the preview so neighbours cannot show through. */
  html.homepagescript-active :is(.hot-ranking-cell-wrapper.is-hover-active-play,.module .list-c > .hover-c.hoverShow) {background:var(--bg1,#171819)!important;border-radius:8px 8px 0 0!important;}
- html.homepagescript-active :is(.hot-ranking-cell-wrapper .ranking-ratio-item-container,.time-line-body .img-cover-ratio-item-container,.module .list-c > .hover-c .hover-item,.module .list-c > .hover-c .season-cover-c) {height:var(--pgc-card-height,200px)!important;}
+ html.homepagescript-active :is(.feenline-vcard-wrapper .ranking-ratio-item-container,.module .list-c > .hover-c .hover-item,.module .list-c > .hover-c .season-cover-c) {height:var(--pgc-card-height,200px)!important;}
  html.homepagescript-active .module .list-c > .hover-c .hover-item {border-radius:8px;overflow:hidden;}
  html.homepagescript-active .module .list-c > .hover-c .season-cover {height:100%!important;aspect-ratio:auto!important;}
  html.homepagescript-active .hot-ranking-cell-wrapper .ranking-cell-desc {box-sizing:border-box!important;min-width:0!important;}

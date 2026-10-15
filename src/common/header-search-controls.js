@@ -2,7 +2,7 @@ import css from './header-search-controls.css';
 
 export function createHeaderSearchControls({signal}) {
   const panels = new Map();
-  const headers = '.bili-header__bar,.mini-header,.international-header,.bili-header-m,.bili-mini-header,.b-header,.link-navbar,.charity-header,.search-fixed-header';
+  const headers = '.bili-header__bar,.mini-header,.international-header,.bili-header-m,.bili-mini-header,.b-header,.link-navbar,.charity-header,.search-fixed-header,.search-layout .search-input-container';
   const hosts = '.center-search-container,.search-block,.nav-search,.nav-search-box,.search-box,.search-container,.search-input-wrap';
   const selector = '.search-pannel,.search-panel,.nav-search-panel';
   const style = document.createElement('style');
@@ -54,11 +54,16 @@ export function createHeaderSearchControls({signal}) {
   }
   function schedule() { if (!stopped && !frame) frame = requestAnimationFrame(update); }
   function reopen(event) {
-    const input = event.target.closest?.('input.nav-search-input,input.nav-search-content,input[name="keyword"]');
+    const input = event.target.closest?.('input.nav-search-input,input.nav-search-content,input[name="keyword"],input.search-input-el');
     if (!input?.closest(headers)) return;
     for (const [panel, state] of panels) {
       if (state.host.contains(input)) panel.classList.remove('broadcast-search-closed');
     }
+  }
+  function close(panel, state) {
+    panel.classList.add('broadcast-search-closed');
+    const active = document.activeElement;
+    if (state.host.contains(active)) active.blur();
   }
   // Keep native outside-click handling from removing the button before click.
   document.addEventListener('mousedown', event => {
@@ -71,10 +76,16 @@ export function createHeaderSearchControls({signal}) {
     const panel = button.closest(selector), state = panels.get(panel);
     if (!state) return;
     event.preventDefault(); event.stopPropagation();
-    panel.classList.add('broadcast-search-closed');
-    const active = document.activeElement;
-    if (state.host.contains(active)) active.blur();
+    close(panel, state);
   }, {signal});
+  document.addEventListener('keydown', event => {
+    if (event.key !== 'Escape' || event.isComposing || event.keyCode === 229) return;
+    for (const [panel, state] of panels) {
+      if (!panel.getClientRects().length || getComputedStyle(panel).visibility === 'hidden') continue;
+      event.preventDefault();
+      close(panel, state);
+    }
+  }, {capture:true, signal});
   for (const type of ['pointerdown', 'focusin', 'input']) {
     document.addEventListener(type, reopen, {capture:true, signal});
   }

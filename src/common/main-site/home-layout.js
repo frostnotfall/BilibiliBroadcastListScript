@@ -259,7 +259,7 @@ export function mountHomeLayout(pageStyle, suppliedMatchesPage) {
       makeMore(container, () => Array.from(container.querySelectorAll('a[href]')));
       fit(Array.from(container.querySelectorAll('a.channel-item')), count - 1);
     }
-    for (const container of document.querySelectorAll('.feed2 .recommended-container_floor-aside > .container,.head-cards,.loading-cards,.channel-feed,.popular-list .card-list,.fav-list-main .items,.section-cards,#room-card-list,main [class~="grid"],.items-container')) {
+    for (const container of document.querySelectorAll('.feed2 .recommended-container_floor-aside > .container,.head-cards,.loading-cards,.channel-feed,.channel-page__body > .feed-cards,.popular-list .card-list,.fav-list-main .items,.section-cards,#room-card-list,main [class~="grid"],.items-container')) {
       observe(container);
       const count = innerWidth < 400 ? 1 : Math.max(2, Math.floor((container.clientWidth + 12) / 232));
       setColumns(container, count);

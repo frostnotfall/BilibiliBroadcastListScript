@@ -19,8 +19,8 @@ html.homepagescript-active #app .grid-focus-highlight-area .highlight-areas-ctnr
 html.homepagescript-active .highlight-areas-ctnr {display:grid!important;grid-template-columns:repeat(auto-fit,minmax(min(100px,100%),1fr))!important;gap:8px!important;white-space:normal!important;}
 html.homepagescript-active .highlight-areas-ctnr .highlight-area-item {position:static!important;box-sizing:border-box!important;min-width:0!important;width:100%!important;margin:0!important;padding:12px 4px!important;}
 html.homepagescript-active .highlight-areas-ctnr .area-detail {width:100%!important;min-width:0!important;margin:0!important;}
-/* Anchor the recommendation popup to its section, preserving native hover/click events. */
-html.homepagescript-active #app .highlight-areas-ctnr .hover-panel-wrap {position:absolute!important;inset:100% 0 auto!important;width:100%!important;min-width:0!important;margin:8px 0 0!important;padding:12px!important;box-sizing:border-box!important;max-height:calc(100dvh - 80px)!important;overflow:auto!important;z-index:10003!important;}
+/* Keep section-wide popups directly below the hovered item's row. */
+html.homepagescript-active #app .highlight-areas-ctnr .hover-panel-wrap {position:absolute!important;inset:var(--broadcast-live-recommendation-top,100%) 0 auto!important;width:100%!important;min-width:0!important;margin:8px 0 0!important;padding:12px!important;box-sizing:border-box!important;max-height:calc(100dvh - 80px)!important;overflow:auto!important;z-index:10003!important;}
 html.homepagescript-active .highlight-areas-ctnr .area-banner {width:100%!important;height:auto!important;aspect-ratio:420/112;}
 html.homepagescript-active .highlight-areas-ctnr .sec-areas {display:grid!important;grid-template-columns:repeat(auto-fit,minmax(min(80px,100%),1fr))!important;gap:12px!important;}
 html.homepagescript-active .highlight-areas-ctnr .sec-area-item {width:100%!important;min-width:0!important;margin:0!important;}

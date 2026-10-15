@@ -48,6 +48,7 @@ export function createMediaMenu({getTarget, openPage, play, openNew, openExterna
   const events = new AbortController();
   const media = matchMedia('(prefers-color-scheme: dark)');
   let host = null, previousFocus = null, menuEvents = null, themeObserver = null, stopped = false;
+  const scrollPositions = new Map();
   let dialogHost = null, dialogEvents = null, dialogFocus = null;
   function syncTheme() {
     if (!host && !dialogHost) return;
@@ -71,6 +72,7 @@ export function createMediaMenu({getTarget, openPage, play, openNew, openExterna
     const focused = host?.shadowRoot?.activeElement;
     menuEvents?.abort(); menuEvents = null;
     host?.remove(); host = null;
+    scrollPositions.clear();
     releaseTheme();
     if (restoreFocus && focused && previousFocus?.isConnected) previousFocus.focus({preventScroll:true});
     previousFocus = null;
@@ -145,6 +147,15 @@ export function createMediaMenu({getTarget, openPage, play, openNew, openExterna
     const target = getTarget(event);
     if (!target || !document.body || dialogHost) return;
     event.preventDefault(); event.stopImmediatePropagation();
+    // Only scrolling an ancestor moves the menu's target. Native live banners
+    // also scroll their own overflow-hidden contents during animation; those
+    // unrelated events must not dismiss another card's menu. Snapshot offsets
+    // to ignore scroll-into-view events already queued before contextmenu.
+    const path = event.composedPath();
+    // composedPath also includes ancestors outside an open shadow root.
+    for (const node of new Set([...path.slice(path.indexOf(target.anchor) + 1), document.scrollingElement])) {
+      if (node instanceof Element && node !== target.anchor) scrollPositions.set(node, [node.scrollLeft, node.scrollTop]);
+    }
     previousFocus = document.activeElement;
     menuEvents = new AbortController();
     host = document.createElement('div'); host.id = 'broadcast-media-menu';
@@ -193,7 +204,13 @@ export function createMediaMenu({getTarget, openPage, play, openNew, openExterna
   }
   document.addEventListener('contextmenu', onContextMenu, {capture:true, signal:events.signal});
   document.addEventListener('pointerdown', event => {if (host && !event.composedPath().includes(host)) close();}, {capture:true, signal:events.signal});
-  document.addEventListener('scroll', event => {if (host && !event.composedPath().includes(host)) close();}, {capture:true, signal:events.signal});
+  document.addEventListener('scroll', event => {
+    if (!host || event.composedPath().includes(host)) return;
+    const node = event.target === document ? document.scrollingElement : event.target;
+    const position = scrollPositions.get(node);
+    if (!position || node.scrollLeft === position[0] && node.scrollTop === position[1]) return;
+    close();
+  }, {capture:true, signal:events.signal});
   window.addEventListener('resize', () => close(), {signal:events.signal});
   window.addEventListener('blur', () => close(), {signal:events.signal});
   media.addEventListener('change', syncTheme, {signal:events.signal});

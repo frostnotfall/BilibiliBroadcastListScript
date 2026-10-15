@@ -158,8 +158,7 @@ export function mountNavigationBar() {
     switch (button.dataset.action) {
       case 'back': history.back(); break;
       case 'forward': history.forward(); break;
-      case 'home': location.assign(['live.bilibili.com', 'link.bilibili.com'].includes(location.hostname)
-        ? 'https://live.bilibili.com/' : 'https://www.bilibili.com/'); break;
+      case 'home': location.assign('https://www.bilibili.com/'); break;
       case 'action': if (editing) submitAddress(); else location.reload(); break;
     }
   }, {signal:events.signal});
