@@ -1,6 +1,13 @@
 @media(max-width:1099px) {
 html.homepagescript-active .link-navbar .nav-items-ctnr,
 html.homepagescript-active .broadcast-live-more-host .slot-ctnr {display:none!important;}
+/* Old headers supply a muted label color; new headers inherit the nav color. */
+html.homepagescript-active .broadcast-live-more-host {--broadcast-live-more-color:#000;}
+html.homepagescript-active:is(.bili_dark,[lab-style*="dark"],[data-theme*="dark"]) .broadcast-live-more-host,
+html.homepagescript-active:has(link#__css-map__[href*="/dark.css"]) .broadcast-live-more-host {--broadcast-live-more-color:#e7e9eb;}
+html.homepagescript-active:has(link#__css-map__[href*="/light.css"]) .broadcast-live-more-host {--broadcast-live-more-color:#000;}
+html.homepagescript-active .link-navbar .showmore-link.broadcast-live-more-host,
+html.homepagescript-active .link-navbar .showmore-link.broadcast-live-more-host :is([aria-controls="live-home-more-menu"],.more-tab-animation,.more-label-text,.down-arrow-icon-block) {color:var(--broadcast-live-more-color)!important;}
 html.homepagescript-active .broadcast-live-more-host,
 html.homepagescript-active .broadcast-live-more-host > [aria-controls="live-home-more-menu"] {font-family:var(--broadcast-live-font,inherit)!important;font-size:var(--broadcast-live-font-size,14px)!important;font-weight:var(--broadcast-live-font-weight,400)!important;line-height:24px!important;}
 html.homepagescript-active .broadcast-live-more-host :is(.more-tab-animation,.more-label-text) {font:inherit!important;line-height:24px!important;}

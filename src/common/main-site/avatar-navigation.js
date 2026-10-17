@@ -1,6 +1,8 @@
 import {isPageUrl} from '../urls.js';
+import {createAvatarHover} from './avatar-hover.js';
   // 页面导航由页面脚本负责；保留头像原生处理器生成的 URL。
   export function createAvatarNavigation() {
+    const avatarHover = createAvatarHover();
     const events = new AbortController();
     let api = null, restoreIgnore = () => {}, active = null, timer = 0, restoreOpen = () => {};
     function destination(value) {
@@ -24,6 +26,7 @@ import {isPageUrl} from '../urls.js';
         .some(link => isLink(link) && link.href === url.href);
     }
     function sync() {
+      avatarHover.refresh();
       const next = window.__potPlayerBilibiliClick;
       if (next === api) return;
       restoreIgnore(); api = next;
@@ -61,5 +64,5 @@ import {isPageUrl} from '../urls.js';
     window.addEventListener('click', onClick, { capture:true, signal:events.signal });
     sync();
     const poll = setInterval(sync, 500);
-    return { isLink, destroy() { events.abort(); clearInterval(poll); clear(); restoreIgnore(); } };
+    return { isLink, destroy() { avatarHover.destroy(); events.abort(); clearInterval(poll); clear(); restoreIgnore(); } };
   }

@@ -90,6 +90,26 @@ html.homepagescript-active .search-layout .media-card:has(.media-footer) .media-
     left:0!important; transform:none!important; max-width:calc(100vw - 32px)!important;
   }
   html.homepagescript-active .search-layout .search-sub-channel { flex-wrap:wrap!important; gap:8px!important; }
+  /* Keep the heading and all-events action together; let the native promo
+     links use the full next row without splitting individual labels. */
+  html.homepagescript-active .search-layout .esport-list-item-title {
+    display:grid!important; grid-template-columns:minmax(0,1fr) auto!important;
+    align-items:center!important; gap:12px!important;
+  }
+  html.homepagescript-active .search-layout .esport-list-item-title-wrapper { display:contents!important; }
+  html.homepagescript-active .search-layout .esport-list-item-title-text {
+    grid-column:1; grid-row:1; margin-right:0!important; white-space:nowrap!important;
+  }
+  html.homepagescript-active .search-layout .esport-list-item-title > a {
+    grid-column:2; grid-row:1; justify-self:end; white-space:nowrap!important;
+  }
+  html.homepagescript-active .search-layout .esport-list-item-title-wrapper > div:not(.esport-list-item-title-text) {
+    grid-column:1 / -1; grid-row:2; display:flex!important; flex-wrap:wrap!important;
+    align-items:center!important; min-width:0!important; gap:8px!important;
+  }
+  html.homepagescript-active .search-layout .esport-list-item-title-link {
+    flex:none!important; margin:0!important; white-space:nowrap!important;
+  }
   /* Native columns and negative row margins otherwise leave the cards overflowing. */
   html.homepagescript-active .search-layout .row {
     display:grid!important; grid-template-columns:repeat(auto-fit,minmax(min(420px,100%),1fr))!important;

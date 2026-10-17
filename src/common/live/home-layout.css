@@ -1,6 +1,8 @@
 /* LiveHome only: layout changes stay in CSS so native controls keep their events. */
 /* The native full-screen shell must fit below the shared navigation inset. */
 html.homepagescript-active #app [class~="min-w-1190px"] > [class~="h-screen"] {height:calc(100vh - var(--broadcast-navigation-height,0px))!important;}
+/* Leave 2px between the native refresh/top controls and the inner scrollbar. */
+html.homepagescript-active #app [class~="min-w-1190px"] .fixed.bottom-134px.right-24px {right:calc(var(--broadcast-live-scrollbar-width,0px) + 2px)!important;bottom:2px!important;}
 @media(max-width:1099px) {
 html.homepagescript-active #app {box-sizing:border-box!important;min-width:0!important;width:100%!important;}
 /* Old homepage: full-width sections, including descendants mounted by lazy-component. */

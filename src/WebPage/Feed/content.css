@@ -1,0 +1,70 @@
+@media(max-width:1099px) {
+  html.feedscript-active {
+    --edge-top:calc(var(--broadcast-navigation-height,0px) + var(--homepagescript-header-height,0px));
+    --edge-width:min(300px,calc(100vw - 40px));
+  }
+  html.feedscript-active, html.feedscript-active body { min-width:0!important; overflow-x:clip!important; scrollbar-gutter:auto!important; }
+  .feedscript-path { box-sizing:border-box!important; width:100%!important; min-width:0!important; max-width:100%!important; }
+  .feedscript-viewport {
+    transform:none!important; translate:none!important; rotate:none!important; scale:none!important;
+    filter:none!important; backdrop-filter:none!important; perspective:none!important;
+    contain:none!important; will-change:auto!important; content-visibility:visible!important;
+  }
+  .feedscript-shell { display:block!important; margin:0!important; padding:0!important; }
+  .feedscript-header {
+    position:sticky!important; top:var(--broadcast-navigation-height,0px)!important;
+    height:var(--homepagescript-header-height)!important; margin:0!important; z-index:1300!important;
+  }
+  .feedscript-header .bili-header__bar { position:relative!important; inset:auto!important; }
+  .feedscript-main { box-sizing:border-box!important; width:100%!important; min-width:0!important; max-width:100%!important; margin:0!important; padding:8px!important; }
+  .feedscript-main > * { box-sizing:border-box!important; min-width:0!important; max-width:100%!important; margin-inline:0!important; }
+  /* The avatar occupies only the author row. Content uses the full inner width. */
+  .feedscript-main .bili-dyn-item__main { position:relative!important; margin-left:0!important; padding-top:16px!important; padding-inline:16px!important; }
+  .feedscript-main .bili-dyn-item__avatar { position:absolute!important; left:16px!important; top:16px!important; width:48px!important; height:48px!important; }
+  .feedscript-main .bili-dyn-item__header { position:relative!important; box-sizing:border-box!important; min-width:0!important; min-height:56px; padding:0 24px 0 64px!important; }
+  .feedscript-main .bili-dyn-item__more { inset:0 0 auto auto!important; }
+  .feedscript-main .bili-dyn-item__desc { padding-right:0!important; min-width:0!important; }
+  .feedscript-main .bili-dyn-title { max-width:100%!important; }
+  /* Put the native decoration on its own header row when it cannot share the name row. */
+  .feedscript-main .bili-dyn-item__ornament { position:static!important; width:110px!important; max-width:100%!important; margin:4px 0 0 auto!important; }
+  .feedscript-main :is(.bili-dyn-item__body,.bili-dyn-item__footer) { width:auto!important; min-width:0!important; max-width:100%!important; margin-left:0!important; padding-left:0!important; }
+  .feedscript-main .bili-dyn-item__body { margin-top:12px!important; }
+  .feedscript-main .bili-dyn-item__footer { box-sizing:border-box!important; display:flex!important; width:100%!important; padding-inline:0!important; justify-content:space-around!important; gap:0!important; }
+  .feedscript-main .bili-dyn-item__footer > * { min-width:0!important; }
+  .feedscript-main .bili-dyn-item__footer > .bili-dyn-item__action { display:flex!important; flex:1 1 0!important; align-items:center!important; justify-content:center!important; width:auto!important; margin-inline:0!important; padding-inline:0!important; }
+  .feedscript-main :is(.bili-dyn-item__header,.bili-dyn-title,.bili-dyn-publishing) { overflow-wrap:anywhere; }
+  .feedscript-main .bili-dyn-card-video__header { width:42%!important; max-width:280px!important; flex:0 0 42%!important; }
+  .feedscript-main .bili-dyn-card-video__cover { width:100%!important; height:100%!important; }
+  .feedscript-main .bili-dyn-card-video__cover > .b-img { width:100%!important; height:100%!important; }
+  .feedscript-main .bili-dyn-card-video__cover img { width:100%!important; height:100%!important; object-fit:cover!important; }
+  .feedscript-main .bili-dyn-card-video__body { box-sizing:border-box!important; min-width:0!important; height:100%!important; padding:10px 10px 36px!important; display:flex!important; flex-direction:column!important; justify-content:flex-start!important; gap:4px!important; }
+  .feedscript-main :is(.bili-dyn-card-video__title,.bili-dyn-card-video__desc) { min-width:0!important; word-break:break-word!important; }
+  .feedscript-main .bili-dyn-card-video__title { flex-shrink:0!important; }
+  .feedscript-main .bili-dyn-card-video__desc { flex:1 1 auto!important; min-height:0!important; overflow:hidden!important; }
+  .feedscript-main .bili-dyn-card-video__stat { top:auto!important; bottom:10px!important; left:8px!important; right:8px!important; width:auto!important; gap:4px 10px!important; flex-wrap:wrap!important; }
+  .feedscript-main .bili-dyn-card-video__stat__item { width:auto!important; min-width:0!important; margin:0!important; white-space:nowrap!important; }
+  .feedscript-main :is(.bili-dyn-card-article,.bili-dyn-card-pgc,.bili-dyn-card-goods) > * { min-width:0!important; max-width:100%!important; }
+  /* Publishing remains native, with controls wrapping instead of pushing the feed wider. */
+  .feedscript-main :is(.bili-dyn-publishing__body,.bili-dyn-publishing__content,.bili-dyn-publishing__action) { min-width:0!important; max-width:100%!important; }
+  .feedscript-main .bili-dyn-publishing__control { display:flex!important; height:auto!important; flex-wrap:wrap!important; gap:12px!important; }
+  .feedscript-main .bili-dyn-publishing__tools { max-width:100%!important; flex:0 0 auto!important; }
+  .feedscript-main .bili-dyn-publishing__headquarters { min-width:0!important; max-width:100%!important; margin-left:auto!important; }
+  .feedscript-main .bili-dyn-up-list { min-width:0!important; max-width:100%!important; }
+  .feedscript-scroll { width:100%!important; min-width:0!important; overflow-x:auto!important; overflow-y:hidden!important; overscroll-behavior-x:contain; }
+  .feedscript-scroll > * { flex-shrink:0!important; }
+  .feedscript-main .bili-dyn-list-tabs { display:flex!important; flex-wrap:wrap!important; gap:8px 16px!important; }
+  .edge-panel :is(.bili-dyn-my-info,.bili-dyn-live-users,.bili-dyn-search-trendings,.bili-dyn-banner) { box-sizing:border-box!important; position:static!important; width:100%!important; height:auto!important; max-height:none!important; min-height:0!important; transform:none!important; margin-inline:0!important; }
+  .edge-panel .bili-dyn-live-users { flex:0 1 auto!important; }
+  .edge-panel .bili-dyn-live-users__body { flex:0 0 auto!important; height:auto!important; max-height:none!important; overflow:visible!important; }
+  .edge-panel-right .sticky { position:static!important; transform:none!important; }
+  html.feedscript-scrolled .edge-panel :is(.bili-dyn-my-info,.bili-dyn-banner),
+  html.feedscript-scrolled .edge-panel > :has(> :is(.bili-dyn-my-info,.bili-dyn-banner)) { display:none!important; }
+  /* Keep the site's own top button and its native scroll visibility/handler. */
+  .feedscript-legacy { display:none!important; }
+  .feedscript-tools { position:fixed!important; inset:auto 18px 8px auto!important; height:auto!important; min-height:0!important; padding:0!important; margin:0!important; transform:none!important; z-index:1190!important; }
+  @media(max-width:399px) {
+    .feedscript-main .bili-dyn-item__main { padding-top:12px!important; padding-inline:12px!important; }
+    .feedscript-main .bili-dyn-item__avatar { left:12px!important; top:12px!important; }
+    .feedscript-main .bili-dyn-card-video__body { padding:8px 8px 36px!important; }
+  }
+}

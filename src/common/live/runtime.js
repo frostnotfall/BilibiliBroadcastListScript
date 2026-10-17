@@ -95,6 +95,13 @@ export function mountLivePage({id = 'LiveHome', extraStyle = '', contentSelector
     for (const element of observed) if (!element.isConnected) {
       resize.unobserve(element); observed.delete(element);
     }
+    if (id === 'LiveHome' && !headerOnly) for (const tools of document.querySelectorAll('#app [class~="min-w-1190px"] .fixed.bottom-134px.right-24px')) {
+      const scroll = tools.parentElement.querySelector(':scope > .overflow-y-auto');
+      if (!scroll) continue;
+      observe(scroll);
+      // The new homepage scrolls inside its shell; fixed positioning includes the scrollbar lane.
+      setProperty(tools,'--broadcast-live-scrollbar-width',`${Math.max(0,scroll.offsetWidth - scroll.clientWidth)}px`);
+    }
     if (id === 'LiveHome' && !headerOnly) for (const section of document.querySelectorAll('.highlight-areas-ctnr')) {
       if (narrow.matches) observe(section);
       for (const item of section.querySelectorAll('.highlight-area-item')) {

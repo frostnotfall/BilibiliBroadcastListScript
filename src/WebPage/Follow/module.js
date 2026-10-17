@@ -17,7 +17,7 @@ export function mount() {
   style.textContent = pageStyle;
   (document.head || html).append(style);
   html.classList.add('follow-script-active');
-  let frame = 0, stopped = false;
+  let frame = 0, stopped = false, selectedPage = '';
   const header = mountLivePage({id:'Follow', headerOnly:true});
 
   // Keep the native main subtree in place, including its handlers. Only siblings
@@ -35,6 +35,9 @@ export function mount() {
   function refresh() {
     frame = 0;
     if (stopped) return;
+    const nextPage = document.querySelector('.main-ctnr .link-panigation .selected')?.textContent.trim();
+    const pageChanged = Boolean(selectedPage && nextPage && nextPage !== selectedPage);
+    if (nextPage) selectedPage = nextPage;
     const keep = new Set(), hide = new Set();
     const main = narrow.matches && pageId(location.href) === 'Follow'
       ? document.body.querySelector('.main-ctnr.p-relative.f-right') : null;
@@ -56,6 +59,7 @@ export function mount() {
     }
     reconcileClasses(hidden, hide, 'follow-script-hidden');
     reconcileClasses(shells, keep, 'follow-script-shell');
+    if (pageChanged) window.scrollTo({top:0, left:0, behavior:'instant'});
   }
   function schedule() {
     if (!stopped && !frame) frame = requestAnimationFrame(refresh);
