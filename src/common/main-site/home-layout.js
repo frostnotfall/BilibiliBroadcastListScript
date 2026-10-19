@@ -2,8 +2,13 @@ import {avatarSubmenuPosition} from '../avatar-submenu-position.js';
 import {fitHomeHeader, createHeaderCards} from './header-controls.js';
 import {isPageUrl} from '../urls.js';
 import {createHeaderSearchNavigation, createAvatarNavigation} from './home-navigation.js';
-export function mountHomeLayout(pageStyle, suppliedMatchesPage) {
-  'use strict';
+import {watchPageState} from '../page-state.js';
+const defaultContentSelector = '.feed2 .recommended-container_floor-aside > .container,.head-cards,.loading-cards,.channel-feed,.channel-page__body > .feed-cards,.popular-list .card-list,.fav-list-main .items,.section-cards,#room-card-list,main [class~="grid"],.items-container';
+export function mountHomeLayout(pageStyle, suppliedMatchesPage, {
+  contentSelector = defaultContentSelector,
+  columns = container => innerWidth < 400 ? 1 : Math.max(2, Math.floor((container.clientWidth + 12) / 232)),
+  mountContent, avatarLink, avatarNavigationEnabled = true, observeLoad = false,
+} = {}) {
   const matchesPage = suppliedMatchesPage;
   if (!matchesPage()) return;
   window.bilibiliHomePageScript?.destroy();
@@ -11,7 +16,7 @@ export function mountHomeLayout(pageStyle, suppliedMatchesPage) {
   const headerSearchNavigation = createHeaderSearchNavigation();
   const headerCards = createHeaderCards();
 
-  const avatarNavigation = createAvatarNavigation();
+  const avatarNavigation = avatarNavigationEnabled ? createAvatarNavigation() : null;
 
   const html = document.documentElement;
   const narrow = matchMedia('(max-width: 1099px)');
@@ -127,7 +132,7 @@ export function mountHomeLayout(pageStyle, suppliedMatchesPage) {
   }
 
   function isAvatarNavigationLink(link) {
-    return avatarNavigation.isLink(link);
+    return avatarLink ? avatarLink(link) : Boolean(avatarNavigation?.isLink(link));
   }
 
   const isCompletedNavigation = isPageUrl;
@@ -227,13 +232,20 @@ export function mountHomeLayout(pageStyle, suppliedMatchesPage) {
     frame = 0;
     if (stopped) return;
     if (!matchesPage()) { window.bilibiliHomePageScript?.destroy(); return; }
+    contentLayout?.refresh(narrow.matches);
     fitAvatarMenus();
     // 原生频道弹出菜单可能挂在 body 下，不能只扫描顶栏的后代。
     for (const link of document.querySelectorAll(navigationLinks)) {
       if (isCurrentTabLink(link)) rememberAttribute(link, 'target', '_self');
     }
-    for (const [element] of variables) if (!element.isConnected) variables.delete(element);
-    for (const element of hidden) if (!element.isConnected) hidden.delete(element);
+    for (const [element] of attributes) if (!element.isConnected) {
+      restoreAttributes(element); attributes.delete(element);
+    }
+    for (const [element, value] of variables) if (!element.isConnected) {
+      if (value) element.style.setProperty('--homepagescript-columns', value); else element.style.removeProperty('--homepagescript-columns');
+      variables.delete(element);
+    }
+    for (const element of hidden) if (!element.isConnected) {element.classList.remove('homepagescript-hidden');hidden.delete(element);}
     for (const element of observed) if (!element.isConnected) { resize.unobserve(element); observed.delete(element); }
     for (const [container, menu] of menus) if (!container.isConnected) {
       if (activeMenu === menu) closeMenu();
@@ -259,9 +271,9 @@ export function mountHomeLayout(pageStyle, suppliedMatchesPage) {
       makeMore(container, () => Array.from(container.querySelectorAll('a[href]')));
       fit(Array.from(container.querySelectorAll('a.channel-item')), count - 1);
     }
-    for (const container of document.querySelectorAll('.feed2 .recommended-container_floor-aside > .container,.head-cards,.loading-cards,.channel-feed,.channel-page__body > .feed-cards,.popular-list .card-list,.fav-list-main .items,.section-cards,#room-card-list,main [class~="grid"],.items-container')) {
+    for (const container of document.querySelectorAll(contentSelector)) {
       observe(container);
-      const count = innerWidth < 400 ? 1 : Math.max(2, Math.floor((container.clientWidth + 12) / 232));
+      const count = columns(container);
       setColumns(container, count);
     }
   }
@@ -279,6 +291,7 @@ export function mountHomeLayout(pageStyle, suppliedMatchesPage) {
   mutations.observe(document.body, { childList:true, subtree:true });
   window.addEventListener('resize', () => { closeMenu(); schedule(); }, { signal:events.signal });
   narrow.addEventListener('change', schedule, { signal:events.signal });
+  if (observeLoad) document.addEventListener('load', schedule, {capture:true, signal:events.signal});
   document.addEventListener('scroll', event => {
     if (event.target !== panel && !panel.contains(event.target)) closeMenu();
   }, { capture:true, passive:true, signal:events.signal });
@@ -292,8 +305,9 @@ export function mountHomeLayout(pageStyle, suppliedMatchesPage) {
   // 在 window 捕获阶段同步，先于后加载的 BroadcastListScript 的点击拦截器。
   window.addEventListener('pointerdown', syncPotPlayerIgnore, { capture:true, signal:events.signal });
   window.addEventListener('click', syncPotPlayerIgnore, { capture:true, signal:events.signal });
+  const contentLayout = mountContent?.({narrow, schedule});
   syncPotPlayerIgnore();
-  const potPlayerTimer = setInterval(syncPotPlayerIgnore, 500);
+  watchPageState(syncPotPlayerIgnore, events.signal);
   // 捕获普通左键，避免首页自身的点击处理器另外打开标签页；保留 Ctrl/中键等浏览器操作。
   document.addEventListener('click', event => {
     if (event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
@@ -302,28 +316,35 @@ export function mountHomeLayout(pageStyle, suppliedMatchesPage) {
     event.preventDefault(); event.stopImmediatePropagation(); location.assign(link.href);
   }, { capture:true, signal:events.signal });
 
-  window.bilibiliHomePageScript = {
+  function restoreAttributes(element) {
+    for (const [name, {original,value}] of attributes.get(element) || []) {
+      if (element.getAttribute(name) !== value) continue;
+      if (original === null) element.removeAttribute(name); else element.setAttribute(name, original);
+    }
+  }
+  const instance = {
     destroy() {
-      avatarNavigation.destroy();
+      if (stopped) return;
+      contentLayout?.destroy();
+      avatarNavigation?.destroy();
       headerSearchNavigation.destroy();
       headerCards.destroy();
       stopped = true; events.abort(); mutations.disconnect(); avatarMutations.disconnect(); resize.disconnect(); cancelAnimationFrame(frame); closeMenu();
-      clearInterval(potPlayerTimer); restorePotPlayerIgnore();
+      restorePotPlayerIgnore();
       for (const [element, saved] of avatarMenus) resetAvatarMenu(element, saved);
       for (const element of hidden) element.classList.remove('homepagescript-hidden');
-      for (const [element, saved] of attributes) for (const [name, {original, value}] of saved) {
-        if (element.getAttribute(name) !== value) continue;
-        if (original === null) element.removeAttribute(name); else element.setAttribute(name, original);
-      }
+      for (const element of attributes.keys()) restoreAttributes(element);
       for (const [element, value] of variables) {
         if (value) element.style.setProperty('--homepagescript-columns', value); else element.style.removeProperty('--homepagescript-columns');
       }
       for (const menu of menus.values()) menu.button.remove();
       panel.remove(); style.remove(); html.classList.remove('homepagescript-active');
-      delete window.bilibiliHomePageScript;
+      attributes.clear(); variables.clear(); hidden.clear(); menus.clear(); observed.clear(); avatarMenus.clear(); avatarTargets.clear();
+      if (window.bilibiliHomePageScript === instance) delete window.bilibiliHomePageScript;
     },
   };
+  window.bilibiliHomePageScript = instance;
   update();
 
-  return window.bilibiliHomePageScript;
+  return instance;
 }

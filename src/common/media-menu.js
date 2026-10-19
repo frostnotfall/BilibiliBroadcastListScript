@@ -120,7 +120,7 @@ export function createMediaMenu({getTarget, openPage, play, openNew, openExterna
     if (target.kind === 'native') return [
       {label:'不支持当前页面，从外置浏览器打开', action:openExternal},
     ];
-    const external = {label:'从外部浏览器打开', hint:'(鼠标中键)', icon:'browser', action:openExternal};
+    const external = {label:'从外部浏览器打开', icon:'browser', action:openExternal};
     const copy = {label:'复制链接地址', copy:true};
     if (target.kind === 'page') {
       const items = [
@@ -128,7 +128,7 @@ export function createMediaMenu({getTarget, openPage, play, openNew, openExterna
       ];
       if (target.playlist) items.push(
         {label:'播放该页面内视频', icon:'player', action:play},
-        {label:'新开一个进程播放该页面内视频', icon:'player', action:openNew}, null,
+        {label:'新开一个进程播放该页面内视频', hint:'(鼠标中键)', icon:'player', action:openNew}, null,
         {label:'将该页面内视频添加到默认播放列表（下一个）', icon:'playlist', action:addNext},
         {label:'将该页面内视频添加到默认播放列表（末尾）', icon:'playlist', action:addLast},
       );
@@ -136,7 +136,7 @@ export function createMediaMenu({getTarget, openPage, play, openNew, openExterna
     }
     return [
       {label:'使用当前进程播放', hint:'(鼠标左键)', icon:'player', action:play},
-      {label:'新开一个进程播放', icon:'player', action:openNew}, external, null,
+      {label:'新开一个进程播放', hint:'(鼠标中键)', icon:'player', action:openNew}, external, null,
       {label:'添加到默认播放列表（下一个）', icon:'playlist', action:addNext},
       {label:'添加到默认播放列表（末尾）', icon:'playlist', action:addLast}, null, copy,
     ];

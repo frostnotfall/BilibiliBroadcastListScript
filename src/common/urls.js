@@ -1,5 +1,14 @@
 import scopes from '../page-scopes.json';
 
+const scopesByHost = new Map();
+for (const scope of scopes) {
+  const compiled = {...scope, paths:new Set(scope.paths),
+    pathPattern:scope.pathPattern && new RegExp(scope.pathPattern),
+    hashPattern:scope.hashPattern && new RegExp(scope.hashPattern)};
+  if (!scopesByHost.has(scope.host)) scopesByHost.set(scope.host, []);
+  scopesByHost.get(scope.host).push(compiled);
+}
+
 export function urlOf(value, base = location.href) {
   if (typeof value !== 'string' || !value.trim()) return null;
   try {
@@ -13,11 +22,10 @@ export function pageId(value) {
   const url = value instanceof URL ? value : urlOf(value);
   if (!url || !['http:', 'https:'].includes(url.protocol)) return null;
   const path = url.pathname.replace(/\/$/, '') || '/';
-  for (const scope of scopes) {
-    if (url.hostname !== scope.host) continue;
+  for (const scope of scopesByHost.get(url.hostname) || []) {
     if (scope.protocols && !scope.protocols.includes(url.protocol)) continue;
-    if (scope.hashPattern && !new RegExp(scope.hashPattern).test(url.hash)) continue;
-    if (scope.paths?.includes(path) || scope.pathPattern && new RegExp(scope.pathPattern).test(url.pathname)) return scope.id;
+    if (scope.hashPattern && !scope.hashPattern.test(url.hash)) continue;
+    if (scope.paths.has(path) || scope.pathPattern?.test(url.pathname)) return scope.id;
   }
   return null;
 }

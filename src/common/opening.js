@@ -1,6 +1,8 @@
 import {urlOf, classifyUrl, isMediaUrl, isPlayitemUrl, isPlaylistUrl, isPlayerUrl, isPageUrl, isShortUrl, playerCommandUri} from './urls.js';
 import {createMediaMenu} from './media-menu.js';
 import {version} from './version.js';
+import {createResolverCache} from './resolver-cache.js';
+import {syncPageState} from './page-state.js';
 
 const resultType = 'potPlayer.short-link.result';
 const resolverName = 'potPlayer.short-link:';
@@ -20,7 +22,8 @@ export function reportResolverFrame() {
 export function createPageOpening({beforeMedia = () => {}, ignoreClick = () => false, resolveLink = () => null, timeout = 8000} = {}) {
   const originalOpen = window.open;
   const events = new AbortController();
-  const shortLinks = new Map(), ignored = new Set(), observers = new Map();
+  const ignored = new Set(), observers = new Map();
+  const shortLinks = createResolverCache(startShortLink);
   const pendingNodes = new Set(), watchedTags = new Set();
   let stopped = false, click = null, timer = 0, frame = 0;
   const normalized = value => urlOf(value)?.href || '';
@@ -33,51 +36,46 @@ export function createPageOpening({beforeMedia = () => {}, ignoreClick = () => f
   }
   function resolveUrl(value) {
     const url = normalized(value);
-    if (!url || !isShortUrl(url)) return Promise.resolve(url);
-    if (shortLinks.has(url)) return shortLinks.get(url).promise;
-    const entry = {url:'', promise:null, cancel() {}};
-    shortLinks.set(url, entry);
-    entry.promise = new Promise(resolve => {
-      if (stopped || !document.documentElement) { shortLinks.delete(url); resolve(''); return; }
-      const iframe = document.createElement('iframe');
-      const token = Array.from(crypto.getRandomValues(new Uint8Array(16)), byte => byte.toString(16).padStart(2,'0')).join('');
-      iframe.hidden = true;
-      iframe.name = resolverName + token;
-      iframe.setAttribute('sandbox', 'allow-same-origin');
-      iframe.setAttribute('referrerpolicy', 'no-referrer');
-      let finished = false;
-      function finish(value) {
-        if (finished) return;
-        const finalUrl = normalized(value);
-        if (finalUrl && isShortUrl(finalUrl)) return;
-        finished = true;
-        clearTimeout(expiry);
-        window.removeEventListener('message', onMessage);
-        iframe.onload = iframe.onerror = null;
-        iframe.remove();
-        entry.url = finalUrl;
-        if (!finalUrl) shortLinks.delete(url);
-        resolve(finalUrl);
-      }
-      function onMessage(event) {
-        if (!event.isTrusted || event.source !== iframe.contentWindow) return;
-        const data = event.data;
-        if (data?.type !== resultType || data.token !== token) return;
-        const target = normalized(data.url);
-        if (target && new URL(target).origin === event.origin) finish(target);
-      }
-      const expiry = setTimeout(() => finish(''), timeout);
-      entry.cancel = () => finish('');
-      window.addEventListener('message', onMessage);
-      iframe.onload = () => {
-        try { const target = iframe.contentDocument?.URL; if (target) finish(target); }
-        catch { /* Cross-origin result is reported by document-created injection. */ }
-      };
-      iframe.onerror = () => finish('');
+    return url && isShortUrl(url) ? shortLinks.resolve(url) : Promise.resolve(url);
+  }
+  function startShortLink(url, complete) {
+    if (stopped || !document.documentElement) { complete(''); return; }
+    const iframe = document.createElement('iframe');
+    const token = Array.from(crypto.getRandomValues(new Uint8Array(16)), byte => byte.toString(16).padStart(2,'0')).join('');
+    iframe.hidden = true;
+    iframe.name = resolverName + token;
+    iframe.setAttribute('sandbox', 'allow-same-origin');
+    iframe.setAttribute('referrerpolicy', 'no-referrer');
+    let finished = false;
+    function finish(value) {
+      if (finished) return;
+      const finalUrl = normalized(value);
+      if (finalUrl && isShortUrl(finalUrl)) return;
+      finished = true;
+      clearTimeout(expiry);
+      window.removeEventListener('message', onMessage);
+      iframe.onload = iframe.onerror = null;
+      iframe.remove(); complete(finalUrl);
+    }
+    function onMessage(event) {
+      if (!event.isTrusted || event.source !== iframe.contentWindow) return;
+      const data = event.data;
+      if (data?.type !== resultType || data.token !== token) return;
+      const target = normalized(data.url);
+      if (target && new URL(target).origin === event.origin) finish(target);
+    }
+    const expiry = setTimeout(() => finish(''), timeout);
+    window.addEventListener('message', onMessage);
+    iframe.onload = () => {
+      try { const target = iframe.contentDocument?.URL; if (target) finish(target); }
+      catch { /* Cross-origin result is reported by document-created injection. */ }
+    };
+    iframe.onerror = () => finish('');
+    try {
       iframe.src = url;
       (document.body || document.documentElement).append(iframe);
-    });
-    return entry.promise;
+    } catch { finish(''); }
+    return () => finish('');
   }
   function send(value, state, {playlist = false, explicit = false} = {}) {
     if (stopped || !(playlist ? isPlayerUrl(value) : isMediaUrl(value))) return false;
@@ -115,8 +113,8 @@ export function createPageOpening({beforeMedia = () => {}, ignoreClick = () => f
     const url = normalized(value);
     if (!url || stopped) return false;
     if (!isShortUrl(url)) return dispatch(url, state);
-    const cached = shortLinks.get(url);
-    if (cached?.url) return dispatch(cached.url, state);
+    const cached = shortLinks.peek(url);
+    if (cached) return dispatch(cached, state);
     if (state.pending.has(url)) return true;
     state.pending.add(url);
     resolveUrl(url).then(realUrl => {
@@ -153,7 +151,7 @@ export function createPageOpening({beforeMedia = () => {}, ignoreClick = () => f
         return true;
       } catch { return false; }
     }
-    const cached = shortLinks.get(url)?.url;
+    const cached = shortLinks.peek(url);
     if (isShortUrl(url) && !cached) resolveUrl(url).then(value => {if (!stopped && !launch(value)) fallback();});
     else if (!launch(cached || url)) fallback();
   }
@@ -162,7 +160,7 @@ export function createPageOpening({beforeMedia = () => {}, ignoreClick = () => f
       if (typeof window.chrome?.webview?.postMessage !== 'function') return null;
       const target = linkTarget(event);
       if (!target || isIgnored(target.url, true, true)) return null;
-      const resolved = shortLinks.get(target.url)?.url || target.url;
+      const resolved = shortLinks.peek(target.url) || target.url;
       if (isIgnored(resolved, true, true)) return null;
       const kind = isPlayitemUrl(resolved) || isShortUrl(resolved) ? 'media' : isPageUrl(resolved) ? 'page' : 'native';
       return {...target, kind, playlist:isPlaylistUrl(resolved)};
@@ -180,7 +178,7 @@ export function createPageOpening({beforeMedia = () => {}, ignoreClick = () => f
     addLast:target => playerCommand(target, 'add', '_blank'),
     openExternal({url}) {
       clearClick();
-      // Use the native new-window path, like a normal middle click. Do not run
+      // Use the native new-window path for external browsing. Do not run
       // the click-scoped window.open wrapper, which would send media to play.
       Reflect.apply(originalOpen, window, [url, '_blank', 'noopener']);
     },
@@ -211,15 +209,24 @@ export function createPageOpening({beforeMedia = () => {}, ignoreClick = () => f
     if (typeof window.chrome?.webview?.postMessage !== 'function') return;
     const target = linkTarget(event);
     if (!target) return;
-    const resolved = shortLinks.get(target.url)?.url || target.url;
-    if (!isPageUrl(resolved) || isPlayitemUrl(resolved) || isIgnored(resolved, true, true)) return;
+    const resolved = shortLinks.peek(target.url) || target.url;
+    if (isIgnored(target.url, true, true) || isIgnored(resolved, true, true)) return;
+    if (isPlayerUrl(resolved) || isShortUrl(resolved)) {
+      event.preventDefault(); event.stopImmediatePropagation();
+      playerCommand({...target, fallback:() => Reflect.apply(originalOpen, window, [target.url, '_blank', 'noopener'])}, 'new', '_blank', true);
+      return;
+    }
+    if (!isPageUrl(resolved)) return;
     event.preventDefault(); event.stopImmediatePropagation(); clearClick();
     Reflect.apply(originalOpen, window, [target.url, '_blank', 'noopener']);
   }
   function scan(node) {
     if (stopped || !node.querySelectorAll) return;
-    if (node.matches?.('a[href]') && isShortUrl(node.getAttribute('href'))) resolveUrl(node.getAttribute('href'));
-    for (const link of node.querySelectorAll('a[href*="b23.tv" i]')) resolveUrl(link.getAttribute('href'));
+    if (node.matches?.('a[href]') && isShortUrl(node.getAttribute('href'))) shortLinks.prefetch(normalized(node.getAttribute('href')));
+    for (const link of node.querySelectorAll('a[href*="b23.tv" i]')) {
+      const url = normalized(link.getAttribute('href'));
+      if (isShortUrl(url)) shortLinks.prefetch(url);
+    }
     for (const element of [node, ...node.querySelectorAll('*')]) {
       if (element.shadowRoot) { observe(element.shadowRoot); scan(element.shadowRoot); }
       if (element.localName?.includes('-') && !watchedTags.has(element.localName) && window.customElements) {
@@ -249,6 +256,13 @@ export function createPageOpening({beforeMedia = () => {}, ignoreClick = () => f
   }
   function schedule(node = document) {
     if (stopped) return;
+    if (!node.querySelectorAll) return;
+    // contains() intentionally keeps distinct shadow roots: a document scan
+    // cannot otherwise replace queued work inside an already observed root.
+    for (const pending of pendingNodes) {
+      if (pending === node || pending.contains(node)) return;
+      if (node.contains(pending)) pendingNodes.delete(pending);
+    }
     pendingNodes.add(node);
     if (!frame) frame = requestAnimationFrame(prepare);
   }
@@ -268,13 +282,14 @@ export function createPageOpening({beforeMedia = () => {}, ignoreClick = () => f
       stopped = true; events.abort(); mediaMenu.destroy(); clearClick(); cancelAnimationFrame(frame);
       for (const observer of observers.values()) observer.disconnect();
       observers.clear(); pendingNodes.clear(); ignored.clear(); watchedTags.clear();
-      for (const entry of shortLinks.values()) entry.cancel();
-      shortLinks.clear();
+      shortLinks.destroy();
       if (window.open === open) window.open = originalOpen;
       if (window.__potPlayerBilibiliClick === controller) delete window.__potPlayerBilibiliClick;
+      syncPageState();
     },
   };
   window.__potPlayerBilibiliClick = controller;
+  syncPageState();
   window.open = open;
   // Window capture handlers in page modules get to preserve native search first.
   document.addEventListener('click', onClick, {capture:true, passive:false, signal:events.signal});

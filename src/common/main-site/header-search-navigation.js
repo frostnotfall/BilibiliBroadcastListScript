@@ -1,5 +1,6 @@
 import {urlOf} from '../urls.js';
 import {createHeaderSearchControls} from '../header-search-controls.js';
+import {watchPageState} from '../page-state.js';
   // 保留原生搜索处理器生成的地址、关键词、默认词和来源参数。
   export function createHeaderSearchNavigation() {
     const events = new AbortController(), attributes = new Map();
@@ -73,9 +74,9 @@ import {createHeaderSearchControls} from '../header-search-controls.js';
     window.addEventListener('submit', onSubmit, { capture:true, signal:events.signal });
     window.addEventListener('focusin', event => { if (!searchControl(event.target)) pending = null; }, { capture:true, signal:events.signal });
     sync();
-    const poll = setInterval(sync, 500);
+    watchPageState(sync, events.signal);
     return { destroy() {
-      stopped = true; pending = null; events.abort(); clearInterval(poll); restoreIgnore();
+      stopped = true; pending = null; events.abort(); restoreIgnore();
       searchControls.destroy();
       if (window.open === open) window.open = originalOpen;
       for (const [element, saved] of attributes) for (const [name, value] of saved) {

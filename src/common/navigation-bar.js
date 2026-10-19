@@ -180,7 +180,7 @@ export function mountNavigationBar() {
         }
       } else if (document.head.contains(target)) { changed = true; layout = true; }
       else if (record.type === 'childList') for (const node of [...record.addedNodes, ...record.removedNodes]) {
-        if (node.nodeType === 1 && (offsets.has(node) || node.matches(headers) || node.querySelector(headers))) { changed = true; layout = true; }
+        if (node.nodeType === 1 && (node.contains(host) || offsets.has(node) || node.matches(headers) || node.querySelector(headers))) { changed = true; layout = true; }
       }
     }
     if (changed) schedule(layout);

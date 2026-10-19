@@ -58,12 +58,18 @@ export function createEdgePanels({prefix, popup = '[role="dialog"],[role="toolti
     }
     setOpen(active);
   }
-  document.addEventListener('click', event => {
+  // Native dynamic/image cards stop click bubbling, even in their empty area.
+  // Observe before page handlers (including delegated media opening) consume it.
+  window.addEventListener('click', event => {
     // The outer five pixels on either edge never toggle or dismiss a panel.
     if (event.detail && (event.clientX < 5 || event.clientX >= document.documentElement.clientWidth - 5)) return;
-    if (!active || !(event.target instanceof Element) || event.target.closest(`[data-edge-control],${popup}`)) return;
+    if (!active || !(event.target instanceof Element)) return;
+    // Menus can live in a shadow root and stop bubbling themselves. Their
+    // controls still belong to the open panel's interaction, wherever mounted.
+    if (event.composedPath().some(node => node instanceof Element && node.matches(
+      `[data-edge-control],#broadcast-media-menu,#broadcast-external-dialog,${popup}`))) return;
     if (!states.get(active).element.contains(event.target)) setOpen(null);
-  }, {signal:events.signal});
+  }, {capture:true, signal:events.signal});
   document.addEventListener('keydown', event => {
     if (active && event.key === 'Escape') { const button = states.get(active).button; setOpen(null); button.focus(); }
   }, {signal:events.signal});

@@ -1,6 +1,7 @@
 import {pageId, createPageOpening} from '../../common/index.js';
 import {mountHomeLayout} from '../../common/main-site/home-layout.js';
 import {pageStyle} from './style.js';
+import {mountArticleSidebar} from './sidebar.js';
 
 export const early = () => createPageOpening();
 
@@ -11,11 +12,13 @@ export function mount() {
   if (!layout) return;
   const html = document.documentElement;
   html.classList.add('articlescript-active');
+  const sidebar = mountArticleSidebar();
   let stopped = false;
   return {
     destroy() {
       if (stopped) return;
       stopped = true;
+      sidebar.destroy();
       layout.destroy();
       html.classList.remove('articlescript-active');
     },

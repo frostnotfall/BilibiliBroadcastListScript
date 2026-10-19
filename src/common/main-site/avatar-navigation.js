@@ -1,5 +1,6 @@
 import {isPageUrl} from '../urls.js';
 import {createAvatarHover} from './avatar-hover.js';
+import {watchPageState} from '../page-state.js';
   // 页面导航由页面脚本负责；保留头像原生处理器生成的 URL。
   export function createAvatarNavigation() {
     const avatarHover = createAvatarHover();
@@ -22,11 +23,11 @@ import {createAvatarHover} from './avatar-hover.js';
     function isLink(link) { return Boolean(control(link) && link.hasAttribute('href') && destination(link.href)); }
     function ignored(url, {explicit = false} = {}) {
       if (explicit) return false;
-      return Boolean(active && destination(url.href)) || Array.from(document.querySelectorAll('a[href]'))
+      if (!destination(url.href)) return false;
+      return Boolean(active) || Array.from(document.querySelectorAll('.header-avatar-wrap a[href],.link-navbar a[href],.mini-header a[href],.international-header a[href],.charity-header a[href]'))
         .some(link => isLink(link) && link.href === url.href);
     }
     function sync() {
-      avatarHover.refresh();
       const next = window.__potPlayerBilibiliClick;
       if (next === api) return;
       restoreIgnore(); api = next;
@@ -63,6 +64,6 @@ import {createAvatarHover} from './avatar-hover.js';
     window.addEventListener('keydown', sync, { capture:true, signal:events.signal });
     window.addEventListener('click', onClick, { capture:true, signal:events.signal });
     sync();
-    const poll = setInterval(sync, 500);
-    return { isLink, destroy() { avatarHover.destroy(); events.abort(); clearInterval(poll); clear(); restoreIgnore(); } };
+    watchPageState(sync, events.signal);
+    return { isLink, destroy() { avatarHover.destroy(); events.abort(); clear(); restoreIgnore(); } };
   }

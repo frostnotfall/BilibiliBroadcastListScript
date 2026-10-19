@@ -34,28 +34,57 @@ export function dynamicContentStyle(scope, prefix = 'feedscript') {
 }
 
 export function createDynamicContent({getRoot, prefix = 'feedscript', popup = '[role="tooltip"],[role="dialog"],[class*="popover"],[class*="popper"],[class*="image-viewer"],[class*="image-preview"]', isActive = () => true}) {
-  const events = new AbortController(), mediaStyles = new Map(), classes = new Map(), titles = new Map();
-  let stopped = false;
+  const events = new AbortController(), states = new Map(), titles = new Map();
+  let stopped = false, root = null, frame = 0, width = -1, discover = true;
   const saveStyles = (element,names) => new Map(names.map(name => [name,{
     value:element.style.getPropertyValue(name),priority:element.style.getPropertyPriority(name),
   }]));
-  function restoreStyles(element,values) {
-    for(const [name,{value,priority}] of values) {
+  function mark(state, element, name) {
+    const className = prefix + '-' + name;
+    if(element.classList.contains(className)) return;
+    if(!state.classes.has(element)) state.classes.set(element,new Set());
+    state.classes.get(element).add(className); element.classList.add(className);
+  }
+  function release(state) {
+    for(const [element,styles] of state.styles) for(const [name,{value,priority}] of styles) {
       if(value) element.style.setProperty(name,value,priority); else element.style.removeProperty(name);
     }
+    for(const [element,names] of state.classes) for(const name of names) element.classList.remove(name);
+    state.styles.clear(); state.classes.clear();
   }
-  function mark(element,name) {
-    const className = `${prefix}-${name}`;
-    if(element.classList.contains(className)) return;
-    if(!classes.has(element)) classes.set(element,new Set());
-    classes.get(element).add(className);element.classList.add(className);
+  function restoreTitle(element, {original,value}) {
+    if(element.title!==value) return;
+    if(original===null) element.removeAttribute('title'); else element.setAttribute('title',original);
   }
-  function clearMedia() {
-    for(const [element,styles] of mediaStyles) restoreStyles(element,styles);
-    mediaStyles.clear();
-    for(const [element,names] of classes) for(const name of names) element.classList.remove(name);
-    classes.clear();
+  function owner(node) {
+    for(let element=node.nodeType===1 ? node : node.parentElement; element; element=element.parentElement) {
+      if(states.has(element)) return element;
+      if(element===root) break;
+    }
+    return null;
   }
+  function changed(records) {
+    for(const record of records) {
+      const unit=owner(record.target);
+      if(unit) states.get(unit).dirty=true;
+      if(!unit || unit===root) discover=true;
+      if(!unit && record.type==='attributes') for(const [element,state] of states) {
+        if(record.target.contains(element)) state.dirty=true;
+      }
+    }
+  }
+  function schedule() {
+    if(!stopped && !frame) frame=requestAnimationFrame(() => {frame=0;refresh();});
+  }
+  const mutations=new MutationObserver(records => {changed(records);schedule();});
+  const resize=new ResizeObserver(records => {
+    let changed=false;
+    for(const record of records) {
+      const state=states.get(record.target);
+      if(state && record.target.clientWidth!==state.width) {state.dirty=true;changed=true;}
+    }
+    if(changed || root && root.clientWidth!==width) schedule();
+  });
   function collectMedia(root) {
     // Keep the outer native album intact, including its viewer controls.
     const roots = [...root.querySelectorAll('[class*="album" i]')].filter(element => !element.closest(popup) &&
@@ -74,36 +103,67 @@ export function createDynamicContent({getRoot, prefix = 'feedscript', popup = '[
     return ['收起','查看大图','向左旋转','向右旋转'].every(label=>text.includes(label));
   }
   function refresh() {
-    clearMedia();
-    const root=getRoot();
-    if(stopped || !isActive() || !root) {clear();return;}
-    const images=collectMedia(root);
-    // Expanded controls may be siblings of the image or already fit without zoom.
-    for(const tool of root.querySelectorAll('*')) {
-      if(tool.children.length>=2 && !tool.closest(popup) && isTools(tool) && ![...tool.children].some(isTools)) mark(tool,'image-tools');
+    if(frame) {cancelAnimationFrame(frame);frame=0;}
+    const next=getRoot();
+    if(stopped || !isActive() || !next) {clear();return;}
+    if(next!==root) {
+      clear(); root=next;
+      mutations.observe(root,{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:['class','style','hidden','src','srcset']});
+      resize.observe(root);
     }
-    for(const element of images) {
-      for(let parent=element.parentElement;parent && parent!==root;parent=parent.parentElement) {
-        mark(parent,'fit');if(parent.matches('.bili-dyn-item')) break;
+    // A caller may refresh before the observer callback is delivered.
+    changed(mutations.takeRecords());
+    for(const [element,state] of states) if(!root.contains(element)) {release(state);resize.unobserve(element);states.delete(element);}
+    for(const [element,state] of titles) if(!root.contains(element)) {restoreTitle(element,state);titles.delete(element);}
+    if(discover) {
+      const units=[...root.querySelectorAll('.bili-dyn-item')].filter(element => !element.parentElement.closest('.bili-dyn-item') || !root.contains(element.parentElement.closest('.bili-dyn-item')));
+      const current=new Set(units.length ? units : [root]);
+      for(const [element,state] of states) if(!current.has(element)) {release(state);resize.unobserve(element);states.delete(element);}
+      for(const unit of current) if(!states.has(unit)) {
+        states.set(unit,{dirty:true,width:-1,styles:new Map(),classes:new Map()}); resize.observe(unit);
+      }
+      discover=false;
+    }
+    const resized=root.clientWidth!==width; width=root.clientWidth;
+    const pending=[...states].filter(([,state]) => resized || state.dirty);
+    // Restore every affected card first. Native measurement must not inherit our zoom.
+    for(const [,state] of pending) release(state);
+    const batches=pending.map(([unit,state]) => {
+      const images=collectMedia(unit), tools=[];
+      for(const tool of unit.querySelectorAll('*')) {
+        if(tool.children.length>=2 && !tool.closest(popup) && isTools(tool) && ![...tool.children].some(isTools)) tools.push(tool);
+      }
+      return {state,images,tools};
+    });
+    for(const {state,images,tools} of batches) {
+      for(const tool of tools) mark(state,tool,'image-tools');
+      for(const element of images) for(let parent=element.parentElement;parent && parent!==root;parent=parent.parentElement) {
+        mark(state,parent,'fit'); if(parent.matches('.bili-dyn-item')) break;
       }
     }
-    // Measure native dimensions again before each scale, avoiding compounded zoom.
-    for(const element of images) {
-      const css=getComputedStyle(element.parentElement);
-      const available=element.parentElement.clientWidth-parseFloat(css.paddingLeft)-parseFloat(css.paddingRight);
+    // All geometry reads precede scale writes, avoiding a layout flush per image.
+    const measurements=[];
+    for(const {state,images} of batches) for(const element of images) {
+      const parent=element.parentElement, css=getComputedStyle(parent);
+      const available=parent.clientWidth-(parseFloat(css.paddingLeft)||0)-(parseFloat(css.paddingRight)||0);
       const natural=Math.max(element.scrollWidth,element.getBoundingClientRect().width);
       const scale=Math.min(1,Math.max(0,available)/Math.max(1,natural));
-      if(!natural || !scale || scale===1) continue;
-      mark(element,'media');
-      const values={ [`--${prefix}-media-width`]:`${natural}px`, [`--${prefix}-scale`]:String(scale) };
-      mediaStyles.set(element,saveStyles(element,Object.keys(values)));
+      if(natural && scale && scale!==1) measurements.push({state,element,natural,scale});
+    }
+    for(const {state,element,natural,scale} of measurements) {
+      mark(state,element,'media');
+      const values={['--'+prefix+'-media-width']:natural+'px',['--'+prefix+'-scale']:String(scale)};
+      state.styles.set(element,saveStyles(element,Object.keys(values)));
       for(const [name,value] of Object.entries(values)) element.style.setProperty(name,value,'important');
     }
+    for(const [unit,state] of pending) {state.dirty=false;state.width=unit.clientWidth;}
+    // Discard only records generated by our synchronous restore/measure/apply pass.
+    mutations.takeRecords();
   }
   function onTitle(event) {
     if(stopped || !isActive()) return;
-    const root=getRoot(), element=event.target instanceof Element ? event.target.closest(cardText) : null;
-    if(!element || !root?.contains(element)) return;
+    const current=getRoot(), element=event.target instanceof Element ? event.target.closest(cardText) : null;
+    if(!element || !current?.contains(element)) return;
     const text=[...element.closest(cards).querySelectorAll(cardText)].map(field=>field.textContent.trim()).filter(Boolean).join('\n\n');
     let state=titles.get(element);
     if(state && element.title!==state.value) {titles.delete(element);state=null;}
@@ -113,12 +173,21 @@ export function createDynamicContent({getRoot, prefix = 'feedscript', popup = '[
     element.title=text;
   }
   function clear() {
-    clearMedia();
-    for(const [element,{original,value}] of titles) if(element.title===value) {
-      if(original===null) element.removeAttribute('title'); else element.setAttribute('title',original);
-    }
-    titles.clear();
+    mutations.disconnect(); resize.disconnect(); cancelAnimationFrame(frame); frame=0;
+    for(const state of states.values()) release(state);
+    for(const [element,state] of titles) restoreTitle(element,state);
+    states.clear(); titles.clear(); root=null; width=-1; discover=true;
   }
+  document.addEventListener('load', event => {
+    if(!root?.contains(event.target)) return;
+    const unit=owner(event.target);
+    if(unit) states.get(unit).dirty=true;
+    schedule();
+  },{capture:true,signal:events.signal});
+  window.addEventListener('resize', () => {
+    for(const state of states.values()) state.dirty=true;
+    schedule();
+  },{signal:events.signal});
   for(const type of ['mouseover','focusin']) document.addEventListener(type,onTitle,{signal:events.signal});
   return {refresh,clear,destroy() {stopped=true;events.abort();clear();}};
 }

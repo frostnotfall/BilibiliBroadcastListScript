@@ -3,6 +3,7 @@ import {reportResolverFrame} from './opening.js';
 import {mountNavigationBar} from './navigation-bar.js';
 import {mountHorizontalWheel} from './horizontal-wheel.js';
 import {version} from './version.js';
+import {syncPageState} from './page-state.js';
 
 export function startDispatcher(modules) {
   if (reportResolverFrame()) return;
@@ -42,6 +43,7 @@ export function startDispatcher(modules) {
       active.module.routeChanged?.(); navigation?.routeChanged();
     }
     lastUrl = location.href;
+    syncPageState();
   }
   // Observe push/replaceState immediately, including transitions from an unsupported
   // route. The low-frequency fallback also covers a later native history replacement.
@@ -56,7 +58,9 @@ export function startDispatcher(modules) {
   }
   for (const type of ['popstate', 'hashchange', 'pageshow']) window.addEventListener(type, reconcile, {signal:events.signal});
   document.addEventListener('DOMContentLoaded', reconcile, {signal:events.signal});
-  const poll = setInterval(reconcile, 250);
+  const poll = setInterval(() => {
+    if (lastUrl !== location.href || active && !active.ui && document.readyState !== 'loading') reconcile();
+  }, 1000);
   const controller = {
     version, get activePage() { return active?.id || null; }, reconcile,
     destroy() {

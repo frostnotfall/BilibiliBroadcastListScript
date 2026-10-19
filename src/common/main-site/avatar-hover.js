@@ -52,16 +52,22 @@ export function createAvatarHover() {
     for (const element of properties.keys()) if (!element.isConnected || !element.closest('.homepagescript-avatar-circle')) restore(element);
     for (const root of current) {
       if (!roots.has(root)) roots.set(root, root.classList.contains('homepagescript-avatar-circle'));
-      root.classList.add('homepagescript-avatar-circle');
+      if (!root.classList.contains('homepagescript-avatar-circle')) root.classList.add('homepagescript-avatar-circle');
       for (const link of root.querySelectorAll('.header-avatar-wrap--container > :is(.header-entry-mini,.header-entry-avatar)')) circle(link);
       mutations.observe(root, {subtree:true, childList:true, attributes:true, attributeFilter:['class','style']});
     }
   }
   function schedule() { if (!stopped && !frame) frame = requestAnimationFrame(() => {frame = 0; refresh();}); }
   const mutations = new MutationObserver(schedule), resize = new ResizeObserver(schedule);
+  const selector = '.bili-header__bar .header-avatar-wrap';
+  const discovery = new MutationObserver(records => {
+    if (records.some(record => roots.has(record.target) || record.target.closest?.(selector) || [...record.addedNodes, ...record.removedNodes].some(node =>
+      node.nodeType === 1 && (node.matches(selector) || node.querySelector(selector))))) schedule();
+  });
+  discovery.observe(document.body, {childList:true, subtree:true, attributes:true, attributeFilter:['class']});
   resize.observe(document.documentElement); refresh();
   return {refresh, destroy() {
-    stopped = true; mutations.disconnect(); resize.disconnect(); cancelAnimationFrame(frame);
+    stopped = true; mutations.disconnect(); discovery.disconnect(); resize.disconnect(); cancelAnimationFrame(frame);
     for (const element of [...properties.keys()]) restore(element);
     for (const [root, hadClass] of roots) if (!hadClass) root.classList.remove('homepagescript-avatar-circle');
     roots.clear(); style.remove();

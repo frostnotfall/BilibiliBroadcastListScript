@@ -43,12 +43,12 @@ export function createFixedProfiles({selector, getBounds = () => null}) {
         right:Math.min(viewport.right, preferred.right ?? viewport.right),
         bottom:Math.min(viewport.bottom, preferred.bottom ?? viewport.bottom),
       };
-      const scale = Math.min(1, (bounds.right - bounds.left) / Math.max(1, width * nativeZoom), (bounds.bottom - bounds.top) / Math.max(1, height * nativeZoom));
-      const unit = nativeZoom * scale;
-      const right = bounds.right - width * unit;
+      // Preserve the native size; move the card when space is tight instead of shrinking it.
+      const unit = nativeZoom;
+      const right = Math.max(bounds.left, bounds.right - width * unit);
       const x = preferred.align === 'right' ? right : Math.max(bounds.left, Math.min(state.x, right));
-      const y = Math.max(bounds.top, Math.min(state.y, bounds.bottom - height * unit));
-      for (const [name, value] of Object.entries({'--fixed-profile-x':`${x / unit}px`, '--fixed-profile-y':`${y / unit}px`, '--fixed-profile-zoom':String(state.zoom * scale)})) {
+      const y = Math.max(bounds.top, Math.min(preferred.y ?? state.y, bounds.bottom - height * unit));
+      for (const [name, value] of Object.entries({'--fixed-profile-x':`${x / unit}px`, '--fixed-profile-y':`${y / unit}px`, '--fixed-profile-zoom':String(state.zoom)})) {
         if (host.style.getPropertyValue(name) !== value) host.style.setProperty(name, value, 'important');
       }
     }

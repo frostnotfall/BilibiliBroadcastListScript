@@ -4,6 +4,7 @@ import {createLiveAvatarLayout} from './avatar-layout.js';
 import {createLiveControls} from './home-controls.js';
 import {createHeaderSearchControls} from '../header-search-controls.js';
 import {liveStyle, liveHeaderStyle} from './style.js';
+import {watchPageState} from '../page-state.js';
 export function mountLivePage({id = 'LiveHome', extraStyle = '', contentSelector = '#app main [class~="grid"]', headerOnly = false} = {}) {
   const matchesPage = () => pageId(location.href) === id;
   window.bilibiliHomePageScript?.destroy();
@@ -152,17 +153,16 @@ export function mountLivePage({id = 'LiveHome', extraStyle = '', contentSelector
   narrow.addEventListener('change',schedule,{signal:events.signal});
   window.addEventListener('popstate',schedule,{signal:events.signal});
   window.addEventListener('hashchange',schedule,{signal:events.signal});
-  // A shared poll detects pushState and bridge reinjection without patching website history.
-  const syncTimer = setInterval(() => {
+  watchPageState(({routeChanged}) => {
     if (!matchesPage()) destroy();
-    else navigation.sync();
-  },500);
+    else { navigation.sync(); if (routeChanged) schedule(); }
+  }, events.signal);
 
   function destroy() {
     if (stopped) return;
     stopped = true;
     events.abort(); mutations.disconnect(); avatarLayout.disconnect(); resize.disconnect();
-    clearInterval(syncTimer); cancelAnimationFrame(frame);
+    cancelAnimationFrame(frame);
     navigation.destroy();
     controls.destroy();
     searchControls.destroy();

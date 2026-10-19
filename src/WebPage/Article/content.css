@@ -29,7 +29,6 @@ html.articlescript-active:has(#app.dark_mode) { color-scheme:dark!important; }
   html.articlescript-active .page-home .article-item__stats { flex-wrap:wrap!important; width:auto!important; min-width:0!important; gap:6px 10px!important; }
 
   /* Opus: use available width for text and constrain native media. */
-  html.articlescript-active #app:has(.opus-detail) { padding-bottom:calc(76px + env(safe-area-inset-bottom,0px))!important; }
   html.articlescript-active .opus-detail {
     box-sizing:border-box!important; width:calc(100% - 16px)!important; min-width:0!important; max-width:100%!important;
     margin-left:8px!important; margin-right:8px!important;
@@ -68,20 +67,29 @@ html.articlescript-active:has(#app.dark_mode) { color-scheme:dark!important; }
   }
   html.articlescript-active .opus-tabs .bili-tabs__nav__items { margin-left:-30px!important; width:calc(100% + 30px)!important; }
 
-  /* Keep all seven native actions accessible while reading. No cloned
-     buttons: collection, comment and back-to-top retain their events. */
+  /* Native vertical layout and button geometry. A document-level pointer
+     tracker enables the transparent rail without intercepting text selection. */
   html.articlescript-active .opus-detail .right-sidebar-wrap {
-    position:fixed!important; z-index:100!important; left:8px!important; right:8px!important; top:auto!important;
-    bottom:calc(8px + env(safe-area-inset-bottom,0px))!important; width:auto!important; min-width:0!important; margin:0!important; transform:none!important;
+    position:fixed!important; z-index:100!important; left:auto!important; right:2px!important;
+    top:var(--articlescript-sidebar-top,180px)!important; bottom:auto!important;
+    margin:0!important; transform:none!important; transition:none!important; pointer-events:none!important;
   }
   html.articlescript-active .right-sidebar-wrap .side-toolbar {
-    display:flex!important; align-items:center!important; justify-content:space-around!important;
-    box-sizing:border-box!important; width:100%!important; height:56px!important; padding:4px!important;
-    background:var(--bg1,#fff)!important; border:1px solid var(--line_regular,#e3e5e7)!important; border-radius:8px!important;
+    max-height:var(--articlescript-sidebar-room,none)!important; overflow-x:hidden!important; overflow-y:auto!important; scrollbar-width:none!important;
   }
-  html.articlescript-active .side-toolbar :is(.side-toolbar__top,.side-toolbar__box,.side-toolbar__bottom) { display:contents!important; }
-  html.articlescript-active .side-toolbar :is(.side-toolbar__action,.side-toolbar__btn) { box-sizing:border-box!important; flex:1 1 0!important; width:auto!important; min-width:0!important; height:46px!important; margin:0!important; padding:0!important; }
-  html.articlescript-active .side-toolbar .ring-progress { left:calc(50% - 15px)!important; }
+  html.articlescript-active .right-sidebar-wrap .side-toolbar::-webkit-scrollbar { display:none!important; }
+  html.articlescript-active .right-sidebar-wrap.articlescript-sidebar-hover :is(.side-toolbar__top,.side-toolbar__box),
+  html.articlescript-active .right-sidebar-wrap .opus-collection { pointer-events:auto!important; }
+  html.articlescript-active .right-sidebar-wrap:not(.articlescript-sidebar-hover) :is(.side-toolbar__top,.side-toolbar__box),
+  html.articlescript-active .right-sidebar-wrap:not(.articlescript-sidebar-hover) :is(.side-toolbar__top,.side-toolbar__box) * {
+    pointer-events:none!important; background:transparent!important; border-color:transparent!important; box-shadow:none!important;
+  }
+  html.articlescript-active .right-sidebar-wrap:not(.articlescript-sidebar-hover) :is(.side-toolbar__top,.side-toolbar__box) :is(svg,img,.side-toolbar__action__text) { opacity:.5!important; }
+  html.articlescript-active .right-sidebar-wrap:not(.articlescript-sidebar-hover) :is(.side-toolbar__top,.side-toolbar__box) :is(.side-toolbar__audit-btn__text,.ring-progress,.side-toolbar__action__combosvga) { opacity:0!important; }
+  html.articlescript-active .side-toolbar .side-toolbar__bottom {
+    position:fixed!important; z-index:100!important; left:auto!important; right:2px!important; top:auto!important;
+    bottom:var(--articlescript-backtop-bottom,2px)!important; pointer-events:auto;
+  }
   html.articlescript-active .right-sidebar-wrap .opus-collection {
     position:fixed!important; left:8px!important; right:8px!important; top:auto!important; bottom:calc(72px + env(safe-area-inset-bottom,0px))!important;
     box-sizing:border-box!important; width:auto!important; max-width:480px!important; max-height:calc(100dvh - 180px)!important; overflow-y:auto!important; transform:none!important;

@@ -83,7 +83,7 @@
   {
     "id": "Space",
     "host": "space.bilibili.com",
-    "pathPattern": "^/\\d+(?:/(?:dynamic|upload(?:/(?:video|opus))?|lists|bangumi)|/(?:favlist|fav)(?:/.*)?)?/?$"
+    "pathPattern": "^/\\d+(?:/(?:dynamic|upload(?:/(?:video|opus))?|lists(?:/\\d+)?|bangumi)|/(?:favlist|fav)(?:/.*)?)?/?$"
   },
   {
     "id": "Search",

@@ -5,9 +5,10 @@ import {createDynamicContent, dynamicContentStyle} from '../../common/dynamic-co
 import {createEdgePanels} from '../../common/edge-panels.js';
 import {createFixedProfiles} from '../../common/fixed-profiles.js';
 import {version} from '../../common/version.js';
+import {liveFaceSelector, liveNameSelector, resolveFeedLiveLink} from './live-users.js';
 import css from './content.css';
 
-export const early = () => createPageOpening();
+export const early = () => createPageOpening({resolveLink:resolveFeedLiveLink});
 export function mount() {
   const matchesPage = () => pageId(location.href) === 'Feed';
   if (!matchesPage()) return;
@@ -20,31 +21,36 @@ export function mount() {
   const panels = createEdgePanels({prefix:'feedscript', popup, scrollRegions:{
     left:'.bili-dyn-live-users', right:'.sticky,.bili-dyn-search-trendings',
   }});
-  const profiles = createFixedProfiles({selector:profileSelector, getBounds:(_host, {width}) => {
+  let profileAnchor = null;
+  const profiles = createFixedProfiles({selector:profileSelector, getBounds:(host, size) => {
     const sidebar = document.querySelector('.feedscript-shell .edge-panel-left.edge-panel-open');
     if (!sidebar) return null;
-    const box = sidebar.getBoundingClientRect();
-    // Keep the complete list clear when possible. In very narrow windows keep
-    // the avatar selection lane clear rather than covering every neighbouring user.
-    const avatarLane = box.left + 88 * box.width / sidebar.offsetWidth;
-    return {align:'right', left:Math.max(avatarLane, Math.min(box.right + 8, html.clientWidth - 8 - Math.min(width,240)))};
+    // Keep the native-size card against the viewport's right edge, allowing list overlap.
+    const anchor = profileAnchor?.isConnected ? profileAnchor.getBoundingClientRect() : null;
+    return {align:'right', ...(anchor && {y:anchor.top - size.height})};
   }});
-  let main = null, frame = 0, stopped = false, layoutPending = false, restoreViewport = null;
+  let main = null, frame = 0, stopped = false, layoutPending = false, restoreViewport = null, wanted = null;
   const dynamic = createDynamicContent({getRoot:() => main, popup, isActive:() => narrow.matches});
   const style = Object.assign(document.createElement('style'), {
     id:'feedscript-style', textContent:css + `@media(max-width:1099px){html.feedscript-active{${dynamicContentStyle('.feedscript-main')}}}`,
   });
   function mark(element, name) {
-    if (!element || element.classList.contains(name)) return;
-    if (!owned.has(element)) owned.set(element, new Set());
-    owned.get(element).add(name); element.classList.add(name);
+    if (!element) return;
+    if (!element.classList.contains(name)) {
+      if (!owned.has(element)) owned.set(element, new Set());
+      owned.get(element).add(name); element.classList.add(name);
+    }
+    if (wanted && owned.get(element)?.has(name)) {
+      if (!wanted.has(element)) wanted.set(element, new Set());
+      wanted.get(element).add(name);
+    }
   }
   function clearClasses() {
     for (const [element, names] of owned) for (const name of names) element.classList.remove(name);
     owned.clear();
   }
   function updateLayout() {
-    clearClasses();
+    wanted = new Map();
     const root = document.querySelector('.bili-dyn-home--member');
     main = root?.querySelector('main') || null;
     if (!main) { clear(); return; }
@@ -79,10 +85,16 @@ export function mount() {
         if (button.textContent.replace(/\s/g,'') === '回到旧版') mark(button, 'feedscript-legacy');
       }
     }
+    for (const [element, names] of owned) {
+      for (const name of names) if (!wanted.get(element)?.has(name)) {element.classList.remove(name); names.delete(name);}
+      if (!names.size) owned.delete(element);
+    }
+    wanted = null;
     panels.sync({left, right}); dynamic.refresh();
   }
   function clear() {
     panels.clear(); profiles.clear(); dynamic.clear(); clearClasses();
+    wanted = null;
     html.classList.remove('feedscript-scrolled');
     restoreViewport?.(); restoreViewport = null; style.remove(); main = null;
   }
@@ -120,10 +132,23 @@ export function mount() {
   const onProfileTransition = event => {
     if (event.target instanceof Element && event.target.closest(profileSelector)) schedule(false);
   };
+  const onProfileHover = event => {
+    const target = event.target instanceof Element ? event.target : null;
+    // Keep the native name click and context menu, but do not start its profile
+    // hover timer. Leaving the avatar still runs the site's normal hide logic.
+    if (target?.closest(liveNameSelector)) { event.stopImmediatePropagation(); return; }
+    if (event.type !== 'mouseover') return;
+    const anchor = target?.closest(liveFaceSelector) || null;
+    // Crossing the gap into the card must retain its anchor. Clear it only
+    // when another native profile trigger takes over (for example a feed author).
+    if (!anchor && !event.composedPath().some(node => node._profile)) return;
+    if (profileAnchor !== anchor) { profileAnchor = anchor; schedule(false); }
+  };
   for (const [target, type, handler, capture = false] of [
     [window,'scroll',() => schedule(false),true], [window,'resize',() => schedule()],
     [window,'pageshow',() => schedule()], [document,'load',() => schedule(),true], [narrow,'change',() => schedule()],
     [document,'transitionrun',onProfileTransition,true], [document,'transitionend',onProfileTransition,true],
+    [document,'mouseenter',onProfileHover,true], [document,'mouseover',onProfileHover,true],
   ]) target.addEventListener(type, handler, {signal:events.signal, capture, passive:true});
   refresh();
   const instance = {version, refresh, destroy() {
