@@ -204,13 +204,26 @@ export function createPageOpening({beforeMedia = () => {}, ignoreClick = () => f
     if (!stopped && click && handle(args[0], click, () => Reflect.apply(originalOpen, this, args))) return null;
     return Reflect.apply(originalOpen, this, args);
   }
-  function onAuxClick(event) {
-    if (stopped || !event.isTrusted || event.button !== 1 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey || event.defaultPrevented) return;
-    if (typeof window.chrome?.webview?.postMessage !== 'function') return;
+  function middleTarget(event) {
+    if (stopped || !event.isTrusted || event.button !== 1 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey || event.defaultPrevented) return null;
+    if (typeof window.chrome?.webview?.postMessage !== 'function') return null;
     const target = linkTarget(event);
-    if (!target) return;
+    if (!target) return null;
     const resolved = shortLinks.peek(target.url) || target.url;
-    if (isIgnored(target.url, true, true) || isIgnored(resolved, true, true)) return;
+    if (isIgnored(target.url, true, true) || isIgnored(resolved, true, true)) return null;
+    return isPlayerUrl(resolved) || isShortUrl(resolved) || isPageUrl(resolved) ? {...target, resolved} : null;
+  }
+  function onMouseDown(event) {
+    const target = middleTarget(event);
+    if (!target || target.anchor.matches?.('a[href]')) return;
+    // Href-less native cards start autoscroll on middle down, swallowing
+    // auxclick. Cancel that default here; only auxclick launches the command.
+    event.preventDefault(); event.stopImmediatePropagation();
+  }
+  function onAuxClick(event) {
+    const target = middleTarget(event);
+    if (!target) return;
+    const {resolved} = target;
     if (isPlayerUrl(resolved) || isShortUrl(resolved)) {
       event.preventDefault(); event.stopImmediatePropagation();
       playerCommand({...target, fallback:() => Reflect.apply(originalOpen, window, [target.url, '_blank', 'noopener'])}, 'new', '_blank', true);
@@ -293,6 +306,7 @@ export function createPageOpening({beforeMedia = () => {}, ignoreClick = () => f
   window.open = open;
   // Window capture handlers in page modules get to preserve native search first.
   document.addEventListener('click', onClick, {capture:true, passive:false, signal:events.signal});
+  document.addEventListener('mousedown', onMouseDown, {capture:true, passive:false, signal:events.signal});
   document.addEventListener('auxclick', onAuxClick, {capture:true, passive:false, signal:events.signal});
   document.addEventListener('DOMContentLoaded', () => schedule(document), {signal:events.signal});
   observe(document); schedule(document);

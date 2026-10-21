@@ -16,7 +16,8 @@ export function pageStyle() {
       html.homepagescript-active .rank-tips { white-space:normal!important; height:auto!important; }
       html.homepagescript-active .rank-list { display:grid!important; grid-template-columns:repeat(var(--homepagescript-columns,2),minmax(0,1fr))!important; gap:16px 12px!important; }
       html.homepagescript-active .rank-item { box-sizing:border-box!important; width:100%!important; min-width:0!important; margin:0!important; }
-      html.homepagescript-active .rank-item .content { display:flex!important; flex-direction:column!important; width:100%!important; min-width:0!important; }
+      /* 行间距由网格统一提供，移除原生列表上下各 20px 的内边距。 */
+      html.homepagescript-active .rank-item .content { display:flex!important; flex-direction:column!important; width:100%!important; min-width:0!important; padding:0!important; }
       html.homepagescript-active .rank-item :is(.img,.info,.detail,.detail-state) { box-sizing:border-box!important; width:100%!important; min-width:0!important; height:auto!important; margin:0!important; }
       html.homepagescript-active .rank-list:not(.pgc-list) .rank-item .img { aspect-ratio:16/9; }
       html.homepagescript-active .rank-item .img :is(a,img) { display:block; width:100%!important; }
@@ -24,8 +25,20 @@ export function pageStyle() {
       /* 官方 pgc-list 使用竖封面；解除固定高度，沿用原生缩略图比例。 */
       html.homepagescript-active .rank-list.pgc-list .rank-item .img :is(a,img) { height:auto!important; }
       html.homepagescript-active .rank-item .info { padding:8px 0 0!important; }
-      html.homepagescript-active .rank-item .title { width:100%!important; }
+      /* 原生标题固定预留三行，窄屏卡片按实际文字高度排列。 */
+      html.homepagescript-active .rank-item .title { width:100%!important; height:auto!important; margin-bottom:8px!important; }
       html.homepagescript-active .rank-item .detail-state { display:flex!important; flex-wrap:wrap!important; gap:4px 10px!important; }
+      /* 保留原生 DOM 和弹层事件，通过网格将上榜入口排在作者右侧，统计另起一行。 */
+      html.homepagescript-active .rank-list:not(.pgc-list) .rank-item .content { display:grid!important; grid-template-columns:minmax(0,1fr) auto!important; column-gap:8px!important; }
+      html.homepagescript-active .rank-list:not(.pgc-list) .rank-item :is(.info,.detail,.content > span:has(.more-data)) { display:contents!important; }
+      html.homepagescript-active .rank-list:not(.pgc-list) .rank-item .img { grid-area:1 / 1 / 2 / -1; }
+      html.homepagescript-active .rank-list:not(.pgc-list) .rank-item .title { grid-area:2 / 1 / 3 / -1; padding-top:8px!important; }
+      html.homepagescript-active .rank-list:not(.pgc-list) .rank-item .detail > a { grid-area:3 / 1; min-width:0!important; align-self:center; }
+      html.homepagescript-active .rank-list:not(.pgc-list) .rank-item .up-name { width:100%!important; max-width:100%!important; margin:0!important; }
+      html.homepagescript-active .rank-list:not(.pgc-list) .rank-item .detail-state { grid-area:4 / 1 / 5 / -1; margin-top:4px!important; }
+      html.homepagescript-active .rank-item .more-data { grid-area:3 / 2; position:static!important; display:inline-flex!important; align-items:center!important; align-self:center; max-width:100%!important; margin:0!important; white-space:nowrap!important; }
+      html.homepagescript-active .van-popover.other { min-width:0!important; max-width:calc(100vw - 24px)!important; }
+      html.homepagescript-active .van-popover.other .other-link { width:auto!important; max-width:100%!important; white-space:normal!important; overflow-wrap:anywhere!important; }
       /* 音乐榜使用 CSS Modules；按语义前缀匹配，避免绑定构建哈希。 */
       html.homepagescript-active .music-rank-list [class*="_cardList_"] { display:flex!important; flex-direction:column!important; gap:12px!important; width:100%!important; }
       html.homepagescript-active .music-rank-list :is([class*="_card_"],[class*="_cardContainer_"]) { box-sizing:border-box!important; width:100%!important; min-width:0!important; height:auto!important; margin:0!important; padding:12px!important; }
