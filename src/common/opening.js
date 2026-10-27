@@ -1,4 +1,4 @@
-import {urlOf, classifyUrl, isMediaUrl, isPlayitemUrl, isPlaylistUrl, isPlayerUrl, isPageUrl, isShortUrl, playerCommandUri} from './urls.js';
+import {urlOf, classifyUrl, isMediaUrl, isPlaylistUrl, isPlayerUrl, isPageUrl, isShortUrl, playerCommandUri} from './urls.js';
 import {createMediaMenu} from './media-menu.js';
 import {version} from './version.js';
 import {createResolverCache} from './resolver-cache.js';
@@ -95,14 +95,13 @@ export function createPageOpening({beforeMedia = () => {}, ignoreClick = () => f
   function dispatch(value, state) {
     if (stopped) return false;
     if (state.explicit && isPlayerUrl(value)) return send(value, state, {playlist:true, explicit:true});
-    if (isPlayitemUrl(value)) return send(value, state);
+    // Playlist links, including header Watchlater cards, share the same
+    // playback actions as single videos. Keep their original query parameters.
+    if (isMediaUrl(value)) return send(value, state);
     if (isPageUrl(value)) {
       if (!state.sent.has(value)) { state.sent.add(value); location.assign(value); }
       return true;
     }
-    // Native "play all" buttons open playlist URLs without an anchor. Keep
-    // that media intent; an ordinary link to an unadapted page asks to leave.
-    if (state.nativeMedia && isMediaUrl(value)) return send(value, state, {playlist:true});
     if (typeof window.chrome?.webview?.postMessage === 'function' && !isIgnored(value, true)) {
       if (state.sent.has(value)) return true;
       if (mediaMenu.confirmExternal(value)) { state.sent.add(value); return true; }
@@ -162,7 +161,7 @@ export function createPageOpening({beforeMedia = () => {}, ignoreClick = () => f
       if (!target || isIgnored(target.url, true, true)) return null;
       const resolved = shortLinks.peek(target.url) || target.url;
       if (isIgnored(resolved, true, true)) return null;
-      const kind = isPlayitemUrl(resolved) || isShortUrl(resolved) ? 'media' : isPageUrl(resolved) ? 'page' : 'native';
+      const kind = isMediaUrl(resolved) || isShortUrl(resolved) ? 'media' : isPageUrl(resolved) ? 'page' : 'native';
       return {...target, kind, playlist:isPlaylistUrl(resolved)};
     },
     openPage({url, fallback}) {
@@ -191,7 +190,6 @@ export function createPageOpening({beforeMedia = () => {}, ignoreClick = () => f
     const state = {sent:new Set(), pending:new Set()};
     click = state; timer = setTimeout(clearClick, 0);
     const anchor = event.composedPath().find(node => node.matches?.('a[href]')) || event.target?.closest?.('a[href]');
-    state.nativeMedia = !anchor;
     if (!anchor || anchor.hasAttribute('download')) { if (anchor) clearClick(); return; }
     const url = normalized(anchor.getAttribute('href'));
     if (!url) return;

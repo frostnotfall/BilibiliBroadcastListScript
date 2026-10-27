@@ -30,7 +30,7 @@ export function pageId(value) {
   return null;
 }
 export const isPageUrl = value => Boolean(pageId(value));
-// PlayitemParse support only; playlist-only URLs must not get the video menu.
+// URLs handled by PlayitemParse; playlist-only URLs are handled separately.
 export function isPlayitemUrl(value) {
   const url = value instanceof URL ? value : urlOf(value);
   if (!url || !['http:', 'https:'].includes(url.protocol)) return false;

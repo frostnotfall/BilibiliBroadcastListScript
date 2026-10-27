@@ -1,6 +1,6 @@
 {
   "name": "bilibili-broadcast-list-script",
-  "version": "8",
+  "version": "9",
   "private": true,
   "license": "MIT",
   "packageManager": "pnpm@11.25.0",
