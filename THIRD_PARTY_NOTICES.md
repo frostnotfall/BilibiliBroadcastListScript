@@ -36,10 +36,63 @@ PNG 由 Windows `System.Drawing.Icon.ToBitmap` 解码对应原始 16px 图标帧
 | 素材 | 项目内路径 | 来源与用途 |
 | --- | --- | --- |
 | Bilibili 图标 | `src/common/assets/bilibili/bilibili.ico` | 用户提供；用于右键菜单中「在当前标签页打开该页面」的功能标识 |
+| 稍后再看 SVG | `src/common/media-menu.js` 中的 `icons.watchlater` | 取自 [Bilibili 官方视频页](https://www.bilibili.com/video/BV1konw6eEkG/) 的 `.video-watchlater-icon`（2026-10-30）；保留原始 viewBox 和路径，用于「添加到稍后再看」功能标识 |
 
 该图标通过构建内嵌到 `BroadcastListScript.js`，运行时不请求外部图片。
 
 **本项目的 MIT 许可证仅适用于项目原创内容，不涵盖 Bilibili 图标、名称或标识。** 本项目不为这些第三方素材授予复制、修改、再分发或商业使用的许可。注明来源和权利归属不代表已取得权利人的授权；相关使用条件应以权利人提供的条款及授权为准。
+
+## Lucide Link 图标来源、版权与许可
+
+右键菜单「复制链接地址」使用 [Lucide Link 图标](https://lucide.dev/icons/link)，SVG 内嵌于 `src/common/media-menu.js` 的 `icons.link`，构建后随 `BroadcastListScript.js` 分发，运行时不请求外部资源。保留原始 viewBox 和路径，以 `currentColor` 适配明暗主题，在菜单中显示为 16×16。
+
+来源：[Lucide 官方许可](https://lucide.dev/license)（查阅日期：2026-10-30）。Lucide 使用 ISC 许可；官方将 `link` 列为源自 [Feather](https://github.com/feathericons/feather) 的图标，因此同时保留 Feather 的 MIT 许可和版权声明。下列许可适用于该第三方图标，项目自身的 MIT 许可不替代这些许可。
+
+### Lucide — ISC License
+
+```text
+ISC License
+
+Copyright (c) 2026 Lucide Icons and Contributors
+
+Permission to use, copy, modify, and/or distribute this software for any
+purpose with or without fee is hereby granted, provided that the above
+copyright notice and this permission notice appear in all copies.
+
+THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+```
+
+### Feather — MIT License（适用于源自 Feather 的 Link 图标）
+
+```text
+The MIT License (MIT)
+
+Copyright (c) 2013-present Cole Bemis
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```
 
 ## 交付范围
 

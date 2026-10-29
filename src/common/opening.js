@@ -3,6 +3,7 @@ import {createMediaMenu} from './media-menu.js';
 import {version} from './version.js';
 import {createResolverCache} from './resolver-cache.js';
 import {syncPageState} from './page-state.js';
+import {createWatchlater, watchlaterTarget} from './watchlater.js';
 
 const resultType = 'potPlayer.short-link.result';
 const resolverName = 'potPlayer.short-link:';
@@ -122,6 +123,7 @@ export function createPageOpening({beforeMedia = () => {}, ignoreClick = () => f
     return true;
   }
   function clearClick() { clearTimeout(timer); timer = 0; click = null; }
+  const watchlater = createWatchlater({resolveUrl});
   function linkTarget(event) {
     if (ignoreClick(event)) return null;
     const anchor = event.composedPath().find(node => node.matches?.('a[href]')) || event.target?.closest?.('a[href]');
@@ -134,7 +136,8 @@ export function createPageOpening({beforeMedia = () => {}, ignoreClick = () => f
     const url = normalized(anchor ? anchor.getAttribute('href') : resolved.url);
     if (!url) return null;
     const target = owner.getAttribute('target') || document.querySelector('base[target]')?.getAttribute('target') || '_self';
-    return {anchor:owner, url, fallback:() => target === '_self' ? location.assign(url) : Reflect.apply(originalOpen, window, [url, target])};
+    return {anchor:owner, url, aid:resolved?.aid, bvid:resolved?.bvid,
+      fallback:() => target === '_self' ? location.assign(url) : Reflect.apply(originalOpen, window, [url, target])};
   }
   function playerCommand({url, fallback}, command, target, playback = false) {
     clearClick();
@@ -162,7 +165,7 @@ export function createPageOpening({beforeMedia = () => {}, ignoreClick = () => f
       const resolved = shortLinks.peek(target.url) || target.url;
       if (isIgnored(resolved, true, true)) return null;
       const kind = isMediaUrl(resolved) || isShortUrl(resolved) ? 'media' : isPageUrl(resolved) ? 'page' : 'native';
-      return {...target, kind, playlist:isPlaylistUrl(resolved)};
+      return {...target, kind, playlist:isPlaylistUrl(resolved), watchlater:kind === 'media' ? watchlaterTarget(target, resolved) : null};
     },
     openPage({url, fallback}) {
       clearClick();
@@ -175,6 +178,7 @@ export function createPageOpening({beforeMedia = () => {}, ignoreClick = () => f
     openNew:target => playerCommand(target, 'new', '_blank', true),
     addNext:target => playerCommand(target, 'insert', '_blank'),
     addLast:target => playerCommand(target, 'add', '_blank'),
+    addWatchlater:target => watchlater.add(target.watchlater),
     openExternal({url}) {
       clearClick();
       // Use the native new-window path for external browsing. Do not run
@@ -290,7 +294,7 @@ export function createPageOpening({beforeMedia = () => {}, ignoreClick = () => f
     async open(value) { return send(await resolveUrl(value), click || {sent:new Set(), pending:new Set()}); },
     destroy() {
       if (stopped) return;
-      stopped = true; events.abort(); mediaMenu.destroy(); clearClick(); cancelAnimationFrame(frame);
+      stopped = true; events.abort(); mediaMenu.destroy(); watchlater.destroy(); clearClick(); cancelAnimationFrame(frame);
       for (const observer of observers.values()) observer.disconnect();
       observers.clear(); pendingNodes.clear(); ignored.clear(); watchedTags.clear();
       shortLinks.destroy();

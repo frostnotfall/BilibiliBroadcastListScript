@@ -23,6 +23,7 @@ button {
 }
 button:hover, button:focus-visible { background: var(--menu-hover); }
 button:focus-visible { outline: 1px solid #00aeec; outline-offset: -1px; }
+button:disabled { color: var(--menu-muted); }
 .icon { display: flex; flex: 0 0 16px; width: 16px; height: 16px; }
 svg, img { display: block; width: 16px; height: 16px; }
 .label { min-width: 0; overflow-wrap: anywhere; }

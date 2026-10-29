@@ -9,6 +9,10 @@ const icons = {
   player:`<img src="${playerIcon}" width="16" height="16" alt="" />`,
   playlist:`<img src="${playlistIcon}" width="16" height="16" alt="" />`,
   browser:'<svg viewBox="0 0 20 20" fill="none" stroke="#3199dc" stroke-width="1.4"><circle cx="10" cy="10" r="8"/><ellipse cx="10" cy="10" rx="3.7" ry="8"/><path d="M2 10h16M3.5 5.5h13M3.5 14.5h13"/></svg>',
+  // Lucide Link (derived from Feather); licenses in THIRD_PARTY_NOTICES.md.
+  link:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>',
+  // Official video-page .video-watchlater-icon; provenance in THIRD_PARTY_NOTICES.md.
+  watchlater:'<svg viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" clip-rule="evenodd" d="M11.5 4C7.08172 4 3.5 7.58172 3.5 12C3.5 16.4183 7.08172 20 11.5 20C13.709 20 15.7072 19.106 17.156 17.6578C17.5465 17.2673 18.1797 17.2674 18.5702 17.658C18.9606 18.0486 18.9605 18.6817 18.5699 19.0722C16.7615 20.8801 14.2606 22 11.5 22C5.97715 22 1.5 17.5228 1.5 12C1.5 6.47715 5.97715 2 11.5 2C17.0228 2 21.5 6.47715 21.5 12C21.5 12.3748 21.4793 12.7451 21.439 13.1099C21.3783 13.6588 20.8841 14.0546 20.3352 13.9939C19.7863 13.9333 19.3904 13.4391 19.4511 12.8901C19.4834 12.5982 19.5 12.3012 19.5 12C19.5 7.58172 15.9183 4 11.5 4Z"/><path fill-rule="evenodd" clip-rule="evenodd" d="M17.7929 10.7929C18.1834 10.4024 18.8166 10.4024 19.2071 10.7929L20.5 12.0858L21.7929 10.7929C22.1834 10.4024 22.8166 10.4024 23.2071 10.7929C23.5976 11.1834 23.5976 11.8166 23.2071 12.2071L21.2071 14.2071C21.0196 14.3946 20.7652 14.5 20.5 14.5C20.2348 14.5 19.9804 14.3946 19.7929 14.2071L17.7929 12.2071C17.4024 11.8166 17.4024 11.1834 17.7929 10.7929Z"/><path fill-rule="evenodd" clip-rule="evenodd" d="M14.625 10.4846C15.7917 11.1582 15.7917 12.8422 14.625 13.5157L10.875 15.6808C9.70834 16.3544 8.25 15.5124 8.25 14.1653L8.25 9.83513C8.25 8.48798 9.70834 7.64601 10.875 8.31959L14.625 10.4846ZM13.875 12.2167C14.0417 12.1205 14.0417 11.8799 13.875 11.7837L10.125 9.61862C9.95833 9.5224 9.75 9.64268 9.75 9.83513L9.75 14.1653C9.75 14.3577 9.95833 14.478 10.125 14.3818L13.875 12.2167Z"/></svg>',
 };
 
 function pageTheme(media) {
@@ -44,7 +48,7 @@ async function copyLink(value) {
 
 // One delegated listener covers dynamic cards and open shadow roots. The owner
 // supplies the same link eligibility and playback rules as its normal clicks.
-export function createMediaMenu({getTarget, openPage, play, openNew, openExternal, addNext, addLast}) {
+export function createMediaMenu({getTarget, openPage, play, openNew, openExternal, addNext, addLast, addWatchlater}) {
   const events = new AbortController();
   const media = matchMedia('(prefers-color-scheme: dark)');
   let host = null, previousFocus = null, menuEvents = null, themeObserver = null, stopped = false;
@@ -121,7 +125,7 @@ export function createMediaMenu({getTarget, openPage, play, openNew, openExterna
       {label:'不支持当前页面，从外置浏览器打开', action:openExternal},
     ];
     const external = {label:'从外部浏览器打开', icon:'browser', action:openExternal};
-    const copy = {label:'复制链接地址', copy:true};
+    const copy = {label:'复制链接地址', icon:'link', copy:true};
     if (target.kind === 'page') {
       const items = [
         {label:'在当前标签页打开该页面', hint:'(鼠标左键)', icon:'bilibili', action:openPage}, external,
@@ -136,9 +140,10 @@ export function createMediaMenu({getTarget, openPage, play, openNew, openExterna
     }
     return [
       {label:'使用当前进程播放', hint:'(鼠标左键)', icon:'player', action:play},
-      {label:'新开一个进程播放', hint:'(鼠标中键)', icon:'player', action:openNew}, external, null,
+      {label:'新开一个进程播放', hint:'(鼠标中键)', icon:'player', action:openNew}, null,
       {label:'添加到默认播放列表（下一个）', icon:'playlist', action:addNext},
-      {label:'添加到默认播放列表（末尾）', icon:'playlist', action:addLast}, null, copy,
+      {label:'添加到默认播放列表（末尾）', icon:'playlist', action:addLast}, null, external, copy,
+      ...(target.watchlater ? [{label:'添加到稍后再看', icon:'watchlater', watchlater:true}] : []),
     ];
   }
   function onContextMenu(event) {
@@ -181,7 +186,18 @@ export function createMediaMenu({getTarget, openPage, play, openNew, openExterna
       button.addEventListener('click', async event => {
         if (!event.isTrusted || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
         event.preventDefault(); event.stopPropagation();
-        if (item.copy) {
+        if (item.watchlater) {
+          if (button.disabled) return;
+          const current = host;
+          button.disabled = true; button.setAttribute('aria-busy', 'true');
+          status.textContent = '正在添加到稍后再看…'; place();
+          try {
+            await addWatchlater(target);
+            if (host === current) { status.textContent = '已添加到稍后再看'; place(); }
+          } catch (error) {
+            if (host === current) { button.disabled = false; status.textContent = error.message; place(); }
+          } finally { button.removeAttribute('aria-busy'); }
+        } else if (item.copy) {
           const current = host;
           try { await copyLink(target.url); if (host === current) close(true); }
           catch { if (host === current) { status.textContent = '复制失败，请重试'; place(); } }
@@ -196,8 +212,9 @@ export function createMediaMenu({getTarget, openPage, play, openNew, openExterna
       else if (event.key === 'Tab') close();
       else if (['ArrowDown','ArrowUp','Home','End'].includes(event.key)) {
         event.preventDefault();
-        const index = buttons.indexOf(root.activeElement);
-        buttons[event.key === 'Home' ? 0 : event.key === 'End' ? buttons.length - 1 : (index + (event.key === 'ArrowDown' ? 1 : -1) + buttons.length) % buttons.length].focus();
+        const enabled = buttons.filter(button => !button.disabled);
+        const index = enabled.indexOf(root.activeElement);
+        enabled[event.key === 'Home' ? 0 : event.key === 'End' ? enabled.length - 1 : (index + (event.key === 'ArrowDown' ? 1 : -1) + enabled.length) % enabled.length]?.focus();
       }
     }, {signal:menuEvents.signal});
     buttons[0].focus({preventScroll:true});
