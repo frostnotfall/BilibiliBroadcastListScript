@@ -22,6 +22,11 @@ export function reportResolverFrame() {
 // never installs events. A single instance owns the page's playback/navigation.
 export function createPageOpening({beforeMedia = () => {}, ignoreClick = () => false, resolveLink = () => null, timeout = 8000} = {}) {
   const originalOpen = window.open;
+  // WebView2 advertises document PiP, but PotPlayer externalizes its about:blank
+  // window. Let the site use its existing non-PiP Watchlater branch instead.
+  const nativePip = typeof window.chrome?.webview?.postMessage === 'function'
+    ? Object.getOwnPropertyDescriptor(window, 'documentPictureInPicture') : null;
+  if (nativePip?.configurable) delete window.documentPictureInPicture;
   const events = new AbortController();
   const ignored = new Set(), observers = new Map();
   const shortLinks = createResolverCache(startShortLink);
@@ -189,8 +194,8 @@ export function createPageOpening({beforeMedia = () => {}, ignoreClick = () => f
   function onClick(event) {
     if (stopped || !event.isTrusted || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey || event.defaultPrevented) return;
     clearClick();
-    // A page can preserve an embedded native action before we handle its parent link.
-    if (ignoreClick(event)) return;
+    // Let Watchlater's native stop/prevent handler run before its enclosing video link.
+    if (ignoreClick(event) || event.composedPath().some(node => node.matches?.('.bili-watch-later,.watch-later-trigger'))) return;
     const state = {sent:new Set(), pending:new Set()};
     click = state; timer = setTimeout(clearClick, 0);
     const anchor = event.composedPath().find(node => node.matches?.('a[href]')) || event.target?.closest?.('a[href]');
@@ -299,6 +304,9 @@ export function createPageOpening({beforeMedia = () => {}, ignoreClick = () => f
       observers.clear(); pendingNodes.clear(); ignored.clear(); watchedTags.clear();
       shortLinks.destroy();
       if (window.open === open) window.open = originalOpen;
+      if (nativePip?.configurable && !('documentPictureInPicture' in window)) {
+        Object.defineProperty(window, 'documentPictureInPicture', nativePip);
+      }
       if (window.__potPlayerBilibiliClick === controller) delete window.__potPlayerBilibiliClick;
       syncPageState();
     },
