@@ -41,19 +41,19 @@ html.homepagescript-active :is(.items__item,.fav-list-main .bili-video-card) {mi
   html.homepagescript-active :is(.nav-bar__main-left,.nav-bar__main-right) { box-sizing:border-box!important; min-width:0!important; width:100%!important; max-width:100%!important; }
   html.homepagescript-active :is(.fav-list-header-filter__left,.fav-list-header-filter__right) { min-width:0!important; width:100%!important; max-width:100%!important; flex:1 1 100%!important; }
   html.homepagescript-active .fav-list-header-filter :is(.vui_input,.vui_input-wrapper,.radio-filter) { box-sizing:border-box!important; min-width:0!important; max-width:100%!important; }
-  html.homepagescript-active :is(.space-home,.space-dynamic,.space-upload,.space-lists,.space-list-details,.space-subscribe) {
+  html.homepagescript-active :is(.space-home,.space-dynamic,.space-upload,.space-lists,.space-list-details,.space-subscribe,.space-search) {
     box-sizing:border-box!important; min-width:0!important; width:100%!important; max-width:100%!important;
     margin:0!important; padding:16px!important; gap:16px!important;
   }
-  html.homepagescript-active :is(.space-home,.space-dynamic,.space-upload,.space-subscribe) { flex-direction:column!important; }
-  html.homepagescript-active :is(.space-home > .content,.space-home > .aside,.space-dynamic__left,.space-dynamic__content,.space-dynamic__right,.space-dynamic-inner,.upload-sidenav,.upload-content,.subscribe-sidebar,.subscribe-content) {
+  html.homepagescript-active :is(.space-home,.space-dynamic,.space-upload,.space-subscribe,.space-search) { flex-direction:column!important; }
+  html.homepagescript-active :is(.space-home > .content,.space-home > .aside,.space-dynamic__left,.space-dynamic__content,.space-dynamic__right,.space-dynamic-inner,.upload-sidenav,.upload-content,.subscribe-sidebar,.subscribe-content,.search-sidebar,.search-content) {
     box-sizing:border-box!important; min-width:0!important; width:100%!important; max-width:100%!important; flex:auto!important; margin:0!important;
   }
   html.homepagescript-active :is(.space-main .side-nav,.section-wrap__header,.space-main .breadcrumb,.space-main .radio-filter,.lists-header,.space-list-details .list-header,.video-list__header,.video-list__actions,.space-home .home-empty-content,.space-home .top-video) {
     flex-wrap:wrap!important; gap:8px!important; height:auto!important; min-width:0!important; max-width:100%!important;
   }
   html.homepagescript-active .space-main .side-nav { display:flex!important; }
-  html.homepagescript-active :is(.space-dynamic__left,.upload-sidenav,.subscribe-sidebar) { position:static!important; inset:auto!important; height:auto!important; min-height:0!important; max-height:none!important; flex:0 0 auto!important; }
+  html.homepagescript-active :is(.space-dynamic__left,.upload-sidenav,.subscribe-sidebar,.search-sidebar) { position:static!important; inset:auto!important; height:auto!important; min-height:0!important; max-height:none!important; flex:0 0 auto!important; }
   html.homepagescript-active .space-main .side-nav__item { box-sizing:border-box!important; width:auto!important; flex:0 1 auto!important; margin:0!important; padding:10px 16px!important; }
   html.homepagescript-active .favlist-aside { position:static!important; inset:auto!important; height:auto!important; margin:0!important; padding:0!important; }
   html.homepagescript-active .favlist-aside .fav-collapse-wrap { max-height:none!important; overflow:visible!important; }
@@ -67,11 +67,17 @@ html.homepagescript-active :is(.items__item,.fav-list-main .bili-video-card) {mi
   html.homepagescript-active .space-home .video-list__title { display:flex!important; align-items:baseline!important; gap:6px!important; }
   html.homepagescript-active .space-home .video-list__title .title { min-width:0!important; -webkit-line-clamp:2!important; overflow-wrap:anywhere!important; }
   html.homepagescript-active .space-home .video-list__title .amount { flex-shrink:0!important; margin:0!important; }
-  html.homepagescript-active :is(.space-home .items,.space-home .article-list,.space-home .video-list__content,.space-upload .video-list.grid-mode,.space-list-details .list-content,.space-lists .video-list__content,.space-lists .lists-content > .grid-mode,.space-lists .contet-grid > .video-grid,.space-upload .opus-collection-list) {
+  html.homepagescript-active :is(.space-home .items,.space-home .article-list,.space-home .video-list__content,:is(.space-upload,.space-search) .video-list.grid-mode,.space-list-details .list-content,.space-lists .video-list__content,.space-lists .lists-content > .grid-mode,.space-lists .contet-grid > .video-grid,.space-upload .opus-collection-list) {
     display:grid!important; grid-template-columns:repeat(var(--homepagescript-columns,2),minmax(0,1fr))!important; gap:16px 12px!important; width:100%!important;
   }
-  html.homepagescript-active :is(.space-main .bili-video-card,.space-home .fav-card,.space-home .article-list__item,.space-home .article-card,.space-upload .upload-video-card,.space-upload .upload-video-card__left,.space-upload .upload-video-card__main,.space-lists .video-list__item,.space-list-details .list-video-item) { min-width:0!important; width:100%!important; max-width:100%!important; }
-  html.homepagescript-active .space-upload .upload-video-card.list-mode { flex-wrap:wrap!important; gap:8px!important; }
+  html.homepagescript-active :is(.space-main .bili-video-card,.space-home .fav-card,.space-home .article-list__item,.space-home .article-card,:is(.space-upload,.space-search) .upload-video-card,:is(.space-upload,.space-search) .upload-video-card__left,:is(.space-upload,.space-search) .upload-video-card__main,.space-lists .video-list__item,.space-list-details .list-video-item) { min-width:0!important; width:100%!important; max-width:100%!important; }
+  html.homepagescript-active :is(.space-upload,.space-search) .upload-video-card.list-mode { flex-wrap:wrap!important; gap:8px!important; }
+  /* Space search reuses upload cards and dynamic cards inside its own shell. */
+  html.homepagescript-active .space-search :is(.video,.video-body,.dynamic,.dynamic-content,.dynamic-list,.dynamic-empty) { box-sizing:border-box!important; min-width:0!important; width:100%!important; max-width:100%!important; }
+  html.homepagescript-active .space-search :is(.video-header__top,.dynamic-header,.dynamic-empty-content,.dynamic-empty-content .text) { min-width:0!important; max-width:100%!important; overflow-wrap:anywhere!important; }
+  html.homepagescript-active .space-search :is(.video-header__top .title,.dynamic-header .title,.dynamic-empty-title) { font-size:20px!important; line-height:1.4!important; }
+  html.homepagescript-active .space-search .empty-button { display:flex!important; flex-wrap:wrap!important; justify-content:center!important; gap:8px!important; max-width:100%!important; }
+  html.homepagescript-active .space-search .dynamic-empty .vui_button { margin:0!important; max-width:100%!important; }
   /* Native masonry writes absolute positions and a fixed container height inline.
      Override only in narrow mode; widening and destroy reveal those native values. */
   html.homepagescript-active .space-upload :is(.opus,.opus-body,.opus-feed,.masonry_grid_v2) { min-width:0!important; max-width:100%!important; width:100%!important; }
@@ -86,13 +92,13 @@ html.homepagescript-active :is(.items__item,.fav-list-main .bili-video-card) {mi
   html.homepagescript-active :is(.space-main .bangumi-item,.space-main .bili-bangumi-card) { min-width:0!important; width:100%!important; max-width:100%!important; }
   html.homepagescript-active .space-main .bili-bangumi-card__cover { flex:0 0 35%!important; width:35%!important; max-width:154px!important; }
   html.homepagescript-active .space-main .bili-bangumi-card__details { flex:1!important; min-width:0!important; width:auto!important; }
-  html.homepagescript-active :is(.space-dynamic .bili-dyn-item,.space-dynamic .bili-dyn-item__main,.space-dynamic .bili-dyn-item__header,.space-dynamic .bili-dyn-item__body,.space-dynamic .bili-dyn-item__footer) { box-sizing:border-box!important; min-width:0!important; max-width:100%!important; }
-  html.homepagescript-active .space-dynamic .bili-dyn-item__main { padding:12px!important; }
-  html.homepagescript-active .space-dynamic .bili-dyn-item__avatar { position:absolute!important; left:12px!important; top:12px!important; width:48px!important; height:48px!important; margin:0!important; }
-  html.homepagescript-active .space-dynamic .bili-dyn-item__header { padding:0 32px 0 60px!important; min-height:48px!important; }
-  html.homepagescript-active .space-dynamic .bili-dyn-item__ornament { display:none!important; }
-  html.homepagescript-active :is(.space-dynamic .bili-dyn-item__header,.space-dynamic .bili-dyn-item__body,.space-dynamic .bili-dyn-item__footer) { margin-left:0!important; }
-  html.homepagescript-active :is(.space-dynamic .bili-dyn-card-video__header,.space-dynamic .bili-dyn-card-ugc) { box-sizing:border-box!important; max-width:100%!important; }
-  html.homepagescript-active .space-dynamic .bili-dyn-card-ugc__detail { min-width:0!important; flex:1!important; }
+  html.homepagescript-active :is(.space-dynamic,.space-search) :is(.bili-dyn-item,.bili-dyn-item__main,.bili-dyn-item__header,.bili-dyn-item__body,.bili-dyn-item__footer) { box-sizing:border-box!important; min-width:0!important; max-width:100%!important; }
+  html.homepagescript-active :is(.space-dynamic,.space-search) .bili-dyn-item__main { padding:12px!important; }
+  html.homepagescript-active :is(.space-dynamic,.space-search) .bili-dyn-item__avatar { position:absolute!important; left:12px!important; top:12px!important; width:48px!important; height:48px!important; margin:0!important; }
+  html.homepagescript-active :is(.space-dynamic,.space-search) .bili-dyn-item__header { padding:0 32px 0 60px!important; min-height:48px!important; }
+  html.homepagescript-active :is(.space-dynamic,.space-search) .bili-dyn-item__ornament { display:none!important; }
+  html.homepagescript-active :is(.space-dynamic,.space-search) :is(.bili-dyn-item__header,.bili-dyn-item__body,.bili-dyn-item__footer) { margin-left:0!important; }
+  html.homepagescript-active :is(.space-dynamic,.space-search) :is(.bili-dyn-card-video__header,.bili-dyn-card-ugc) { box-sizing:border-box!important; max-width:100%!important; }
+  html.homepagescript-active :is(.space-dynamic,.space-search) .bili-dyn-card-ugc__detail { min-width:0!important; flex:1!important; }
   html.homepagescript-active :is(.space-main .vui_pagenation-go,.space-main .nav-statistics,.space-main .upinfo-detail__bottom) { min-width:0!important; max-width:100%!important; }
 }

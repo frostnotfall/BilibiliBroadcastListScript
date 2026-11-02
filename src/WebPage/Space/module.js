@@ -9,16 +9,16 @@ import favoritesStyle from './favorites.css';
 export const early = () => createPageOpening();
 export function mount() {
   const css = homeStyle() + contentStyle + favoritesStyle
-    + `@media(max-width:1099px) { ${dynamicContentStyle('html.homepagescript-active .space-dynamic')} }`;
+    + `@media(max-width:1099px) { ${dynamicContentStyle('html.homepagescript-active :is(.space-dynamic,.space-search)')} }`;
   return mountHomeLayout(css, () => pageId(location.href) === 'Space', {
-    contentSelector:".feed2 .recommended-container_floor-aside > .container,.head-cards,.loading-cards,.channel-feed,.popular-list .card-list,.fav-list-main .items,.space-home .items,.space-home .article-list,.space-home .video-list__content,.space-upload .opus-collection-list,.space-upload .opus .masonry_grid_v2 > .container,.space-upload .video-list.grid-mode,.space-list-details .list-content,.space-lists .video-list__content,.space-lists .lists-content > .grid-mode,.space-lists .contet-grid > .video-grid,.section-cards,#room-card-list,main [class~=\"grid\"],.items-container",
+    contentSelector:".feed2 .recommended-container_floor-aside > .container,.head-cards,.loading-cards,.channel-feed,.popular-list .card-list,.fav-list-main .items,.space-home .items,.space-home .article-list,.space-home .video-list__content,.space-upload .opus-collection-list,.space-upload .opus .masonry_grid_v2 > .container,.space-upload .video-list.grid-mode,.space-search .video-list.grid-mode,.space-list-details .list-content,.space-lists .video-list__content,.space-lists .lists-content > .grid-mode,.space-lists .contet-grid > .video-grid,.section-cards,#room-card-list,main [class~=\"grid\"],.items-container",
     columns:container => container.matches('.space-favlist[data-broadcast-favorites-active] .fav-list-main .items')
       ? Math.max(1, Math.floor((container.clientWidth + 12) / 220))
       : innerWidth < 400 ? 1 : Math.max(2, Math.floor((container.clientWidth + 12) / 232)),
     observeLoad:true,
     mountContent({narrow}) {
       const favorites = createFavoritesLayout();
-      const dynamic = createDynamicContent({getRoot:() => document.querySelector('.space-dynamic'),isActive:() => narrow.matches});
+      const dynamic = createDynamicContent({getRoot:() => document.querySelector('.space-dynamic,.space-search .dynamic-list'),isActive:() => narrow.matches});
       return {
         refresh(active) {
           favorites.refresh(active && /^\/\d+\/(?:favlist|fav(?:\/video)?)\/?$/.test(location.pathname));
