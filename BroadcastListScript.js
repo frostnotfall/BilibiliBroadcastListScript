@@ -1,4 +1,4 @@
-// bilibili-broadcast-list-script version: 12
+// bilibili-broadcast-list-script version: 13
 // 本文件可单独从 https://github.com/frostnotfall/BilibiliBroadcastListScript/releases 手动替换更新。
 // MIT License
 // 
@@ -634,7 +634,7 @@
   }
 
   // src/common/version.js
-  var version = "12";
+  var version = "13";
 
   // src/common/resolver-cache.js
   function createResolverCache(start, { concurrency = 4, maxQueued = 128, capacity = 256, ttl = 3e5, retryDelay = 3e4 } = {}) {
@@ -869,6 +869,68 @@
     } };
   }
 
+  // src/common/recommendation-target.js
+  function recommendationMediaUrl(value) {
+    const source = urlOf(value);
+    if (!source || source.hostname !== "cm.bilibili.com" || source.pathname !== "/cm/api/fees/pc/sync/v2") return "";
+    const messages = source.searchParams.getAll("msg");
+    if (messages.length !== 1 || messages[0].length > 65536) return "";
+    const fields = messages[0].split(",").filter((field) => field.startsWith("e|"));
+    if (fields.length !== 1) return "";
+    const encoded = fields[0].slice(2);
+    if (!encoded || !/^[A-Za-z0-9+/]+={0,2}$/.test(encoded)) return "";
+    try {
+      let uint32 = function() {
+        let value2 = 0;
+        for (let i = 0; i < 5; i++) {
+          if (offset >= bytes.length) throw new Error("Truncated varint");
+          const byte = bytes.charCodeAt(offset++);
+          if (i === 4 && byte > 15) throw new Error("Varint overflow");
+          value2 += (byte & 127) * 2 ** (7 * i);
+          if (!(byte & 128)) return value2;
+        }
+        throw new Error("Invalid varint");
+      };
+      const bytes = atob(encoded);
+      let offset = 0, destination = "";
+      while (offset < bytes.length) {
+        const tag = uint32(), field = Math.floor(tag / 8), wire = tag % 8;
+        if (!field) return "";
+        if (wire === 2) {
+          const length = uint32(), end = offset + length;
+          if (end > bytes.length) return "";
+          if (field === 23) {
+            if (destination || !length) return "";
+            destination = new TextDecoder("utf-8", { fatal: true }).decode(
+              Uint8Array.from(bytes.slice(offset, end), (byte) => byte.charCodeAt(0))
+            );
+          }
+          offset = end;
+        } else if (wire === 0) {
+          let ended = false;
+          for (let i = 0; i < 10 && offset < bytes.length; i++) {
+            const byte = bytes.charCodeAt(offset++);
+            if (i === 9 && byte > 1) return "";
+            if (!(byte & 128)) {
+              ended = true;
+              break;
+            }
+          }
+          if (!ended || field === 23) return "";
+        } else if (wire === 1 || wire === 5) {
+          if (field === 23) return "";
+          offset += wire === 1 ? 8 : 4;
+          if (offset > bytes.length) return "";
+        } else return "";
+      }
+      if (!/^https?:\/\//i.test(destination) || /[\u0000-\u0020\u007f]/.test(destination)) return "";
+      const target = urlOf(destination);
+      return target && !target.username && !target.password && !target.port && isMediaUrl(target) ? target.href : "";
+    } catch {
+      return "";
+    }
+  }
+
   // src/common/opening.js
   var resultType = "potPlayer.short-link.result";
   var resolverName = "potPlayer.short-link:";
@@ -886,7 +948,9 @@
     if (nativePip?.configurable) delete window.documentPictureInPicture;
     const events2 = new AbortController();
     const ignored = /* @__PURE__ */ new Set(), observers = /* @__PURE__ */ new Map();
-    const shortLinks = createResolverCache(startShortLink);
+    const shortLinks = createResolverCache(startLinkResolution);
+    const redirectLinks = createResolverCache((url2, complete) => startLinkResolution(url2, complete, true));
+    const redirectDiagnostics = [];
     const pendingNodes = /* @__PURE__ */ new Set(), watchedTags = /* @__PURE__ */ new Set();
     let stopped = false, click = null, timer2 = 0, frame = 0;
     const normalized = (value) => urlOf(value)?.href || "";
@@ -902,9 +966,20 @@
     }
     function resolveUrl(value) {
       const url2 = normalized(value);
-      return url2 && isShortUrl(url2) ? shortLinks.resolve(url2) : Promise.resolve(url2);
+      return url2 && isShortUrl(url2) ? shortLinks.resolve(url2) : Promise.resolve(recommendationMediaUrl(url2) || url2);
     }
-    function startShortLink(url2, complete) {
+    function knownTarget(url2) {
+      return recommendationMediaUrl(url2) || shortLinks.peek(url2) || url2;
+    }
+    function recordRedirect(source, observed, resolved, method) {
+      redirectDiagnostics.push({ source, observed, resolved, outcome: resolved ? classifyUrl(resolved) : "unresolved", method });
+      if (redirectDiagnostics.length > 30) redirectDiagnostics.shift();
+    }
+    function isRedirectCandidate(value) {
+      const url2 = urlOf(value);
+      return Boolean(url2 && (url2.hostname === "bilibili.com" || url2.hostname.endsWith(".bilibili.com")) && !isMediaUrl(url2) && !isPageUrl(url2));
+    }
+    function startLinkResolution(url2, complete, supportedOnly = false) {
       if (stopped || !document.documentElement) {
         complete("");
         return;
@@ -915,16 +990,21 @@
       iframe.name = resolverName + token;
       iframe.setAttribute("sandbox", "allow-same-origin");
       iframe.setAttribute("referrerpolicy", "no-referrer");
-      let finished = false;
+      let finished = false, observedUrl = "";
       function finish(value) {
         if (finished) return;
         const finalUrl = normalized(value);
+        if (finalUrl) observedUrl = finalUrl;
         if (finalUrl && isShortUrl(finalUrl)) return;
+        if (supportedOnly && finalUrl && !isMediaUrl(finalUrl) && !isPageUrl(finalUrl)) return;
         finished = true;
         clearTimeout(expiry);
         window.removeEventListener("message", onMessage);
         iframe.onload = iframe.onerror = null;
         iframe.remove();
+        if (supportedOnly) {
+          recordRedirect(url2, observedUrl, finalUrl, "frame");
+        }
         complete(finalUrl);
       }
       function onMessage(event) {
@@ -989,13 +1069,22 @@
     function handle(value, state, fallback) {
       const url2 = normalized(value);
       if (!url2 || stopped) return false;
-      if (!isShortUrl(url2)) return dispatch(url2, state);
-      const cached = shortLinks.peek(url2);
+      const embedded = recommendationMediaUrl(url2);
+      if (embedded && typeof window.chrome?.webview?.postMessage === "function" && !isIgnored(url2, true, state.explicit)) {
+        const handled = dispatch(embedded, state);
+        if (handled) recordRedirect(url2, embedded, embedded, "metadata");
+        return handled;
+      }
+      const short = isShortUrl(url2);
+      const redirect = !short && isRedirectCandidate(url2) && !(state.explicit && isPlayerUrl(url2)) && typeof window.chrome?.webview?.postMessage === "function" && !isIgnored(url2, true);
+      if (!short && !redirect) return dispatch(url2, state);
+      const resolver = short ? shortLinks : redirectLinks;
+      const cached = resolver.peek(url2);
       if (cached) return dispatch(cached, state);
       if (state.pending.has(url2)) return true;
       state.pending.add(url2);
-      resolveUrl(url2).then((realUrl) => {
-        if (!stopped && (!realUrl || !dispatch(realUrl, state))) fallback();
+      resolver.resolve(url2).then((realUrl) => {
+        if (!stopped && !(redirect ? dispatch(realUrl || url2, state) : realUrl && dispatch(realUrl, state))) fallback();
       });
       return true;
     }
@@ -1040,14 +1129,14 @@
       if (isShortUrl(url2) && !cached) resolveUrl(url2).then((value) => {
         if (!stopped && !launch(value)) fallback();
       });
-      else if (!launch(cached || url2)) fallback();
+      else if (!launch(knownTarget(url2))) fallback();
     }
     const mediaMenu = createMediaMenu({
       getTarget(event) {
         if (typeof window.chrome?.webview?.postMessage !== "function") return null;
         const target = linkTarget(event);
         if (!target || isIgnored(target.url, true, true)) return null;
-        const resolved = shortLinks.peek(target.url) || target.url;
+        const resolved = knownTarget(target.url);
         if (isIgnored(resolved, true, true)) return null;
         const kind = isMediaUrl(resolved) || isShortUrl(resolved) ? "media" : isPageUrl(resolved) ? "page" : "native";
         return { ...target, kind, playlist: isPlaylistUrl(resolved), watchlater: kind === "media" ? watchlaterTarget(target, resolved) : null };
@@ -1098,7 +1187,7 @@
       if (typeof window.chrome?.webview?.postMessage !== "function") return null;
       const target = linkTarget(event);
       if (!target) return null;
-      const resolved = shortLinks.peek(target.url) || target.url;
+      const resolved = knownTarget(target.url);
       if (isIgnored(target.url, true, true) || isIgnored(resolved, true, true)) return null;
       return isPlayerUrl(resolved) || isShortUrl(resolved) || isPageUrl(resolved) ? { ...target, resolved } : null;
     }
@@ -1181,6 +1270,9 @@
       classifyUrl,
       isSupportedUrl: isMediaUrl,
       resolveUrl,
+      getRedirectDiagnostics() {
+        return { version, entries: redirectDiagnostics.map((entry) => ({ ...entry })) };
+      },
       ignoreUrl(predicate) {
         if (typeof predicate !== "function") throw new TypeError("ignoreUrl requires a predicate");
         if (stopped) return () => {
@@ -1207,6 +1299,7 @@
         ignored.clear();
         watchedTags.clear();
         shortLinks.destroy();
+        redirectLinks.destroy();
         if (window.open === open) window.open = originalOpen;
         if (nativePip?.configurable && !("documentPictureInPicture" in window)) {
           Object.defineProperty(window, "documentPictureInPicture", nativePip);

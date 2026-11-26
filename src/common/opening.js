@@ -4,6 +4,7 @@ import {version} from './version.js';
 import {createResolverCache} from './resolver-cache.js';
 import {syncPageState} from './page-state.js';
 import {createWatchlater, watchlaterTarget} from './watchlater.js';
+import {recommendationMediaUrl} from './recommendation-target.js';
 
 const resultType = 'potPlayer.short-link.result';
 const resolverName = 'potPlayer.short-link:';
@@ -29,7 +30,9 @@ export function createPageOpening({beforeMedia = () => {}, ignoreClick = () => f
   if (nativePip?.configurable) delete window.documentPictureInPicture;
   const events = new AbortController();
   const ignored = new Set(), observers = new Map();
-  const shortLinks = createResolverCache(startShortLink);
+  const shortLinks = createResolverCache(startLinkResolution);
+  const redirectLinks = createResolverCache((url, complete) => startLinkResolution(url, complete, true));
+  const redirectDiagnostics = [];
   const pendingNodes = new Set(), watchedTags = new Set();
   let stopped = false, click = null, timer = 0, frame = 0;
   const normalized = value => urlOf(value)?.href || '';
@@ -42,9 +45,21 @@ export function createPageOpening({beforeMedia = () => {}, ignoreClick = () => f
   }
   function resolveUrl(value) {
     const url = normalized(value);
-    return url && isShortUrl(url) ? shortLinks.resolve(url) : Promise.resolve(url);
+    return url && isShortUrl(url) ? shortLinks.resolve(url) : Promise.resolve(recommendationMediaUrl(url) || url);
   }
-  function startShortLink(url, complete) {
+  function knownTarget(url) { return recommendationMediaUrl(url) || shortLinks.peek(url) || url; }
+  function recordRedirect(source, observed, resolved, method) {
+    redirectDiagnostics.push({source, observed, resolved, outcome:resolved ? classifyUrl(resolved) : 'unresolved', method});
+    if (redirectDiagnostics.length > 30) redirectDiagnostics.shift();
+  }
+  // Fallback for Bilibili recommendation/tracking links. Only
+  // explicit clicks resolve these URLs; do not prefetch unknown destinations.
+  function isRedirectCandidate(value) {
+    const url = urlOf(value);
+    return Boolean(url && (url.hostname === 'bilibili.com' || url.hostname.endsWith('.bilibili.com'))
+      && !isMediaUrl(url) && !isPageUrl(url));
+  }
+  function startLinkResolution(url, complete, supportedOnly = false) {
     if (stopped || !document.documentElement) { complete(''); return; }
     const iframe = document.createElement('iframe');
     const token = Array.from(crypto.getRandomValues(new Uint8Array(16)), byte => byte.toString(16).padStart(2,'0')).join('');
@@ -52,16 +67,24 @@ export function createPageOpening({beforeMedia = () => {}, ignoreClick = () => f
     iframe.name = resolverName + token;
     iframe.setAttribute('sandbox', 'allow-same-origin');
     iframe.setAttribute('referrerpolicy', 'no-referrer');
-    let finished = false;
+    let finished = false, observedUrl = '';
     function finish(value) {
       if (finished) return;
       const finalUrl = normalized(value);
+      if (finalUrl) observedUrl = finalUrl;
       if (finalUrl && isShortUrl(finalUrl)) return;
+      // A document-created report can describe an intermediate HTML redirect.
+      // Keep waiting until an existing media/page rule accepts the destination.
+      if (supportedOnly && finalUrl && !isMediaUrl(finalUrl) && !isPageUrl(finalUrl)) return;
       finished = true;
       clearTimeout(expiry);
       window.removeEventListener('message', onMessage);
       iframe.onload = iframe.onerror = null;
-      iframe.remove(); complete(finalUrl);
+      iframe.remove();
+      if (supportedOnly) {
+        recordRedirect(url, observedUrl, finalUrl, 'frame');
+      }
+      complete(finalUrl);
     }
     function onMessage(event) {
       if (!event.isTrusted || event.source !== iframe.contentWindow) return;
@@ -117,13 +140,26 @@ export function createPageOpening({beforeMedia = () => {}, ignoreClick = () => f
   function handle(value, state, fallback) {
     const url = normalized(value);
     if (!url || stopped) return false;
-    if (!isShortUrl(url)) return dispatch(url, state);
-    const cached = shortLinks.peek(url);
+    const embedded = recommendationMediaUrl(url);
+    if (embedded && typeof window.chrome?.webview?.postMessage === 'function' && !isIgnored(url, true, state.explicit)) {
+      const handled = dispatch(embedded, state);
+      if (handled) recordRedirect(url, embedded, embedded, 'metadata');
+      return handled;
+    }
+    const short = isShortUrl(url);
+    const redirect = !short && isRedirectCandidate(url)
+      && !(state.explicit && isPlayerUrl(url))
+      && typeof window.chrome?.webview?.postMessage === 'function' && !isIgnored(url, true);
+    if (!short && !redirect) return dispatch(url, state);
+    const resolver = short ? shortLinks : redirectLinks;
+    const cached = resolver.peek(url);
     if (cached) return dispatch(cached, state);
     if (state.pending.has(url)) return true;
     state.pending.add(url);
-    resolveUrl(url).then(realUrl => {
-      if (!stopped && (!realUrl || !dispatch(realUrl, state))) fallback();
+    resolver.resolve(url).then(realUrl => {
+      // Unknown Bilibili links keep the existing confirmation on failure.
+      // Short-link failures retain their original native fallback.
+      if (!stopped && !(redirect ? dispatch(realUrl || url, state) : realUrl && dispatch(realUrl, state))) fallback();
     });
     return true;
   }
@@ -160,14 +196,14 @@ export function createPageOpening({beforeMedia = () => {}, ignoreClick = () => f
     }
     const cached = shortLinks.peek(url);
     if (isShortUrl(url) && !cached) resolveUrl(url).then(value => {if (!stopped && !launch(value)) fallback();});
-    else if (!launch(cached || url)) fallback();
+    else if (!launch(knownTarget(url))) fallback();
   }
   const mediaMenu = createMediaMenu({
     getTarget(event) {
       if (typeof window.chrome?.webview?.postMessage !== 'function') return null;
       const target = linkTarget(event);
       if (!target || isIgnored(target.url, true, true)) return null;
-      const resolved = shortLinks.peek(target.url) || target.url;
+      const resolved = knownTarget(target.url);
       if (isIgnored(resolved, true, true)) return null;
       const kind = isMediaUrl(resolved) || isShortUrl(resolved) ? 'media' : isPageUrl(resolved) ? 'page' : 'native';
       return {...target, kind, playlist:isPlaylistUrl(resolved), watchlater:kind === 'media' ? watchlaterTarget(target, resolved) : null};
@@ -216,7 +252,7 @@ export function createPageOpening({beforeMedia = () => {}, ignoreClick = () => f
     if (typeof window.chrome?.webview?.postMessage !== 'function') return null;
     const target = linkTarget(event);
     if (!target) return null;
-    const resolved = shortLinks.peek(target.url) || target.url;
+    const resolved = knownTarget(target.url);
     if (isIgnored(target.url, true, true) || isIgnored(resolved, true, true)) return null;
     return isPlayerUrl(resolved) || isShortUrl(resolved) || isPageUrl(resolved) ? {...target, resolved} : null;
   }
@@ -288,6 +324,7 @@ export function createPageOpening({beforeMedia = () => {}, ignoreClick = () => f
   }
   const controller = {
     version, classifyUrl, isSupportedUrl:isMediaUrl, resolveUrl,
+    getRedirectDiagnostics() { return {version, entries:redirectDiagnostics.map(entry => ({...entry}))}; },
     ignoreUrl(predicate) {
       if (typeof predicate !== 'function') throw new TypeError('ignoreUrl requires a predicate');
       if (stopped) return () => {};
@@ -302,7 +339,7 @@ export function createPageOpening({beforeMedia = () => {}, ignoreClick = () => f
       stopped = true; events.abort(); mediaMenu.destroy(); watchlater.destroy(); clearClick(); cancelAnimationFrame(frame);
       for (const observer of observers.values()) observer.disconnect();
       observers.clear(); pendingNodes.clear(); ignored.clear(); watchedTags.clear();
-      shortLinks.destroy();
+      shortLinks.destroy(); redirectLinks.destroy();
       if (window.open === open) window.open = originalOpen;
       if (nativePip?.configurable && !('documentPictureInPicture' in window)) {
         Object.defineProperty(window, 'documentPictureInPicture', nativePip);
